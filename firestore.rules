@@ -1,0 +1,64 @@
+rules_version = '2';
+
+// ZimAI Ready — Cloud Firestore security rules.
+// Deploy with: firebase deploy --only firestore:rules  (or paste into Firebase console → Firestore → Rules)
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isSelf(uid) { return signedIn() && request.auth.uid == uid; }
+    function ownsResource() { return signedIn() && resource.data.userId == request.auth.uid; }
+    function ownsNew() { return signedIn() && request.resource.data.userId == request.auth.uid; }
+    function orgOwner(orgId) {
+      return signedIn() && get(/databases/$(database)/documents/organisations/$(orgId)).data.ownerUserId == request.auth.uid;
+    }
+
+    // Accounts, profiles and progress — private to the user (doc id = uid).
+    match /users/{uid} { allow read, write: if isSelf(uid); }
+    match /employeeProfiles/{uid} { allow read, write: if isSelf(uid); }
+    match /employeeProgress/{uid} { allow read, write: if isSelf(uid); }
+
+    // Per-user records (doc has userId).
+    match /readinessAssessments/{id} {
+      allow read, update, delete: if ownsResource();
+      allow create: if ownsNew();
+    }
+    match /activitySubmissions/{id} {
+      allow read, update, delete: if ownsResource();
+      allow create: if ownsNew();
+    }
+    match /assessmentResults/{id} {
+      allow read, update, delete: if ownsResource();
+      allow create: if ownsNew();
+    }
+
+    // Certificates are publicly verifiable by ID, immutable once issued.
+    match /certificates/{id} {
+      allow read: if true;
+      allow create: if ownsNew();
+      allow update, delete: if false;
+    }
+
+    // Shareable AI Skills Profiles — public read, owner write.
+    match /publicProfiles/{uid} {
+      allow read: if true;
+      allow write: if isSelf(uid);
+    }
+
+    // Organisations — the owner (employer) manages; members may read their own org.
+    match /organisations/{orgId} {
+      allow read: if signedIn() && (
+        resource.data.ownerUserId == request.auth.uid ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.organisationId == orgId
+      );
+      allow create: if signedIn() && request.resource.data.ownerUserId == request.auth.uid;
+      allow update, delete: if signedIn() && resource.data.ownerUserId == request.auth.uid;
+    }
+
+    // Workforce records — visible only to the organisation owner.
+    match /workforceMembers/{id} {
+      allow read, update, delete: if orgOwner(resource.data.organisationId);
+      allow create: if orgOwner(request.resource.data.organisationId);
+    }
+  }
+}

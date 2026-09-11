@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0a8a5f" />
+    <meta name="description" content="ZimAI Ready — Prepare for the Future of Work. Discover where you stand, learn what matters, and become AI Ready in your profession." />
+    <title>ZimAI Ready — Prepare for the Future of Work</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='11' fill='%230a8a5f'/%3E%3Cpath d='M8 21 L14 15 L20 21 L26 15 L32 21' fill='none' stroke='white' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='31' cy='10' r='3.2' fill='%23ffc21a'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Roboto', 'sans-serif'],
+              mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+            },
+            colors: {
+              canvas: '#f6f8f7',
+              brand: { 50: '#edfcf5', 100: '#d3f8e6', 200: '#aaefd1', 300: '#72e0b7', 400: '#39c996', 500: '#15ae7c', 600: '#0a8a5f', 700: '#086f4e', 800: '#0a5840', 900: '#094936', 950: '#04291f' },
+              gold: { 50: '#fffbeb', 100: '#fff3c4', 200: '#ffe685', 300: '#ffd446', 400: '#ffc21a', 500: '#f5a800', 600: '#d98300', 700: '#b45d05', 800: '#924a0c', 900: '#783d0d', 950: '#452002' },
+              clay: { 50: '#fff4ed', 100: '#ffe6d4', 200: '#ffc9a8', 300: '#ffa270', 400: '#ff6f37', 500: '#f4511e', 600: '#e03a0c', 700: '#b92a0c', 800: '#932412', 900: '#772112', 950: '#400c06' },
+              ink: { 50: '#f5f7fa', 100: '#e9edf3', 200: '#d0d8e4', 300: '#a8b7cc', 400: '#7a91af', 500: '#597395', 600: '#455c7c', 700: '#394b65', 800: '#253247', 900: '#172133', 950: '#0b1220' },
+            },
+            boxShadow: {
+              card: '0 1px 2px rgba(11,18,32,0.04), 0 1px 3px rgba(11,18,32,0.04)',
+              lift: '0 10px 30px -10px rgba(11,18,32,0.18), 0 4px 10px -4px rgba(11,18,32,0.08)',
+              glow: '0 0 0 1px rgba(21,174,124,0.15), 0 20px 50px -12px rgba(10,138,95,0.35)',
+            },
+            keyframes: {
+              'fade-in': { from: { opacity: 0 }, to: { opacity: 1 } },
+              'fade-up': { from: { opacity: 0, transform: 'translateY(14px)' }, to: { opacity: 1, transform: 'translateY(0)' } },
+              'slide-up': { from: { opacity: 0, transform: 'translateY(16px)' }, to: { opacity: 1, transform: 'translateY(0)' } },
+              'slide-right': { from: { transform: 'translateX(-100%)' }, to: { transform: 'translateX(0)' } },
+              'scale-in': { from: { opacity: 0, transform: 'scale(0.96)' }, to: { opacity: 1, transform: 'scale(1)' } },
+              float: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-8px)' } },
+              shimmer: { from: { backgroundPosition: '-200% 0' }, to: { backgroundPosition: '200% 0' } },
+              'ping-slow': { '75%,100%': { transform: 'scale(1.5)', opacity: 0 } },
+            },
+            animation: {
+              'fade-in': 'fade-in .35s ease-out both',
+              'fade-up': 'fade-up .5s cubic-bezier(.2,.8,.2,1) both',
+              'slide-up': 'slide-up .35s cubic-bezier(.2,.8,.2,1) both',
+              'slide-right': 'slide-right .28s cubic-bezier(.2,.8,.2,1) both',
+              'scale-in': 'scale-in .22s cubic-bezier(.2,.8,.2,1) both',
+              float: 'float 5s ease-in-out infinite',
+              shimmer: 'shimmer 2.2s linear infinite',
+              'spin-slow': 'spin 3s linear infinite',
+              'ping-slow': 'ping-slow 2s cubic-bezier(0,0,.2,1) infinite',
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      html { -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
+      body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; background: #f6f8f7; color: #0b1220; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+      ::selection { background: #aaefd1; color: #04291f; }
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { scrollbar-width: none; }
+      .text-balance { text-wrap: balance; }
+      .bg-grid { background-image: linear-gradient(rgba(11,18,32,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(11,18,32,.05) 1px, transparent 1px); background-size: 32px 32px; }
+      .bg-grid-dark { background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px); background-size: 32px 32px; }
+      .shimmer-text { background: linear-gradient(90deg, #15ae7c, #ffc21a, #15ae7c); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmer 4s linear infinite; }
+      input[type='range'] { accent-color: #0a8a5f; }
+      /* Layout safety nets (zero specificity, so any utility still wins):
+         grid items may shrink below their content, and decorative blobs never cause sideways scrolling. */
+      :where(main) :where(.grid) > * { min-width: 0; }
+      :where(main) :where(.flex) > :where(.flex-1) { min-width: 0; }
+      :where(main) { overflow-x: clip; }
+      @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; } }
+      /* Print: only the element marked .print-area (e.g. a certificate) */
+      @media print {
+        @page { size: A4 landscape; margin: 0; }
+        html, body { height: 100% !important; overflow: hidden !important; background: #fff !important; }
+        body * { visibility: hidden !important; }
+        /* Ancestors with transforms/animations/filters become the containing block for position:fixed — neutralise them. */
+        body *:has(.print-area) { animation: none !important; transform: none !important; filter: none !important; backdrop-filter: none !important; }
+        .print-area, .print-area * { visibility: visible !important; }
+        .print-area { position: fixed !important; inset: 0 !important; width: 100% !important; max-width: none !important; margin: 0 !important; box-shadow: none !important; transform: none !important; }
+        .no-print { display: none !important; }
+      }
+    </style>
+    <!-- Import map lets Google AI Studio run the app without a bundler. Vite ignores it locally. -->
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@19.3.0",
+          "react/": "https://esm.sh/react@19.3.0/",
+          "react-dom": "https://esm.sh/react-dom@19.3.0?external=react",
+          "react-dom/": "https://esm.sh/react-dom@19.3.0&external=react/",
+          "react-router-dom": "https://esm.sh/react-router-dom@7.18.3?external=react,react-dom",
+          "@google/genai": "https://esm.sh/@google/genai@2.21.0",
+          "lucide-react": "https://esm.sh/lucide-react@1.44.0?external=react",
+          "qrcode.react": "https://esm.sh/qrcode.react@4.2.0?external=react",
+          "firebase/app": "https://esm.sh/firebase@12.19.0/app",
+          "firebase/auth": "https://esm.sh/firebase@12.19.0/auth",
+          "firebase/firestore": "https://esm.sh/firebase@12.19.0/firestore"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
