@@ -12,12 +12,12 @@
  * ────────────────────────────────────────────────────────────────────────────
  */
 export const firebaseConfig = {
-  apiKey: '',
-  authDomain: '',
-  projectId: '',
-  storageBucket: '',
-  messagingSenderId: '',
-  appId: '',
+  apiKey: 'AIzaSyAMFRr8q5_Ke2EpK2XjtNpF3iITDo8kEvQ',
+  authDomain: 'gen-lang-client-0914689610.firebaseapp.com',
+  projectId: 'gen-lang-client-0914689610',
+  storageBucket: 'gen-lang-client-0914689610.firebasestorage.app',
+  messagingSenderId: '189820158178',
+  appId: '1:189820158178:web:c5abec3faa740324161ebb',
 };
 
 /** Optional: a named Firestore database id. Leave '' for the (default) database. */
