@@ -11,6 +11,8 @@ import { getModuleContent } from '../../data/content';
 import { cn, formatDate } from '../../lib/utils';
 import { bestSubmissions, CATEGORY_LABELS, CATEGORY_ORDER, levelCounts, modulesTeaching, SKILL_LEVELS, skillCategory, trackedSkillLevels } from '../dashboard/stats';
 import { LevelPill, LevelPips } from '../dashboard/widgets';
+import { Reveal } from '../../components/motion';
+import { BrainSpark } from '../../components/illustrations';
 
 const LEVEL_DESCRIPTIONS: Record<SkillLevel, string> = {
   0: 'Not yet demonstrated. Covered by modules on or beyond your pathway.',
@@ -41,18 +43,18 @@ function CategoryRadar({ data }: { data: { label: string; value: number }[] }) {
   return (
     <svg viewBox="-50 -6 420 312" className="mx-auto h-auto w-full max-w-[400px] overflow-visible" role="img" aria-label="Average skill level by category">
       {[1, 2, 3].map((l) => (
-        <polygon key={l} points={poly(() => (R * l) / 3)} fill={l === 3 ? '#f8fafc' : 'none'} stroke="#e2e8f0" strokeWidth={1} />
+        <polygon key={l} points={poly(() => (R * l) / 3)} fill={l === 3 ? '#fbfbf1' : 'none'} stroke="#e4e4d0" strokeWidth={1} />
       ))}
       {data.map((_, i) => {
         const [x, y] = pt(i, R);
-        return <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="#e2e8f0" strokeWidth={1} />;
+        return <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="#e4e4d0" strokeWidth={1} />;
       })}
       <g style={{ transform: `scale(${shown})`, transformOrigin: `${cx}px ${cy}px`, transition: 'transform 1s cubic-bezier(.2,.8,.2,1)' }}>
-        <polygon points={poly((i) => Math.max(0.06, data[i].value / 3) * R)} fill="rgba(21,174,124,0.18)" stroke="#0a8a5f" strokeWidth={2} strokeLinejoin="round" />
+        <polygon points={poly((i) => Math.max(0.06, data[i].value / 3) * R)} fill="rgba(3,79,70,0.14)" stroke="#034f46" strokeWidth={2} strokeLinejoin="round" />
         {data.map((d, i) => {
           const [x, y] = pt(i, Math.max(0.06, d.value / 3) * R);
           const lvl = Math.round(d.value) as SkillLevel;
-          return <circle key={i} cx={x} cy={y} r={4.5} fill="#fff" stroke={SKILL_LEVEL_COLORS[lvl].hex} strokeWidth={2.5} />;
+          return <circle key={i} cx={x} cy={y} r={4.5} fill="#fffdf6" stroke={SKILL_LEVEL_COLORS[lvl].hex} strokeWidth={2.5} />;
         })}
       </g>
       {data.map((d, i) => {
@@ -83,7 +85,7 @@ function SkillTile({ skillId, level, onOpen }: { skillId: string; level: SkillLe
     <button
       type="button"
       onClick={onOpen}
-      className={cn('group w-full rounded-xl border border-transparent p-3 text-left transition-all hover:-translate-y-0.5 hover:border-slate-200 hover:bg-white hover:shadow-lift active:scale-[0.99]', c.bg)}
+      className={cn('group w-full rounded-xl border border-transparent p-3 text-left transition-all hover:-translate-y-0.5 hover:border-ink-950 hover:bg-paper hover:shadow-ink-sm active:scale-[0.99]', c.bg)}
     >
       <div className="flex items-start justify-between gap-2">
         <span className="text-sm font-semibold leading-snug text-ink-950">{skillName(skillId)}</span>
@@ -100,19 +102,19 @@ function SkillTile({ skillId, level, onOpen }: { skillId: string; level: SkillLe
 function LevelColumn({ level, ids, levels, onOpen }: { level: SkillLevel; ids: string[]; levels: Record<string, SkillLevel>; onOpen: (id: string) => void }) {
   const c = SKILL_LEVEL_COLORS[level];
   return (
-    <div className="flex flex-col rounded-2xl border border-slate-200/80 bg-white/70 p-3 shadow-card" style={{ borderTop: `4px solid ${c.hex}` }}>
+    <div className="flex flex-col rounded-2xl border border-ink-950/10 bg-paper/80 p-3 shadow-card" style={{ borderTop: `4px solid ${c.hex}` }}>
       <div className="flex items-center justify-between px-1 pb-3 pt-1">
         <span className={cn('flex items-center gap-2 text-xs font-bold uppercase tracking-wider', c.text)}>
           <span className={cn('h-2 w-2 rounded-full', c.dot)} />
           {SKILL_LEVEL_LABELS[level]}
         </span>
-        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-bold tabular-nums text-slate-600">{ids.length}</span>
+        <span className="rounded-full bg-sand-200 px-2 py-0.5 font-condensed text-sm tabular-nums text-slate-600">{ids.length}</span>
       </div>
       <div className="space-y-2">
         {ids.map((id) => (
           <SkillTile key={id} skillId={id} level={levels[id]} onOpen={() => onOpen(id)} />
         ))}
-        {!ids.length && <p className="rounded-xl border border-dashed border-slate-200 px-3 py-6 text-center text-xs text-slate-400">No skills at this level{level === 3 ? ' yet — earned through certification' : ''}</p>}
+        {!ids.length && <p className="rounded-xl border border-dashed border-ink-950/15 px-3 py-6 text-center text-xs text-slate-400">No skills at this level{level === 3 ? ' yet — earned through certification' : ''}</p>}
       </div>
     </div>
   );
@@ -147,7 +149,7 @@ function SkillDetail({ skillId, level, progress, submissions, results }: { skill
         <div className="mt-4 grid grid-cols-4 gap-1.5">
           {SKILL_LEVELS.map((l) => (
             <div key={l} className="text-center">
-              <div className="h-2 rounded-full" style={{ background: l <= level ? SKILL_LEVEL_COLORS[level].hex : '#e2e8f0' }} />
+              <div className="h-2 rounded-full" style={{ background: l <= level ? SKILL_LEVEL_COLORS[level].hex : '#e4e4d0' }} />
               <p className={cn('mt-1.5 text-[10px] font-bold uppercase leading-tight tracking-wide', l === level ? SKILL_LEVEL_COLORS[l].text : 'text-slate-400')}>{SKILL_LEVEL_LABELS[l]}</p>
             </div>
           ))}
@@ -155,9 +157,9 @@ function SkillDetail({ skillId, level, progress, submissions, results }: { skill
       </div>
 
       <section>
-        <h3 className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">Evidence</h3>
+        <h3 className="font-display text-xl text-ink-950">Evidence</h3>
         {!hasEvidence ? (
-          <p className="mt-2 rounded-xl border border-dashed border-slate-200 bg-slate-50/60 px-4 py-4 text-sm text-slate-500">
+          <p className="mt-2 rounded-xl border border-dashed border-ink-950/15 bg-sand-100/70 px-4 py-4 text-sm text-slate-500">
             No evidence recorded yet. {level === 1 ? 'Your current level reflects your prior experience — ' : ''}Complete a module that teaches this skill to demonstrate it.
           </p>
         ) : (
@@ -166,8 +168,8 @@ function SkillDetail({ skillId, level, progress, submissions, results }: { skill
               const mp = progress.modules[m.id];
               const quiz = mp?.quizTotal ? Math.round((mp.quizCorrect / mp.quizTotal) * 100) : null;
               return (
-                <li key={m.id} className="flex items-start gap-3 rounded-xl border border-slate-100 bg-white p-3">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
+                <li key={m.id} className="flex items-start gap-3 rounded-xl border border-ink-950/10 bg-paper p-3">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-800">
                     <CircleCheck className="h-4 w-4" />
                   </span>
                   <div className="min-w-0 flex-1">
@@ -181,19 +183,19 @@ function SkillDetail({ skillId, level, progress, submissions, results }: { skill
               );
             })}
             {subs.map((s) => (
-              <li key={s.id} className="flex items-start gap-3 rounded-xl border border-slate-100 bg-white p-3">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-violet-50 text-violet-700">
+              <li key={s.id} className="flex items-start gap-3 rounded-xl border border-ink-950/10 bg-paper p-3">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-lilac-100 text-lilac-800">
                   <FlaskConical className="h-4 w-4" />
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold text-ink-950">{getModuleContent(s.moduleId)?.activity?.title ?? `${moduleTitle(s.moduleId, progress.domainId)} practical`}</p>
                   <p className="line-clamp-2 text-xs text-slate-500">{s.feedback.overall}</p>
                 </div>
-                <span className="shrink-0 text-sm font-extrabold tabular-nums text-ink-950">{s.feedback.score}%</span>
+                <span className="shrink-0 font-display text-xl font-medium leading-none tabular-nums text-ink-950">{s.feedback.score}%</span>
               </li>
             ))}
             {results.map((r) => (
-              <li key={r.id} className="flex items-start gap-3 rounded-xl border border-slate-100 bg-white p-3">
+              <li key={r.id} className="flex items-start gap-3 rounded-xl border border-ink-950/10 bg-paper p-3">
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gold-50 text-gold-700">
                   <ClipboardCheck className="h-4 w-4" />
                 </span>
@@ -203,7 +205,7 @@ function SkillDetail({ skillId, level, progress, submissions, results }: { skill
                     {formatDate(r.createdAt)} · {r.passed ? 'Passed' : 'Not yet passed'}
                   </p>
                 </div>
-                <span className="shrink-0 text-sm font-extrabold tabular-nums text-ink-950">{r.score}%</span>
+                <span className="shrink-0 font-display text-xl font-medium leading-none tabular-nums text-ink-950">{r.score}%</span>
               </li>
             ))}
           </ul>
@@ -211,13 +213,13 @@ function SkillDetail({ skillId, level, progress, submissions, results }: { skill
       </section>
 
       <section>
-        <h3 className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">How to level up</h3>
+        <h3 className="font-display text-xl text-ink-950">How to level <em>up</em></h3>
         {levelUp.length ? (
           <ul className="mt-2 space-y-2">
             {levelUp.map((m) => (
               <li key={m.id}>
-                <Link to={`/app/learning/${m.id}`} className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 transition hover:border-brand-300 hover:bg-brand-50/40">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 group-hover:bg-brand-100 group-hover:text-brand-700">
+                <Link to={`/app/learning/${m.id}`} className="group flex items-center gap-3 rounded-xl border border-ink-950/10 bg-paper p-3 transition hover:-translate-y-0.5 hover:border-ink-950 hover:shadow-ink-sm">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sand-200/80 text-slate-700 group-hover:bg-lilac-200 group-hover:text-ink-950">
                     <Icon name={m.icon} className="h-4 w-4" />
                   </span>
                   <span className="min-w-0 flex-1">
@@ -226,7 +228,7 @@ function SkillDetail({ skillId, level, progress, submissions, results }: { skill
                       {m.estimatedMinutes} min · {status(m.id) === 'in-progress' ? 'In progress' : inPath.has(m.id) ? 'On your pathway' : 'Optional — from the catalogue'}
                     </span>
                   </span>
-                  <ArrowRight className="h-4 w-4 shrink-0 text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-brand-700" />
+                  <ArrowRight className="h-4 w-4 shrink-0 text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-ink-950" />
                 </Link>
               </li>
             ))}
@@ -237,8 +239,8 @@ function SkillDetail({ skillId, level, progress, submissions, results }: { skill
             {level < 2 ? ' Submit practical activities to strengthen your evidence.' : ''}
           </p>
         )}
-        <div className="mt-3 flex items-start gap-2.5 rounded-xl bg-brand-50/70 p-3 text-sm text-brand-900 ring-1 ring-inset ring-brand-100">
-          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-700" />
+        <div className="mt-3 flex items-start gap-2.5 rounded-xl bg-brand-800 p-3 text-sm text-canvas">
+          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-gold-300" />
           <p>
             <span className="font-semibold">AI Ready (level 3) is awarded through certification.</span> Pass the final knowledge assessment and practical capstone to have this skill verified.
           </p>
@@ -273,11 +275,16 @@ export default function SkillsPage() {
     if (first != null) setTab(String(first) as LevelTab);
   }, [counts]);
 
-  const header = <PageHeader eyebrow="Learn" title="Skills map" description="Every skill on your pathway and the evidence behind it. Levels rise only through demonstrated learning — never from self-rating alone." />;
+  const header = (
+    <div className="relative flex items-end gap-4">
+      <PageHeader className="min-w-0 flex-1" eyebrow="Learn" title={<>Skills <em>map</em></>} description="Every skill on your pathway, backed by evidence." />
+      <BrainSpark className="mb-6 hidden h-28 w-28 shrink-0 animate-ghost-in lg:block" animated />
+    </div>
+  );
 
   if (!progress)
     return (
-      <div className="animate-fade-up">
+      <div>
         {header}
         <EmptyState
           icon={<Layers className="h-6 w-6" />}
@@ -296,29 +303,27 @@ export default function SkillsPage() {
   const teachingCount = selected ? modulesTeaching(selected).length : 0;
 
   return (
-    <div className="animate-fade-up">
+    <div>
       {header}
 
       {/* Summary counts */}
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
         {SKILL_LEVELS.map((l) => {
           const c = SKILL_LEVEL_COLORS[l];
           return (
-            <Card key={l} className="relative overflow-hidden !p-4 sm:!p-5">
-              <span className="absolute inset-x-0 top-0 h-1" style={{ background: c.hex }} />
+            <Card key={l} className="relative animate-ghost-in overflow-hidden !p-5 sm:!p-6" style={{ animationDelay: `${l * 80}ms` }}>
               <p className={cn('flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide', c.text)}>
                 <span className={cn('h-2 w-2 rounded-full', c.dot)} />
                 {SKILL_LEVEL_LABELS[l]}
               </p>
-              <p className="mt-1 text-3xl font-extrabold tracking-tight text-ink-950 tabular-nums">{counts[l]}</p>
-              <p className="text-xs text-slate-500">skill{counts[l] === 1 ? '' : 's'}</p>
+              <p className="mt-3 font-display text-6xl font-medium leading-none tracking-tight text-ink-950 tabular-nums">{counts[l]}</p>
             </Card>
           );
         })}
       </div>
 
       {/* Filter */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="no-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
           <Chip selected={category === 'all'} onClick={() => setCategory('all')}>
             All skills <span className="opacity-70">{ids.length}</span>
@@ -330,7 +335,7 @@ export default function SkillsPage() {
           ))}
         </div>
         <p className="shrink-0 text-sm font-semibold text-slate-500">
-          <span className="text-ink-950">{competentPct}%</span> at Competent or above
+          <span className="font-condensed text-xl font-normal text-ink-950">{competentPct}%</span> at Competent or above
         </p>
       </div>
 
@@ -343,21 +348,21 @@ export default function SkillsPage() {
       </div>
 
       {/* Board — tablet & desktop columns */}
-      <div className="mt-4 hidden gap-4 md:grid md:grid-cols-2 xl:grid-cols-4">
+      <div className="mt-5 hidden gap-5 md:grid md:grid-cols-2 xl:grid-cols-4">
         {SKILL_LEVELS.map((l) => (
           <LevelColumn key={l} level={l} ids={byLevel[l]} levels={levels} onOpen={setSelected} />
         ))}
       </div>
 
       {/* Chart + legend */}
-      <div className="mt-6 grid gap-5 lg:grid-cols-5">
+      <Reveal className="mt-10 grid gap-6 lg:grid-cols-5">
         <Card className="lg:col-span-3">
           <CardTitle icon={<Radar className="h-5 w-5" />} title="Skill profile by category" subtitle="Average level per category (0 – 3)" />
           <div className="grid items-center gap-6 sm:grid-cols-2">
             {categoryAverages.length >= 3 ? (
               <CategoryRadar data={categoryAverages.map((c) => ({ label: c.label, value: c.value }))} />
             ) : (
-              <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-500">The radar appears once skills span three or more categories.</p>
+              <p className="rounded-xl bg-sand-100 p-4 text-sm text-slate-500">The radar appears once skills span three or more categories.</p>
             )}
             <ul className="space-y-3">
               {categoryAverages.map((c) => {
@@ -369,7 +374,7 @@ export default function SkillsPage() {
                         <span className="font-medium text-slate-700">
                           {c.label} <span className="text-xs text-slate-400">({c.count})</span>
                         </span>
-                        <span className="font-bold tabular-nums text-ink-950">{c.value.toFixed(1)}</span>
+                        <span className="font-display text-lg font-medium leading-none tabular-nums text-ink-950">{c.value.toFixed(1)}</span>
                       </div>
                       <ProgressBar value={(c.value / 3) * 100} color={SKILL_LEVEL_COLORS[lvl].hex} size="xs" />
                     </button>
@@ -385,7 +390,7 @@ export default function SkillsPage() {
           <ul className="space-y-3">
             {SKILL_LEVELS.map((l) => (
               <li key={l} className="flex items-start gap-3">
-                <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-extrabold text-white" style={{ background: SKILL_LEVEL_COLORS[l].hex }}>
+                <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg font-condensed text-sm text-white" style={{ background: SKILL_LEVEL_COLORS[l].hex }}>
                   {l}
                 </span>
                 <div>
@@ -395,15 +400,15 @@ export default function SkillsPage() {
               </li>
             ))}
           </ul>
-          <div className="mt-4 flex items-start gap-2 rounded-xl bg-slate-50 p-3 text-xs leading-relaxed text-slate-600">
-            <Award className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
-            <p>Levels rise only through demonstrated evidence. Your self-reported starting point is capped at Developing, and AI Ready is awarded only through certification.</p>
+          <div className="mt-4 flex items-start gap-2 rounded-xl bg-sand-100 p-3 text-xs leading-relaxed text-slate-600">
+            <Award className="mt-0.5 h-4 w-4 shrink-0 text-brand-800" />
+            <p>Self-rating is capped at Developing; AI Ready comes only through certification.</p>
           </div>
           <Button to="/app/learning" variant="secondary" className="mt-4" full icon={<BookOpen className="h-4 w-4" />}>
             Continue learning
           </Button>
         </Card>
-      </div>
+      </Reveal>
 
       <Modal
         open={selected != null}

@@ -7,6 +7,9 @@ import {
 import {
   AIDisclaimer, AISourceBadge, Badge, Button, Card, CardTitle, EmptyState, LoadingState, Modal, PageHeader, ProgressBar, RichText, ScoreRing, useToast,
 } from '../../components/ui';
+import { Reveal } from '../../components/motion';
+import { GhostMascot, Sparkle } from '../../components/illustrations';
+import { SparkleBurst, TutorialStyles } from '../../components/tutorials/primitives';
 import { useApp } from '../../services/store';
 import { getModule, moduleTitle } from '../../data/catalog';
 import { raiseSkills, recordActivity } from '../../lib/progress';
@@ -201,12 +204,19 @@ function ActivityView({ meta, activity, progress, domainId }: { meta: ModuleMeta
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0 space-y-4">
           {phase === 'evaluating' && (
-            <Card>
+            <Card className="relative animate-ghost-in overflow-hidden rounded-4xl bg-lilac-100/60">
+              <Sparkle className="absolute left-8 top-8 h-5 w-5 animate-float" color="#ffa946" />
+              <Sparkle className="absolute bottom-10 right-10 h-4 w-4 animate-float" color="#ff6c4c" />
               <LoadingState
                 variant="ai"
                 title="Assessing your work against the rubric…"
                 messages={['Reading your answer', 'Checking how you verified the AI output', 'Looking for privacy, bias and oversight safeguards', 'Checking accuracy against the data', 'Writing specific feedback for you']}
               />
+              <div className="-mt-8 flex justify-center gap-1.5 pb-6" aria-hidden>
+                {[0, 160, 320].map((d) => (
+                  <span key={d} className="h-2 w-2 animate-bounce rounded-full bg-ink-950/60" style={{ animationDelay: `${d}ms` }} />
+                ))}
+              </div>
             </Card>
           )}
 
@@ -228,14 +238,14 @@ function ActivityView({ meta, activity, progress, domainId }: { meta: ModuleMeta
           {phase === 'edit' && (
             <>
               <Brief activity={activity} />
-              <Card className="animate-fade-up">
-                <CardTitle icon={<FileText className="h-4 w-4" />} title="Your answer" subtitle="Explain your approach: your prompt, what you checked, safeguards and your recommendation." />
+              <Card className="animate-ghost-in rounded-4xl">
+                <CardTitle icon={<FileText className="h-4 w-4" />} title="Your answer" subtitle="Your prompt, checks, safeguards and recommendation." />
                 <textarea
                   value={draft}
                   onChange={(e) => setDraft(e.target.value)}
                   rows={12}
                   placeholder={'e.g.\n1. Prompt I would use: "You are…"\n2. What I kept / corrected from the AI output (with figures)…\n3. How I protected data and checked for bias…\n4. My recommendation and who signs it off…'}
-                  className="w-full resize-y rounded-2xl border border-slate-200 bg-slate-50/50 px-4 py-3.5 text-[15px] leading-relaxed text-ink-950 placeholder:text-slate-400 focus:border-brand-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-100"
+                  className="w-full resize-y rounded-2xl border border-ink-950/15 bg-sand-200/40 px-4 py-3.5 text-[15px] leading-relaxed text-ink-950 placeholder:text-ink-400 focus:border-ink-950 focus:bg-paper focus:outline-none focus:ring-2 focus:ring-lilac-200"
                   aria-describedby="answer-counter"
                 />
                 <div id="answer-counter" className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs">
@@ -266,7 +276,7 @@ function ActivityView({ meta, activity, progress, domainId }: { meta: ModuleMeta
           )}
 
           {phase === 'result' && (
-            <details className="group rounded-2xl border border-slate-200/80 bg-white shadow-card">
+            <details className="group animate-ghost-in rounded-3xl border border-ink-950/10 bg-paper shadow-card">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 text-sm font-bold text-ink-950">
                 <span className="inline-flex items-center gap-2">
                   <Target className="h-4 w-4 text-brand-600" /> Activity brief, data and rubric
@@ -343,11 +353,13 @@ function ActivityView({ meta, activity, progress, domainId }: { meta: ModuleMeta
             </p>
           </Card>
 
-          <Card className="bg-gradient-to-br from-slate-50 to-white">
+          <Card className="border-ink-950 bg-lilac-200">
             <div className="flex items-start gap-3">
-              <Bot className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" />
+              <span className="h-10 w-10 shrink-0 animate-ghost-float" aria-hidden>
+                <GhostMascot mood="wave" className="h-full w-full" />
+              </span>
               <div>
-                <p className="text-sm font-bold text-ink-950">Need a nudge?</p>
+                <p className="font-display text-xl leading-tight text-ink-950">Need a nudge?</p>
                 <p className="mt-0.5 text-sm text-slate-500">The AI Tutor can explain the rubric or help you plan — it won't write your answer for you.</p>
                 <Button className="mt-3" size="sm" variant="outline" onClick={() => setTutorOpen(true)}>
                   Ask the AI Tutor
@@ -375,48 +387,47 @@ function ActivityView({ meta, activity, progress, domainId }: { meta: ModuleMeta
 // ───────────────────────── Brief ─────────────────────────
 
 function Section({ flat, children }: { flat?: boolean; children: React.ReactNode }) {
-  return flat ? <div>{children}</div> : <Card className="animate-fade-up">{children}</Card>;
+  return flat ? <div>{children}</div> : <Reveal><Card className="rounded-4xl">{children}</Card></Reveal>;
 }
 
 function Brief({ activity, flat }: { activity: PracticalActivity; flat?: boolean }) {
-  const Wrap = ({ children }: { children: React.ReactNode }) => <Section flat={flat}>{children}</Section>;
   return (
     <>
-      <Wrap>
+      <Section flat={flat}>
         <CardTitle icon={<Target className="h-4 w-4" />} title="The scenario" />
         <RichText text={activity.scenario} className="text-slate-700" />
-      </Wrap>
+      </Section>
       {activity.data && (
-        <Wrap>
+        <Section flat={flat}>
           <CardTitle icon={<Database className="h-4 w-4" />} title="Your data" subtitle="Fictional data — scroll sideways on small screens" />
-          <div className="-mx-1 overflow-x-auto rounded-xl bg-ink-950 p-4">
-            <pre className="whitespace-pre font-mono text-[12.5px] leading-relaxed text-slate-100">{activity.data}</pre>
+          <div className="-mx-1 overflow-x-auto rounded-2xl bg-ink-950 p-4">
+            <pre className="whitespace-pre font-mono text-[12.5px] leading-relaxed text-canvas/90">{activity.data}</pre>
           </div>
-        </Wrap>
+        </Section>
       )}
-      <Wrap>
+      <Section flat={flat}>
         <CardTitle icon={<ClipboardCheck className="h-4 w-4" />} title="Your task" />
-        <div className="rounded-xl border-l-4 border-brand-500 bg-brand-50/50 px-4 py-3 font-medium text-ink-950">
+        <div className="rounded-2xl bg-lilac-100/80 px-4 py-3.5 font-display text-lg leading-snug text-ink-950 ring-1 ring-inset ring-lilac-300/50">
           <RichText text={activity.task} />
         </div>
-      </Wrap>
-      <Wrap>
-        <CardTitle icon={<Scale className="h-4 w-4" />} title="How you'll be assessed" subtitle="A transparent rubric — the same one the AI uses" />
+      </Section>
+      <Section flat={flat}>
+        <CardTitle icon={<Scale className="h-4 w-4" />} title="How you'll be assessed" subtitle="The same rubric the AI uses" />
         <div className="space-y-2.5">
-          {activity.rubric.map((r) => (
-            <div key={r.criterion} className="rounded-xl bg-slate-50 px-4 py-3">
+          {activity.rubric.map((r, i) => (
+            <div key={r.criterion} className="animate-ghost-in rounded-2xl bg-sand-200/60 px-4 py-3" style={{ animationDelay: `${i * 80}ms` }}>
               <div className="flex items-center justify-between gap-3">
-                <p className="text-sm font-bold text-ink-950">{r.criterion}</p>
+                <p className="text-sm font-semibold text-ink-950">{r.criterion}</p>
                 <Badge tone="neutral">{r.weight}%</Badge>
               </div>
-              <p className="mt-1 text-[13px] leading-relaxed text-slate-500">{r.description}</p>
-              <div className="mt-2 h-1 overflow-hidden rounded-full bg-slate-200">
-                <div className="h-full rounded-full bg-brand-500" style={{ width: `${r.weight}%` }} />
+              <p className="mt-1 text-[13px] leading-relaxed text-ink-500">{r.description}</p>
+              <div className="mt-2 h-1 overflow-hidden rounded-full bg-ink-950/10">
+                <div className="h-full rounded-full bg-ink-950" style={{ width: `${r.weight}%` }} />
               </div>
             </div>
           ))}
         </div>
-      </Wrap>
+      </Section>
     </>
   );
 }
@@ -450,9 +461,20 @@ function ResultView({
   const v = VERDICT_META[f.verdict];
   const passed = f.score >= PASS_MARK;
   return (
-    <Card key={sub.id} className="animate-scale-in">
+    <Card key={sub.id} className="relative animate-ghost-in overflow-hidden rounded-4xl sm:p-8">
+      <TutorialStyles />
       <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-center sm:text-left">
-        <ScoreRing value={f.score} size={140} stroke={12} color={v.hex} label="Score" />
+        <div className="relative shrink-0">
+          <ScoreRing value={f.score} size={140} stroke={12} color={v.hex} label="Score" />
+          {passed && (
+            <>
+              <SparkleBurst className="left-1/2 top-1/2" count={16} radius={120} delay={900} />
+              <span className="tut-stamp absolute -right-4 -top-1 rounded-lg border-2 border-brand-800 bg-paper px-2 py-0.5 font-condensed text-lg uppercase leading-none tracking-wider text-brand-800" style={{ animationDelay: '1100ms' }}>
+                Passed
+              </span>
+            </>
+          )}
+        </div>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
             <Badge tone={v.tone}>{v.label}</Badge>
@@ -461,39 +483,44 @@ function ResultView({
             </Badge>
             <AISourceBadge source={sub.source} />
           </div>
-          <p className="mt-1.5 text-xs font-semibold text-slate-400">
+          <p className="mt-1.5 text-xs font-semibold text-ink-400">
             Attempt {attemptNo} · {timeAgo(sub.createdAt)}
           </p>
-          <RichText text={f.overall} className="mt-2 text-slate-700" />
+          <div className="animate-ghost-in" style={{ animationDelay: '300ms' }}>
+            <RichText text={f.overall} className="mt-2 text-ink-700" />
+          </div>
         </div>
       </div>
 
-      <div className="mt-6 space-y-3">
-        <p className="text-xs font-bold uppercase tracking-wide text-slate-400">Rubric breakdown</p>
+      <div className="mt-8 space-y-3">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-400">Rubric breakdown</p>
         {f.criteria.map((c, i) => {
           const ratio = c.max ? c.score / c.max : 0;
+          const d = 350 + i * 140;
           return (
-            <div key={c.criterion} className="animate-fade-up rounded-2xl border border-slate-100 bg-slate-50/60 p-4" style={{ animationDelay: `${i * 70}ms` }}>
+            <div key={c.criterion} className="animate-ghost-in rounded-2xl bg-sand-200/50 p-4" style={{ animationDelay: `${d}ms` }}>
               <div className="flex items-center justify-between gap-3">
-                <p className="text-sm font-bold text-ink-950">{c.criterion}</p>
-                <span className="text-sm font-extrabold tabular-nums text-ink-950">
+                <p className="text-sm font-semibold text-ink-950">{c.criterion}</p>
+                <span className="font-condensed text-lg leading-none tracking-wide tabular-nums text-ink-950">
                   {c.score}
-                  <span className="text-slate-400">/{c.max}</span>
+                  <span className="text-ink-400">/{c.max}</span>
                 </span>
               </div>
-              <ProgressBar className="mt-2" value={ratio * 100} size="xs" tone={ratio >= 0.75 ? 'brand' : ratio >= 0.5 ? 'gold' : 'clay'} />
-              <p className="mt-2 text-[13px] leading-relaxed text-slate-600">{c.comment}</p>
+              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-ink-950/10" role="progressbar" aria-valuenow={Math.round(ratio * 100)} aria-valuemin={0} aria-valuemax={100} aria-label={c.criterion}>
+                <div className={cn('tut-grow h-full rounded-full', ratio >= 0.75 ? 'bg-brand-800' : ratio >= 0.5 ? 'bg-gold-400' : 'bg-clay-400')} style={{ width: `${ratio * 100}%`, animationDelay: `${d + 250}ms` }} />
+              </div>
+              <p className="mt-2 text-[13px] leading-relaxed text-ink-600">{c.comment}</p>
             </div>
           );
         })}
       </div>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        <div className="rounded-2xl bg-brand-50/60 p-4 ring-1 ring-inset ring-brand-100">
-          <p className="flex items-center gap-1.5 text-sm font-bold text-brand-800">
+        <div className="animate-ghost-in rounded-3xl bg-brand-50 p-5 ring-1 ring-inset ring-brand-800/10" style={{ animationDelay: `${450 + f.criteria.length * 140}ms` }}>
+          <p className="flex items-center gap-1.5 font-display text-xl text-brand-800">
             <CircleCheck className="h-4 w-4" /> Strengths
           </p>
-          <ul className="mt-2 space-y-1.5 text-[13px] leading-relaxed text-slate-700">
+          <ul className="mt-2 space-y-1.5 text-[13px] leading-relaxed text-ink-700">
             {f.strengths.map((s) => (
               <li key={s} className="flex gap-2">
                 <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-brand-500" />
@@ -502,11 +529,11 @@ function ResultView({
             ))}
           </ul>
         </div>
-        <div className="rounded-2xl bg-gold-50/70 p-4 ring-1 ring-inset ring-gold-100">
-          <p className="flex items-center gap-1.5 text-sm font-bold text-gold-800">
+        <div className="animate-ghost-in rounded-3xl bg-gold-50 p-5 ring-1 ring-inset ring-gold-300/50" style={{ animationDelay: `${550 + f.criteria.length * 140}ms` }}>
+          <p className="flex items-center gap-1.5 font-display text-xl text-gold-800">
             <TrendingUp className="h-4 w-4" /> To improve
           </p>
-          <ul className="mt-2 space-y-1.5 text-[13px] leading-relaxed text-slate-700">
+          <ul className="mt-2 space-y-1.5 text-[13px] leading-relaxed text-ink-700">
             {f.improvements.map((s) => (
               <li key={s} className="flex gap-2">
                 <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" />

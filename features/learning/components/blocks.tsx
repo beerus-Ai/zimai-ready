@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { BookOpen, Briefcase, Check, CircleCheck, CircleX, Lightbulb, ListChecks, PenLine, RefreshCw, RotateCcw, Sparkles, Target, WandSparkles, X, Zap } from 'lucide-react';
 import { AIDisclaimer, AISourceBadge, Button, RichText, Spinner } from '../../../components/ui';
+import { Reveal } from '../../../components/motion';
+import { GhostMascot, Sparkle } from '../../../components/illustrations';
 import { generateText } from '../../../services/gemini';
 import { cn } from '../../../lib/utils';
 import type { AISource, LessonBlock } from '../../../types';
@@ -14,26 +16,26 @@ export type InteractiveBlock = Extract<LessonBlock, { type: 'interactive' }>;
 export const isGated = (b: PlayerBlock) => b.type === 'quiz' || b.type === 'interactive';
 
 const BLOCK_META: Record<PlayerBlock['type'], { label: string; icon: ReactNode; cls: string }> = {
-  explain: { label: 'Concept', icon: <BookOpen className="h-3.5 w-3.5" />, cls: 'bg-sky-50 text-sky-700 ring-sky-200/70' },
-  example: { label: 'Workplace example', icon: <Briefcase className="h-3.5 w-3.5" />, cls: 'bg-violet-50 text-violet-700 ring-violet-200/70' },
-  field: { label: 'In your field', icon: <Target className="h-3.5 w-3.5" />, cls: 'bg-gold-50 text-gold-800 ring-gold-200' },
-  'ai-example': { label: 'Personalised AI example', icon: <Sparkles className="h-3.5 w-3.5" />, cls: 'bg-brand-50 text-brand-700 ring-brand-200/70' },
-  interactive: { label: 'Interactive', icon: <Zap className="h-3.5 w-3.5" />, cls: 'bg-clay-50 text-clay-700 ring-clay-200/70' },
-  quiz: { label: 'Quick check', icon: <ListChecks className="h-3.5 w-3.5" />, cls: 'bg-brand-50 text-brand-700 ring-brand-200/70' },
-  task: { label: 'Try it at work', icon: <PenLine className="h-3.5 w-3.5" />, cls: 'bg-ink-50 text-ink-800 ring-ink-200' },
+  explain: { label: 'Concept', icon: <BookOpen className="h-3.5 w-3.5" />, cls: 'bg-sand-200 text-ink-800 ring-ink-950/10' },
+  example: { label: 'Workplace example', icon: <Briefcase className="h-3.5 w-3.5" />, cls: 'bg-blush-100 text-clay-800 ring-clay-300/40' },
+  field: { label: 'In your field', icon: <Target className="h-3.5 w-3.5" />, cls: 'bg-gold-50 text-gold-800 ring-gold-300/60' },
+  'ai-example': { label: 'Personalised AI example', icon: <Sparkles className="h-3.5 w-3.5" />, cls: 'bg-lilac-100 text-lilac-800 ring-lilac-300/60' },
+  interactive: { label: 'Interactive', icon: <Zap className="h-3.5 w-3.5" />, cls: 'bg-clay-50 text-clay-700 ring-clay-300/50' },
+  quiz: { label: 'Quick check', icon: <ListChecks className="h-3.5 w-3.5" />, cls: 'bg-ink-950 text-canvas ring-ink-950' },
+  task: { label: 'Try it at work', icon: <PenLine className="h-3.5 w-3.5" />, cls: 'bg-brand-50 text-brand-800 ring-brand-800/15' },
 };
 
 export function BlockLabel({ type }: { type: PlayerBlock['type'] }) {
   const m = BLOCK_META[type];
   return (
-    <span className={cn('inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide ring-1 ring-inset', m.cls)}>
+    <span className={cn('inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] ring-1 ring-inset', m.cls)}>
       {m.icon}
       {m.label}
     </span>
   );
 }
 
-const H = ({ children }: { children: ReactNode }) => <h2 className="text-xl font-extrabold leading-tight tracking-tight text-ink-950 sm:text-2xl">{children}</h2>;
+const H = ({ children }: { children: ReactNode }) => <h2 className="animate-ghost-in text-3xl leading-[1.05] text-ink-950 sm:text-4xl">{children}</h2>;
 
 // ───────────────────────── Static blocks ─────────────────────────
 
@@ -41,16 +43,18 @@ export function ExplainView({ block }: { block: Extract<LessonBlock, { type: 'ex
   return (
     <div>
       <H>{block.title}</H>
-      <RichText text={block.body} className="mt-3 text-slate-700" />
+      <Reveal delay={80}>
+        <RichText text={block.body} className="mt-4 text-[15px] leading-relaxed text-ink-700" />
+      </Reveal>
       {block.bullets?.length ? (
-        <ul className="mt-5 space-y-2.5">
+        <ul className="mt-6 space-y-2.5">
           {block.bullets.map((b, i) => (
-            <li key={i} className="flex animate-fade-up items-start gap-3 rounded-xl bg-slate-50 px-3.5 py-3 text-[15px] text-slate-700" style={{ animationDelay: `${120 + i * 80}ms` }}>
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white">
+            <Reveal as="li" key={i} delay={160 + i * 90} className="flex items-start gap-3 rounded-2xl border border-ink-950/5 bg-sand-200/50 px-4 py-3 text-[15px] text-ink-700">
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ink-950 text-canvas">
                 <Check className="h-3 w-3" strokeWidth={3} />
               </span>
               <span>{b}</span>
-            </li>
+            </Reveal>
           ))}
         </ul>
       ) : null}
@@ -61,23 +65,28 @@ export function ExplainView({ block }: { block: Extract<LessonBlock, { type: 'ex
 export function ExampleView({ title, scenario, takeaway, accent = 'violet', eyebrow }: { title: string; scenario: string; takeaway: string; accent?: 'violet' | 'gold'; eyebrow?: string }) {
   return (
     <div>
-      {eyebrow && <p className="mb-1 text-xs font-bold uppercase tracking-wider text-gold-700">{eyebrow}</p>}
+      {eyebrow && <p className="mb-2 animate-ghost-in text-xs font-semibold uppercase tracking-[0.2em] text-ink-500">{eyebrow}</p>}
       <H>{title}</H>
-      <div className={cn('mt-4 rounded-2xl border-l-4 p-4 text-[15px] leading-relaxed text-slate-700 sm:p-5', accent === 'gold' ? 'border-gold-400 bg-gold-50/50' : 'border-violet-400 bg-violet-50/40')}>
-        <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-slate-500">
-          <Briefcase className="h-3.5 w-3.5" /> Scenario
+      <Reveal delay={100}>
+        <div className={cn('relative mt-5 overflow-hidden rounded-3xl p-5 text-[15px] leading-relaxed text-ink-800 sm:p-6', accent === 'gold' ? 'bg-gold-50 ring-1 ring-inset ring-gold-300/50' : 'bg-blush-100/70 ring-1 ring-inset ring-clay-300/30')}>
+          <Sparkle className="absolute right-4 top-4 h-5 w-5 opacity-70" color={accent === 'gold' ? '#ffa946' : '#ff6c4c'} />
+          <p className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-500">
+            <Briefcase className="h-3.5 w-3.5" /> Scenario
+          </p>
+          <RichText text={scenario} />
         </div>
-        <RichText text={scenario} />
-      </div>
-      <div className="mt-4 flex animate-fade-up items-start gap-3 rounded-2xl bg-ink-950 p-4 text-white" style={{ animationDelay: '150ms' }}>
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gold-400 text-ink-950">
-          <Lightbulb className="h-4 w-4" />
-        </span>
-        <div>
-          <p className="text-[11px] font-bold uppercase tracking-wider text-gold-300">Takeaway</p>
-          <p className="mt-0.5 whitespace-pre-line text-[15px] leading-relaxed text-white/90">{takeaway}</p>
+      </Reveal>
+      <Reveal delay={260}>
+        <div className="mt-4 flex items-start gap-3 rounded-3xl bg-brand-800 p-5 text-canvas sm:p-6">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-ink-950 bg-gold-400 text-ink-950">
+            <Lightbulb className="h-4 w-4" />
+          </span>
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-canvas/60">Takeaway</p>
+            <p className="mt-1 whitespace-pre-line font-display text-xl leading-snug text-canvas">{takeaway}</p>
+          </div>
         </div>
-      </div>
+      </Reveal>
     </div>
   );
 }
@@ -134,33 +143,36 @@ Write this example for the learner's actual job and industry in Zimbabwe (fictio
   return (
     <div>
       <H>{block.title}</H>
-      <div className="relative mt-4 overflow-hidden rounded-2xl border border-brand-200/70 bg-gradient-to-br from-brand-50/80 via-white to-white p-4 sm:p-5">
+      <div className="relative mt-5 overflow-hidden rounded-3xl bg-lilac-100/80 p-5 ring-1 ring-inset ring-lilac-300/50 sm:p-6">
+        <Sparkle className="absolute right-4 top-4 h-5 w-5" color="#1a1a1a" />
         {loading ? (
           <div className="flex items-center gap-3 py-6">
-            <span className="relative flex h-10 w-10 items-center justify-center">
-              <span className="absolute inset-0 animate-ping-slow rounded-full bg-brand-400/30" />
-              <span className="relative flex h-9 w-9 items-center justify-center rounded-full bg-white shadow">
-                <Sparkles className="h-4 w-4 text-brand-600" />
-              </span>
+            <span className="relative h-12 w-12 shrink-0">
+              <span className="absolute inset-1 animate-ghost-pulse rounded-full bg-lilac-300/70 blur-md" />
+              <GhostMascot mood="thinking" className="relative h-12 w-12" />
             </span>
             <div>
-              <p className="text-sm font-bold text-ink-950">Personalising this example for you…</p>
-              <p className="text-xs text-slate-500">Using your role, industry and progress</p>
+              <p className="font-display text-xl text-ink-950">Personalising for you…</p>
+              <p className="mt-1 flex gap-1" aria-hidden>
+                {[0, 150, 300].map((d) => (
+                  <span key={d} className="h-1.5 w-1.5 animate-bounce rounded-full bg-ink-950/60" style={{ animationDelay: `${d}ms` }} />
+                ))}
+              </p>
             </div>
           </div>
         ) : (
-          <div className="animate-fade-in">
-            <RichText text={state?.text ?? block.fallback} className="text-slate-700" />
+          <div key={state?.text} className="animate-ghost-in pr-6">
+            <RichText text={state?.text ?? block.fallback} className="text-[15px] text-ink-800" />
           </div>
         )}
       </div>
       {!loading && (
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+        <div className="mt-3 flex animate-ghost-in flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <AISourceBadge source={state?.source} />
             <AIDisclaimer compact />
           </div>
-          <button onClick={() => setNonce((n) => n + 1)} className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-semibold text-brand-700 hover:bg-brand-50">
+          <button onClick={() => setNonce((n) => n + 1)} className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold text-ink-800 hover:bg-ink-950/5">
             <RefreshCw className="h-3.5 w-3.5" /> New example
           </button>
         </div>
@@ -189,39 +201,40 @@ export function InteractiveView({ block, done, onDone }: { block: InteractiveBlo
     return (
       <div>
         <H>{block.title}</H>
-        <p className="mt-2 whitespace-pre-line text-[15px] text-slate-600">{block.prompt}</p>
-        <p className="mt-1 text-xs font-semibold text-slate-400">Select every option that applies, then check.</p>
-        <div className="mt-4 space-y-2.5">
-          {block.options.map((o) => {
+        <p className="mt-3 whitespace-pre-line text-[15px] text-ink-600">{block.prompt}</p>
+        <p className="mt-1 text-xs font-semibold text-ink-400">Select every option that applies, then check.</p>
+        <div className="mt-5 space-y-2.5">
+          {block.options.map((o, i) => {
             const on = selected.has(o.id);
             const show = checked;
             const right = o.correct === on;
             return (
-              <button
-                key={o.id}
-                disabled={complete}
-                onClick={() => {
-                  if (checked && !complete) setChecked(false);
-                  setSelected((s) => {
-                    const n = new Set(s);
-                    if (n.has(o.id)) n.delete(o.id);
-                    else n.add(o.id);
-                    return n;
-                  });
-                }}
-                className={cn(
-                  'flex w-full items-start gap-3 rounded-2xl border-2 px-4 py-3 text-left transition-all active:scale-[0.99]',
-                  show ? (right ? 'border-brand-400 bg-brand-50/60' : 'border-clay-300 bg-clay-50/60') : on ? 'border-brand-500 bg-brand-50/50' : 'border-slate-200 bg-white hover:border-brand-300',
-                )}
-              >
-                <span className={cn('mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2', on ? 'border-brand-600 bg-brand-600 text-white' : 'border-slate-300 bg-white')}>
-                  {on && <Check className="h-3 w-3" strokeWidth={3} />}
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block text-[15px] font-semibold text-ink-950">{o.label}</span>
-                  {show && <span className={cn('mt-1 block animate-fade-in text-[13px]', right ? 'text-brand-800' : 'text-clay-700')}>{o.feedback}</span>}
-                </span>
-              </button>
+              <Reveal key={o.id} delay={80 + i * 70}>
+                <button
+                  disabled={complete}
+                  onClick={() => {
+                    if (checked && !complete) setChecked(false);
+                    setSelected((s) => {
+                      const n = new Set(s);
+                      if (n.has(o.id)) n.delete(o.id);
+                      else n.add(o.id);
+                      return n;
+                    });
+                  }}
+                  className={cn(
+                    'flex w-full items-start gap-3 rounded-2xl border-2 px-4 py-3 text-left transition-all active:scale-[0.99]',
+                    show ? (right ? 'border-brand-800/60 bg-brand-50' : 'border-clay-300 bg-blush-100/60') : on ? 'border-ink-950 bg-lilac-100 shadow-ink-sm' : 'border-ink-950/10 bg-paper hover:border-ink-950/35',
+                  )}
+                >
+                  <span className={cn('mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2', on ? 'border-ink-950 bg-ink-950 text-canvas' : 'border-ink-950/25 bg-paper')}>
+                    {on && <Check className="h-3 w-3" strokeWidth={3} />}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[15px] font-semibold text-ink-950">{o.label}</span>
+                    {show && <span className={cn('mt-1 block animate-ghost-in text-[13px]', right ? 'text-brand-800' : 'text-clay-700')}>{o.feedback}</span>}
+                  </span>
+                </button>
+              </Reveal>
             );
           })}
         </div>
@@ -267,39 +280,40 @@ export function InteractiveView({ block, done, onDone }: { block: InteractiveBlo
   return (
     <div>
       <H>{block.title}</H>
-      <p className="mt-2 text-[15px] text-slate-600">{block.prompt}</p>
+      <p className="mt-3 text-[15px] text-ink-600">{block.prompt}</p>
       {needAll && correctIds.length > 1 && (
-        <p className="mt-1 text-xs font-semibold text-slate-400">
+        <p className="mt-1 text-xs font-semibold text-ink-400">
           Tap each option to reveal feedback · {foundCorrect} of {correctIds.length} risks found
         </p>
       )}
-      <div className="mt-4 space-y-2.5">
-        {block.options.map((o) => {
+      <div className="mt-5 space-y-2.5">
+        {block.options.map((o, i) => {
           const shown = revealed.has(o.id);
           return (
-            <button
-              key={o.id}
-              onClick={() => {
-                if (shown) return;
-                const n = new Set(revealed);
-                n.add(o.id);
-                setRevealed(n);
-                const found = correctIds.filter((id) => n.has(id)).length;
-                if (needAll ? found === correctIds.length : o.correct) finish();
-              }}
-              className={cn(
-                'flex w-full items-start gap-3 rounded-2xl border-2 px-4 py-3 text-left transition-all active:scale-[0.99]',
-                shown ? (o.correct ? 'border-brand-400 bg-brand-50/60' : 'border-clay-300 bg-clay-50/50') : 'border-slate-200 bg-white hover:border-brand-300 hover:bg-slate-50',
-              )}
-            >
-              <span className="mt-0.5 shrink-0">
-                {shown ? o.correct ? <CircleCheck className="h-5 w-5 text-brand-600" /> : <CircleX className="h-5 w-5 text-clay-500" /> : <span className="block h-5 w-5 rounded-full border-2 border-slate-300" />}
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block text-[15px] font-semibold leading-snug text-ink-950">{o.label}</span>
-                {shown && <span className={cn('mt-1 block animate-fade-in text-[13px] leading-snug', o.correct ? 'text-brand-800' : 'text-clay-700')}>{o.feedback}</span>}
-              </span>
-            </button>
+            <Reveal key={o.id} delay={80 + i * 70}>
+              <button
+                onClick={() => {
+                  if (shown) return;
+                  const n = new Set(revealed);
+                  n.add(o.id);
+                  setRevealed(n);
+                  const found = correctIds.filter((id) => n.has(id)).length;
+                  if (needAll ? found === correctIds.length : o.correct) finish();
+                }}
+                className={cn(
+                  'flex w-full items-start gap-3 rounded-2xl border-2 px-4 py-3 text-left transition-all active:scale-[0.99]',
+                  shown ? (o.correct ? 'border-brand-800/60 bg-brand-50' : 'border-clay-300 bg-blush-100/60') : 'border-ink-950/10 bg-paper hover:border-ink-950/35 hover:bg-white',
+                )}
+              >
+                <span className="mt-0.5 shrink-0">
+                  {shown ? o.correct ? <CircleCheck className="h-5 w-5 animate-scale-in text-brand-800" /> : <CircleX className="h-5 w-5 animate-scale-in text-clay-500" /> : <span className="block h-5 w-5 rounded-full border-2 border-ink-950/25" />}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[15px] font-semibold leading-snug text-ink-950">{o.label}</span>
+                  {shown && <span className={cn('mt-1 block animate-ghost-in text-[13px] leading-snug', o.correct ? 'text-brand-800' : 'text-clay-700')}>{o.feedback}</span>}
+                </span>
+              </button>
+            </Reveal>
           );
         })}
       </div>
@@ -324,9 +338,10 @@ export function InteractiveView({ block, done, onDone }: { block: InteractiveBlo
 
 function Feedback({ ok, title }: { ok: boolean; title: string }) {
   return (
-    <span className={cn('inline-flex animate-scale-in items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold', ok ? 'bg-brand-600 text-white' : 'bg-clay-100 text-clay-700')}>
+    <span className={cn('relative inline-flex animate-scale-in items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-semibold', ok ? 'border-brand-800 bg-brand-800 text-canvas' : 'border-clay-300 bg-clay-100 text-clay-700')}>
       {ok ? <Check className="h-4 w-4" strokeWidth={3} /> : <X className="h-4 w-4" />}
       {title}
+      {ok && <Sparkle className="absolute -right-2 -top-2 h-4 w-4" color="#ffa946" />}
     </span>
   );
 }
@@ -390,58 +405,60 @@ export function QuizView({
 
   return (
     <div>
-      <h2 className="text-lg font-extrabold leading-snug tracking-tight text-ink-950 sm:text-xl">{block.question}</h2>
-      <div className="mt-4 space-y-2.5" role="radiogroup">
+      <h2 className="animate-ghost-in text-2xl leading-[1.15] text-ink-950 sm:text-3xl">{block.question}</h2>
+      <div className="mt-5 space-y-2.5" role="radiogroup">
         {block.options.map((o, i) => {
           const isWrong = wrong.includes(i);
           const isRight = solved && i === block.correctIndex;
           return (
-            <button
-              key={i}
-              role="radio"
-              aria-checked={selected === i}
-              disabled={solved || isWrong}
-              onClick={() => choose(i)}
-              className={cn(
-                'group flex w-full items-center gap-3 rounded-2xl border-2 px-4 py-3 text-left transition-all active:scale-[0.99]',
-                isRight && 'border-brand-500 bg-brand-50 shadow-sm shadow-brand-900/5',
-                isWrong && 'border-clay-300 bg-clay-50/60',
-                !isRight && !isWrong && (solved ? 'border-slate-100 bg-white opacity-60' : 'border-slate-200 bg-white hover:border-brand-300 hover:bg-slate-50'),
-              )}
-            >
-              <span
+            <Reveal key={i} delay={80 + i * 70}>
+              <button
+                role="radio"
+                aria-checked={selected === i}
+                disabled={solved || isWrong}
+                onClick={() => choose(i)}
                 className={cn(
-                  'flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-extrabold transition',
-                  isRight ? 'bg-brand-600 text-white' : isWrong ? 'bg-clay-500 text-white' : 'bg-slate-100 text-slate-600 group-hover:bg-brand-100 group-hover:text-brand-700',
+                  'group flex w-full items-center gap-3 rounded-2xl border-2 px-4 py-3 text-left transition-all active:scale-[0.99]',
+                  isRight && 'border-brand-800 bg-brand-50 shadow-ink-sm',
+                  isWrong && 'border-clay-300 bg-blush-100/60',
+                  !isRight && !isWrong && (solved ? 'border-ink-950/5 bg-paper opacity-50' : 'border-ink-950/10 bg-paper hover:border-ink-950/40 hover:bg-white'),
                 )}
               >
-                {isRight ? <Check className="h-4 w-4" strokeWidth={3} /> : isWrong ? <X className="h-4 w-4" strokeWidth={3} /> : 'ABCDE'[i]}
-              </span>
-              <span className={cn('text-[15px] font-semibold leading-snug', isWrong ? 'text-clay-800 line-through decoration-clay-300' : 'text-ink-950')}>{o}</span>
-            </button>
+                <span
+                  className={cn(
+                    'flex h-7 w-7 shrink-0 items-center justify-center rounded-lg font-condensed text-sm transition',
+                    isRight ? 'bg-brand-800 text-canvas' : isWrong ? 'bg-clay-400 text-ink-950' : 'bg-sand-200 text-ink-700 group-hover:bg-lilac-200 group-hover:text-ink-950',
+                  )}
+                >
+                  {isRight ? <Check className="h-4 w-4" strokeWidth={3} /> : isWrong ? <X className="h-4 w-4" strokeWidth={3} /> : 'ABCDE'[i]}
+                </span>
+                <span className={cn('text-[15px] font-semibold leading-snug', isWrong ? 'text-clay-800 line-through decoration-clay-300' : 'text-ink-950')}>{o}</span>
+              </button>
+            </Reveal>
           );
         })}
       </div>
 
       {solved && (
-        <div className="mt-4 animate-scale-in rounded-2xl border border-brand-200 bg-brand-50/70 p-4">
-          <p className="flex items-center gap-2 text-sm font-extrabold text-brand-800">
-            <CircleCheck className="h-5 w-5" />
+        <div className="relative mt-5 animate-ghost-in overflow-hidden rounded-3xl bg-brand-800 p-5 text-canvas">
+          <Sparkle className="absolute right-4 top-4 h-6 w-6" color="#ffa946" />
+          <p className="flex items-center gap-2 font-display text-2xl leading-tight">
+            <CircleCheck className="h-5 w-5 shrink-0" />
             {firstTry.current === true ? (practice ? 'Correct — nicely done!' : 'Correct, first time!') : done && firstTry.current === null ? 'Answered' : 'Correct — you got there!'}
           </p>
-          <RichText text={block.explanation} className="mt-1.5 text-slate-700" />
+          <RichText text={block.explanation} className="mt-2 text-canvas/85 [&_strong]:text-canvas" />
         </div>
       )}
 
       {showingWrong && (
-        <div className="mt-4 animate-scale-in rounded-2xl border border-clay-200 bg-clay-50/70 p-4">
-          <p className="flex items-center gap-2 text-sm font-extrabold text-clay-700">
-            <CircleX className="h-5 w-5" /> Not quite — here's why
+        <div className="mt-5 animate-ghost-in rounded-3xl bg-blush-100/80 p-5 ring-1 ring-inset ring-clay-300/40">
+          <p className="flex items-center gap-2 font-display text-2xl leading-tight text-clay-800">
+            <CircleX className="h-5 w-5 shrink-0" /> Not quite — here's why
           </p>
-          <RichText text={block.explanation} className="mt-1.5 text-slate-700" />
-          <div className="mt-3 flex flex-wrap gap-2">
+          <RichText text={block.explanation} className="mt-2 text-ink-700" />
+          <div className="mt-4 flex flex-wrap gap-2">
             {explainDifferently && !alt && (
-              <Button size="sm" variant="outline" icon={altLoading ? <Spinner className="h-4 w-4" /> : <WandSparkles className="h-4 w-4 text-brand-600" />} disabled={altLoading} onClick={askAlt}>
+              <Button size="sm" variant="outline" icon={altLoading ? <Spinner className="h-4 w-4" /> : <WandSparkles className="h-4 w-4 text-lilac-700" />} disabled={altLoading} onClick={askAlt}>
                 {altLoading ? 'Re-explaining for your role…' : 'Explain it differently'}
               </Button>
             )}
@@ -453,14 +470,14 @@ export function QuizView({
       )}
 
       {alt && (
-        <div className="mt-4 animate-fade-up rounded-2xl border border-brand-200/70 bg-gradient-to-br from-white to-brand-50/60 p-4">
+        <div className="mt-4 animate-ghost-in rounded-3xl bg-lilac-100/80 p-5 ring-1 ring-inset ring-lilac-300/50">
           <div className="mb-2 flex items-center justify-between gap-2">
-            <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-brand-700">
+            <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-lilac-800">
               <WandSparkles className="h-3.5 w-3.5" /> Explained for your role
             </p>
             <AISourceBadge source={alt.source} />
           </div>
-          <RichText text={alt.text} className="text-[14px] text-slate-700" />
+          <RichText text={alt.text} className="text-[14px] text-ink-700" />
           <AIDisclaimer compact className="mt-2" />
         </div>
       )}
@@ -496,37 +513,41 @@ export function TaskView({ block, storageKey }: { block: Extract<LessonBlock, { 
   return (
     <div>
       <H>{block.title}</H>
-      <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50/70 p-4 text-slate-700">
-        <RichText text={block.instructions} />
-      </div>
+      <Reveal delay={100}>
+        <div className="mt-5 rounded-3xl bg-sand-200/70 p-5 text-ink-800 ring-1 ring-inset ring-ink-950/5 sm:p-6">
+          <RichText text={block.instructions} />
+        </div>
+      </Reveal>
       {block.hint && (
         <div className="mt-3">
           {hint ? (
-            <div className="flex animate-fade-in items-start gap-2.5 rounded-xl bg-gold-50 p-3 text-sm text-gold-900 ring-1 ring-inset ring-gold-200">
+            <div className="flex animate-ghost-in items-start gap-2.5 rounded-2xl bg-gold-50 p-3.5 text-sm text-gold-900 ring-1 ring-inset ring-gold-300/60">
               <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-gold-600" />
               {block.hint}
             </div>
           ) : (
-            <button onClick={() => setHint(true)} className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-semibold text-gold-700 hover:bg-gold-50">
+            <button onClick={() => setHint(true)} className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-sm font-semibold text-gold-800 hover:bg-gold-50">
               <Lightbulb className="h-4 w-4" /> Show a hint
             </button>
           )}
         </div>
       )}
-      <label className="mt-5 block">
-        <span className="flex items-center justify-between text-xs font-bold uppercase tracking-wide text-slate-500">
-          Your reflection <span className="font-medium normal-case tracking-normal text-slate-400">optional · not graded</span>
-        </span>
-        <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          rows={4}
-          placeholder="Jot down how you would apply this in your own work…"
-          className="mt-2 w-full resize-y rounded-2xl border border-slate-200 bg-white px-4 py-3 text-[15px] text-ink-950 placeholder:text-slate-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
-        />
-      </label>
+      <Reveal delay={200}>
+        <label className="mt-5 block">
+          <span className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-500">
+            Your reflection <span className="font-medium normal-case tracking-normal text-ink-400">optional · not graded</span>
+          </span>
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            rows={4}
+            placeholder="Jot down how you would apply this in your own work…"
+            className="mt-2 w-full resize-y rounded-2xl border border-ink-950/15 bg-paper px-4 py-3 text-[15px] text-ink-950 placeholder:text-ink-400 focus:border-ink-950 focus:outline-none focus:ring-2 focus:ring-lilac-200"
+          />
+        </label>
+      </Reveal>
       {saved && (
-        <p className="mt-1 flex items-center gap-1 text-xs text-slate-400">
+        <p className="mt-1 flex items-center gap-1 text-xs text-ink-400">
           <Check className="h-3 w-3" /> Saved on this device
         </p>
       )}

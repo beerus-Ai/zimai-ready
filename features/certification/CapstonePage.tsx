@@ -13,6 +13,7 @@ import type { CapstoneSections, SectionId } from './capstones';
 import { combineSections, evaluateCapstone, fallbackCapstoneIntro, personaliseCapstone } from './assessmentEngine';
 import type { CapstoneEvaluation, CapstoneIntro } from './assessmentEngine';
 import { BreakdownBars, DataBlock, Fact, LockedPanel, scoreHex } from './assessment-components';
+import { Reveal } from '../../components/motion';
 
 type Phase = 'brief' | 'evaluating' | 'results';
 
@@ -126,7 +127,7 @@ export default function CapstonePage() {
     <PageHeader
       eyebrow="Stage 3 · Practical capstone"
       title={unlocked && progress ? brief.title : 'Practical Capstone'}
-      description={`A realistic ${domain?.shortName ?? 'workplace'} scenario. Show how you use AI, verify its output and make a responsible professional recommendation.`}
+      description={`A realistic ${domain?.shortName ?? 'workplace'} scenario to solve with AI.`}
     />
   );
 
@@ -240,16 +241,17 @@ export default function CapstonePage() {
     const canClaim = !!achievable && LEVEL_META[achievable].rank > held;
     const outstanding = status.requirements.filter((r) => !r.met && r.level === (status.nextLevel ?? 'AI_READY'));
     return (
-      <div className="animate-fade-up space-y-6">
+      <div className="animate-fade-up space-y-8 sm:space-y-10">
         <PageHeader
           eyebrow="Practical capstone · Results"
           title={ev.passed ? 'Practical competency demonstrated' : 'Not yet — revise and resubmit'}
           description={ev.passed ? 'You passed the practical capstone — evidence that you can use AI responsibly in real professional work.' : `You scored ${ev.score}%. The pass mark is ${CERT_RULES.capstonePassMark}%. Use the feedback below to strengthen your submission.`}
         />
 
-        <Card>
-          <div className="flex flex-col items-center gap-6 md:flex-row">
-            <ScoreRing value={ev.score} color={color} label={ev.passed ? 'Passed' : 'Score'} />
+        <Reveal>
+        <Card className="rounded-4xl">
+          <div className="flex flex-col items-center gap-8 p-1 sm:p-3 md:flex-row md:gap-10">
+            <ScoreRing value={ev.score} size={208} stroke={16} color={color} label={ev.passed ? 'Passed' : 'Score'} />
             <div className="w-full min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge tone={ev.passed ? 'brand' : ev.score >= 50 ? 'gold' : 'clay'}>
@@ -270,14 +272,15 @@ export default function CapstonePage() {
             </div>
           </div>
         </Card>
+        </Reveal>
 
-        <div className="grid gap-6 lg:grid-cols-5">
-          <Card className="lg:col-span-3">
-            <CardTitle icon={<ListChecks className="h-5 w-5" />} title="Score by criterion" subtitle="Each criterion is scored against its published weight." />
+        <Reveal delay={80} className="grid gap-6 lg:grid-cols-5 lg:gap-8">
+          <Card className="rounded-3xl lg:col-span-3">
+            <CardTitle icon={<ListChecks className="h-5 w-5" />} title="Score by criterion" />
             <BreakdownBars items={ev.breakdown} showComments />
           </Card>
           <div className="space-y-6 lg:col-span-2">
-            <Card>
+            <Card className="rounded-3xl">
               <CardTitle icon={<Award className="h-5 w-5" />} title="What this means for certification" />
               {canClaim && achievable ? (
                 <>
@@ -313,8 +316,8 @@ export default function CapstonePage() {
                 </>
               )}
             </Card>
-            <Card>
-              <CardTitle icon={<Target className="h-5 w-5" />} title="Key issues in this scenario" subtitle="What an expert reviewer expects you to spot." />
+            <Card className="rounded-3xl">
+              <CardTitle icon={<Target className="h-5 w-5" />} title="Key issues in this scenario" />
               <ul className="space-y-2">
                 {brief.planted.map((p) => (
                   <li key={p.label} className="flex gap-2 text-sm text-slate-600">
@@ -325,10 +328,10 @@ export default function CapstonePage() {
               </ul>
             </Card>
           </div>
-        </div>
+        </Reveal>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card>
+        <Reveal delay={120} className="grid gap-6 md:grid-cols-2">
+          <Card className="rounded-3xl bg-brand-50/60">
             <CardTitle icon={<CircleCheck className="h-5 w-5" />} title="Strengths" />
             <ul className="space-y-2">
               {ev.feedback.strengths.map((s) => (
@@ -339,7 +342,7 @@ export default function CapstonePage() {
               ))}
             </ul>
           </Card>
-          <Card>
+          <Card className="rounded-3xl bg-gold-50/60">
             <CardTitle icon={<PenLine className="h-5 w-5" />} title="How to improve" />
             <ul className="space-y-2">
               {ev.feedback.improvements.map((s) => (
@@ -350,9 +353,9 @@ export default function CapstonePage() {
               ))}
             </ul>
           </Card>
-        </div>
+        </Reveal>
 
-        <Card>
+        <Card className="rounded-3xl">
           <details className="group">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-[15px] font-bold text-ink-950">
               <span className="flex items-center gap-2">
@@ -396,21 +399,21 @@ export default function CapstonePage() {
   const best = status.bestCapstone;
   const shownIntro = intro ?? fallbackCapstoneIntro(brief, profile);
   return (
-    <div className="animate-fade-up space-y-6">
+    <div className="animate-fade-up space-y-8 sm:space-y-10">
       {header}
 
       {best && (
-        <div className={cn('flex flex-col gap-2 rounded-2xl border p-4 text-sm sm:flex-row sm:items-center sm:justify-between', best.passed ? 'border-brand-200 bg-brand-50/60' : 'border-gold-200 bg-gold-50/60')}>
+        <div className={cn('flex flex-col gap-2 rounded-2xl border p-4 text-sm sm:flex-row sm:items-center sm:justify-between', best.passed ? 'border-brand-800/15 bg-brand-50/70' : 'border-gold-200 bg-gold-50/70')}>
           <p className="text-slate-700">
-            Your best capstone score is <strong className="font-bold text-ink-950">{best.score}%</strong> ({best.passed ? 'passed' : 'not yet passed'}). You can revise and resubmit — your best score counts.
+            Your best capstone score is <strong className="font-display text-xl font-medium text-ink-950">{best.score}%</strong> ({best.passed ? 'passed' : 'not yet passed'}). You can revise and resubmit — your best score counts.
           </p>
           <Badge tone={best.passed ? 'brand' : 'gold'}>{attempts.length} submission{attempts.length === 1 ? '' : 's'}</Badge>
         </div>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-5">
-        <div className="space-y-6 lg:col-span-3">
-          <Card>
+      <div className="grid gap-6 lg:grid-cols-5 lg:gap-8">
+        <Reveal className="space-y-6 lg:col-span-3">
+          <Card className="rounded-4xl p-6 sm:p-8">
             <div className="flex flex-wrap items-center gap-2">
               <Badge tone="brand" icon={<Building2 className="h-3 w-3" />}>
                 {brief.organisation}
@@ -421,8 +424,8 @@ export default function CapstonePage() {
               <Badge tone="neutral">Pass mark {CERT_RULES.capstonePassMark}%</Badge>
             </div>
             <p className="mt-4 text-xs font-bold uppercase tracking-[0.12em] text-slate-500">Your role</p>
-            <p className="text-lg font-extrabold text-ink-950">{shownIntro.roleTitle}</p>
-            <div className="mt-3 rounded-xl bg-brand-50/60 p-4">
+            <p className="font-display text-2xl leading-tight text-ink-950 sm:text-3xl">{shownIntro.roleTitle}</p>
+            <div className="mt-3 rounded-2xl border border-ink-950/10 bg-lilac-100/70 p-4">
               {introLoading ? (
                 <p className="flex items-center gap-2 text-sm text-slate-500">
                   <Sparkles className="h-4 w-4 animate-pulse text-brand-600" /> Personalising this scenario to your role…
@@ -439,7 +442,7 @@ export default function CapstonePage() {
                 </>
               )}
             </div>
-            <h3 className="mt-6 text-[15px] font-bold text-ink-950">The situation</h3>
+            <h3 className="mt-6 font-display text-xl font-medium text-ink-950">The situation</h3>
             <div className="mt-2 space-y-3 text-[15px] leading-relaxed text-slate-700">
               {brief.context.split('\n\n').map((p) => (
                 <p key={p.slice(0, 32)}>{p}</p>
@@ -447,12 +450,12 @@ export default function CapstonePage() {
             </div>
           </Card>
 
-          <Card>
-            <CardTitle icon={<FileText className="h-5 w-5" />} title={brief.dataTitle} subtitle="Fictional data for this scenario. Examine it carefully — not everything here is correct." />
+          <Card className="rounded-3xl">
+            <CardTitle icon={<FileText className="h-5 w-5" />} title={brief.dataTitle} subtitle="Fictional data — not everything here is correct." />
             <DataBlock data={brief.data} kind={brief.dataKind} />
           </Card>
 
-          <Card>
+          <Card className="rounded-3xl">
             <CardTitle icon={<Target className="h-5 w-5" />} title="Your task" />
             <p className="text-[15px] font-semibold leading-relaxed text-ink-950">{brief.task}</p>
             <p className="mt-4 text-sm font-semibold text-slate-700">Your submission should include:</p>
@@ -465,16 +468,16 @@ export default function CapstonePage() {
               ))}
             </ul>
           </Card>
-        </div>
+        </Reveal>
 
-        <div className="lg:col-span-2">
+        <Reveal delay={100} className="lg:col-span-2">
           <div className="space-y-6 lg:sticky lg:top-6">
-            <Card>
-              <CardTitle icon={<Scale className="h-5 w-5" />} title="How you will be scored" subtitle="Transparent criteria — 100 points in total." />
+            <Card className="rounded-3xl">
+              <CardTitle icon={<Scale className="h-5 w-5" />} title="How you will be scored" subtitle="100 points in total." />
               <ul className="space-y-3">
                 {CAPSTONE_CRITERIA.map((c) => (
                   <li key={c.id} className="flex items-start gap-3">
-                    <span className="flex h-8 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-sm font-extrabold tabular-nums text-ink-950">{c.weight}</span>
+                    <span className="flex h-8 w-10 shrink-0 items-center justify-center rounded-lg border border-ink-950/10 bg-gold-100 font-condensed text-base tabular-nums text-ink-950">{c.weight}</span>
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-ink-950">{c.label}</p>
                       <p className="text-xs leading-snug text-slate-500">{c.description}</p>
@@ -482,11 +485,11 @@ export default function CapstonePage() {
                   </li>
                 ))}
               </ul>
-              <p className="mt-4 rounded-xl bg-slate-50 p-3 text-xs leading-relaxed text-slate-500">
+              <p className="mt-4 rounded-xl bg-sand-100 p-3 text-xs leading-relaxed text-slate-500">
                 Pass mark {CERT_RULES.capstonePassMark}%. Your responsible AI score from this capstone also counts towards the responsible AI requirement ({CERT_RULES.responsibleAIPassMark}%).
               </p>
             </Card>
-            <Card className="border-gold-200 bg-gold-50/40">
+            <Card className="rounded-3xl border-ink-950/10 bg-blush-100/60">
               <CardTitle icon={<Lightbulb className="h-5 w-5" />} title="Tips for a strong submission" />
               <ul className="space-y-2 text-sm text-slate-600">
                 <li>• Be specific to this scenario — refer to the actual data and figures.</li>
@@ -497,14 +500,14 @@ export default function CapstonePage() {
               </ul>
             </Card>
           </div>
-        </div>
+        </Reveal>
       </div>
 
       {/* Submission form */}
-      <Card>
-        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <Card className="rounded-4xl p-6 sm:p-8">
+        <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-lg font-extrabold text-ink-950">Your submission</h2>
+            <h2 className="text-3xl leading-tight text-ink-950">Your <em>submission</em></h2>
             <p className="text-sm text-slate-500">
               {completeCount}/{CAPSTONE_SECTIONS.length} sections complete · Your draft saves automatically on this device.
             </p>
@@ -515,7 +518,7 @@ export default function CapstonePage() {
           </span>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-8">
           {CAPSTONE_SECTIONS.map((sec) => {
             const value = sections[sec.id];
             const len = value.trim().length;
@@ -524,7 +527,7 @@ export default function CapstonePage() {
             return (
               <div key={sec.id} id={`cap-${sec.id}`} className="scroll-mt-24">
                 <label htmlFor={`cap-input-${sec.id}`} className="flex items-start gap-3">
-                  <span className={cn('flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-sm font-extrabold', met ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-600')}>
+                  <span className={cn('flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-sm font-extrabold', met ? 'bg-brand-800 text-canvas' : 'border border-ink-950/15 bg-sand-100 text-ink-700')}>
                     {met ? <CircleCheck className="h-4 w-4" /> : sec.number}
                   </span>
                   <span className="min-w-0">
@@ -545,8 +548,8 @@ export default function CapstonePage() {
                   aria-invalid={invalid}
                   aria-describedby={`cap-hint-${sec.id}`}
                   className={cn(
-                    'mt-3 w-full resize-y rounded-xl border bg-white px-4 py-3 text-[15px] leading-relaxed text-ink-950 outline-none transition placeholder:text-slate-400 focus:ring-2',
-                    invalid ? 'border-clay-400 focus:border-clay-500 focus:ring-clay-100' : 'border-slate-200 focus:border-brand-500 focus:ring-brand-100',
+                    'mt-3 w-full resize-y rounded-xl border bg-paper px-4 py-3 text-[15px] leading-relaxed text-ink-950 outline-none transition placeholder:text-slate-400 focus:ring-2',
+                    invalid ? 'border-clay-400 focus:border-clay-500 focus:ring-clay-100' : 'border-ink-950/15 focus:border-ink-950 focus:ring-lilac-200',
                   )}
                 />
                 <div id={`cap-hint-${sec.id}`} className="mt-1.5 flex items-center justify-between gap-3 text-xs">
@@ -566,7 +569,7 @@ export default function CapstonePage() {
           })}
         </div>
 
-        <div className="mt-8 flex flex-col gap-3 border-t border-slate-100 pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-8 flex flex-col gap-3 border-t border-ink-950/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="max-w-md text-xs leading-relaxed text-slate-500">
             Your submission is evaluated against the criteria above by Gemini, or by the built-in evaluator when AI is unavailable. You can revise and resubmit as many times as you need.
           </p>

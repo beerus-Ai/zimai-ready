@@ -7,6 +7,9 @@ import {
 import {
   AISourceBadge, Badge, Button, Card, EmptyState, ErrorState, Icon, LoadingState, Modal, ScoreRing, useToast,
 } from '../../components/ui';
+import { CertificateRibbon, GhostMascot, Sparkle } from '../../components/illustrations';
+import { LessonTutorial } from '../../components/tutorials';
+import { SparkleBurst, TutorialStyles } from '../../components/tutorials/primitives';
 import { useApp } from '../../services/store';
 import { generateJSON, generateText, Type } from '../../services/gemini';
 import type { Schema } from '../../services/gemini';
@@ -151,6 +154,8 @@ function Player({ data, progress, domainId, learner }: { data: ResolvedModule; p
   const [summary, setSummary] = useState<Summary | null>(null);
   const [saving, setSaving] = useState(false);
   const [mobileTutor, setMobileTutor] = useState(false);
+  // Lesson preview tutorial: open on a fresh module, collapsed otherwise. Remembered for this module while the page is open.
+  const [previewOpen, setPreviewOpen] = useState(() => mp.status === 'not-started' && mp.lessonsCompleted.length === 0);
   const [tutorOpen, setTutorOpen] = useState(() => {
     try {
       return localStorage.getItem(TUTOR_PREF) !== 'closed';
@@ -409,17 +414,17 @@ Re-explain the concept in a DIFFERENT way, specifically for a ${job}. Use one co
   return (
     <div className="animate-fade-in">
       {/* Compact header */}
-      <div className="sticky top-14 z-30 -mx-4 mb-5 border-b border-slate-200/70 bg-canvas/85 px-4 pb-3 pt-3 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:top-0 lg:-mx-8 lg:px-8">
+      <div className="sticky top-14 z-30 -mx-4 mb-5 border-b border-ink-950/10 bg-canvas/85 px-4 pb-3 pt-3 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:top-0 lg:-mx-8 lg:px-8">
         <div className="flex items-center gap-3">
-          <Link to="/app/learning" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition hover:border-slate-300 hover:text-ink-950" aria-label="Back to my learning path">
+          <Link to="/app/learning" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ink-950/15 bg-paper text-ink-700 transition hover:border-ink-950 hover:text-ink-950" aria-label="Back to my learning path">
             <ArrowLeft className="h-4 w-4" />
           </Link>
-          <div className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 sm:flex">
+          <div className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-lilac-200 text-ink-950 ring-1 ring-ink-950 sm:flex">
             <Icon name={meta.icon} className="h-[18px] w-[18px]" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-bold text-ink-950 sm:text-[15px]">{title}</p>
-            <p className="truncate text-xs text-slate-500">
+            <p className="truncate font-display text-lg leading-tight text-ink-950 sm:text-xl">{title}</p>
+            <p className="truncate text-xs text-ink-500">
               {view === 'lesson' && lesson ? `Lesson ${lessonIdx + 1} of ${lessons.length} · ${lesson.title}` : view === 'complete' ? 'Module complete' : 'Briefing complete · practical challenge next'}
             </p>
           </div>
@@ -437,7 +442,7 @@ Re-explain the concept in a DIFFERENT way, specifically for a ${job}. Use one co
         {view === 'lesson' && (
           <div className="mt-3 flex gap-1" aria-label={`Step ${blockIdx + 1} of ${blocks.length}`}>
             {blocks.map((_, i) => (
-              <div key={i} className={cn('h-1.5 flex-1 rounded-full transition-all duration-500', i < blockIdx ? 'bg-brand-500' : i === blockIdx ? 'bg-brand-400/60' : 'bg-slate-200')} />
+              <div key={i} className={cn('h-1.5 flex-1 rounded-full transition-all duration-500', i < blockIdx ? 'bg-ink-950' : i === blockIdx ? 'animate-ghost-pulse bg-lilac-400' : 'bg-lilac-100')} />
             ))}
           </div>
         )}
@@ -447,6 +452,31 @@ Re-explain the concept in a DIFFERENT way, specifically for a ${job}. Use one co
         <div className="mx-auto w-full min-w-0 max-w-2xl">
           {view === 'lesson' && lesson && block && (
             <>
+              <div className="mb-4 overflow-hidden rounded-3xl border border-ink-950/10 bg-paper">
+                <button
+                  type="button"
+                  onClick={() => setPreviewOpen((o) => !o)}
+                  aria-expanded={previewOpen}
+                  className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition hover:bg-ink-950/[0.03]"
+                >
+                  <span className="h-8 w-8 shrink-0 animate-ghost-float" aria-hidden>
+                    <GhostMascot mood="wave" className="h-full w-full" />
+                  </span>
+                  <span className="min-w-0 flex-1 font-display text-lg text-ink-950">
+                    Lesson <em>preview</em>
+                  </span>
+                  <span className="inline-flex items-center gap-1 rounded-full border border-ink-950/15 px-2.5 py-1 text-xs font-semibold text-ink-700">
+                    {previewOpen ? 'Hide' : 'Watch'}
+                    <ChevronRight className={cn('h-3.5 w-3.5 transition-transform duration-300', previewOpen && 'rotate-90')} />
+                  </span>
+                </button>
+                {previewOpen && (
+                  <div className="animate-ghost-in px-2 pb-2">
+                    <LessonTutorial className="rounded-[1.5rem]" />
+                  </div>
+                )}
+              </div>
+
               {lessons.length > 1 && (
                 <div className="no-scrollbar -mx-1 mb-4 flex gap-1.5 overflow-x-auto px-1">
                   {lessons.map((l, i) => {
@@ -459,7 +489,7 @@ Re-explain the concept in a DIFFERENT way, specifically for a ${job}. Use one co
                         onClick={() => jumpToLesson(i)}
                         className={cn(
                           'inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition',
-                          i === lessonIdx ? 'bg-ink-950 text-white' : done ? 'bg-brand-50 text-brand-800 hover:bg-brand-100' : 'bg-white text-slate-500 ring-1 ring-inset ring-slate-200 disabled:opacity-50',
+                          i === lessonIdx ? 'bg-ink-950 text-canvas' : done ? 'bg-brand-50 text-brand-800 hover:bg-brand-100' : 'bg-paper text-ink-500 ring-1 ring-inset ring-ink-950/10 disabled:opacity-50',
                         )}
                       >
                         {done ? <Check className="h-3 w-3" strokeWidth={3} /> : <span className="tabular-nums">{i + 1}</span>}
@@ -471,26 +501,28 @@ Re-explain the concept in a DIFFERENT way, specifically for a ${job}. Use one co
               )}
 
               {mp.status === 'completed' && (
-                <div className="mb-3 flex items-center gap-2 rounded-xl bg-sky-50 px-3 py-2 text-xs font-semibold text-sky-800 ring-1 ring-inset ring-sky-200">
+                <div className="mb-3 flex animate-ghost-in items-center gap-2 rounded-2xl bg-lilac-100 px-3 py-2 text-xs font-semibold text-ink-800 ring-1 ring-inset ring-lilac-300/60">
                   <Eye className="h-3.5 w-3.5" /> Review mode — you've completed this module, so answers here won't change your mastery.
                 </div>
               )}
               {strongLesson && blockIdx === 0 && (
-                <div className="mb-3 flex animate-fade-up items-center gap-3 rounded-2xl bg-gradient-to-r from-gold-100 to-gold-50 px-4 py-3 ring-1 ring-inset ring-gold-200">
-                  <Trophy className="h-5 w-5 shrink-0 text-gold-600" />
-                  <p className="flex-1 text-sm text-gold-900">
+                <div className="relative mb-3 flex animate-ghost-in items-center gap-3 rounded-2xl border border-ink-950 bg-gold-400 px-4 py-3 shadow-ink-sm">
+                  <TutorialStyles />
+                  <SparkleBurst className="left-6 top-1/2" count={10} radius={50} />
+                  <Trophy className="h-5 w-5 shrink-0 text-ink-950" />
+                  <p className="flex-1 text-sm text-ink-950">
                     <strong>Strong competency</strong> in "{strongLesson}" — every answer right first time.
                   </p>
-                  <button onClick={() => setStrongLesson(null)} className="text-gold-700 hover:text-gold-900" aria-label="Dismiss">
+                  <button onClick={() => setStrongLesson(null)} className="text-ink-800 hover:text-ink-950" aria-label="Dismiss">
                     <X className="h-4 w-4" />
                   </button>
                 </div>
               )}
 
-              <Card key={key} className={cn('min-h-[320px] sm:p-8', dir === 1 ? 'animate-slide-up' : 'animate-fade-in')}>
-                <div className="mb-4 flex items-center justify-between gap-2">
+              <Card key={key} className={cn('min-h-[320px] animate-ghost-in rounded-4xl sm:p-10', dir === 1 ? '' : '[animation-duration:.6s]')}>
+                <div className="mb-6 flex items-center justify-between gap-2">
                   <BlockLabel type={block.type} />
-                  <span className="text-xs font-semibold tabular-nums text-slate-400">
+                  <span className="font-condensed text-sm tracking-wider tabular-nums text-ink-400">
                     {blockIdx + 1} / {blocks.length}
                   </span>
                 </div>
@@ -501,7 +533,7 @@ Re-explain the concept in a DIFFERENT way, specifically for a ${job}. Use one co
                 <Button variant="outline" onClick={goBack} disabled={lessonIdx === 0 && blockIdx === 0} icon={<ChevronLeft className="h-4 w-4" />}>
                   Back
                 </Button>
-                <span className="hidden items-center gap-1.5 text-xs text-slate-400 sm:inline-flex">
+                <span className="hidden items-center gap-1.5 text-xs text-ink-400 sm:inline-flex">
                   <Keyboard className="h-3.5 w-3.5" /> Use ← → keys
                 </span>
                 <Button onClick={goNext} disabled={!canAdvance} loading={saving} iconRight={<ChevronRight className="h-4 w-4" />}>
@@ -509,7 +541,7 @@ Re-explain the concept in a DIFFERENT way, specifically for a ${job}. Use one co
                 </Button>
               </div>
               {!canAdvance && (
-                <p className="mt-2 text-center text-xs font-medium text-slate-500 sm:text-right">{block.type === 'quiz' ? 'Answer correctly to continue' : 'Complete the activity to continue'}</p>
+                <p className="mt-2 animate-ghost-in text-center text-xs font-medium text-ink-500 sm:text-right">{block.type === 'quiz' ? 'Answer correctly to continue' : 'Complete the activity to continue'}</p>
               )}
 
               {mp.struggling && (
@@ -550,20 +582,20 @@ Re-explain the concept in a DIFFERENT way, specifically for a ${job}. Use one co
           )}
 
           {view === 'briefing' && activity && (
-            <Card className="animate-scale-in text-center sm:p-10">
-              <div className="mx-auto flex h-16 w-16 animate-float items-center justify-center rounded-3xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-glow">
+            <Card className="animate-ghost-in rounded-4xl text-center sm:p-12">
+              <div className="mx-auto flex h-16 w-16 animate-float items-center justify-center rounded-3xl border border-ink-950 bg-lilac-200 text-ink-950 shadow-ink-sm">
                 <Target className="h-8 w-8" />
               </div>
-              <p className="mt-5 text-xs font-bold uppercase tracking-[0.16em] text-brand-600">{mp.status === 'completed' ? 'Challenge passed' : 'Briefing complete'}</p>
-              <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-ink-950 sm:text-3xl">{activity.title}</h1>
-              <p className="mx-auto mt-2 max-w-lg text-[15px] text-slate-500">
+              <p className="mt-6 text-xs font-semibold uppercase tracking-[0.2em] text-ink-500">{mp.status === 'completed' ? 'Challenge passed' : 'Briefing complete'}</p>
+              <h1 className="mt-3 text-4xl leading-[1.02] text-ink-950 sm:text-5xl">{activity.title}</h1>
+              <p className="mx-auto mt-3 max-w-lg text-[15px] text-ink-500">
                 {mp.status === 'completed'
                   ? `You passed this challenge${bestActivity >= 0 ? ` with ${bestActivity}%` : ''}. You can revisit it to improve your score.`
                   : 'This module is completed by passing the practical challenge (60% or more). Your answer is assessed against a transparent rubric:'}
               </p>
               <div className="mx-auto mt-6 grid max-w-lg gap-2 text-left">
-                {activity.rubric.map((r) => (
-                  <div key={r.criterion} className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-4 py-2.5 text-sm">
+                {activity.rubric.map((r, i) => (
+                  <div key={r.criterion} className="flex animate-ghost-in items-center justify-between gap-3 rounded-2xl bg-sand-200/60 px-4 py-2.5 text-sm" style={{ animationDelay: `${150 + i * 80}ms` }}>
                     <span className="font-semibold text-ink-950">{r.criterion}</span>
                     <Badge tone="neutral">{r.weight} pts</Badge>
                   </div>
@@ -591,9 +623,12 @@ Re-explain the concept in a DIFFERENT way, specifically for a ${job}. Use one co
       {/* Mobile tutor */}
       <button
         onClick={() => setMobileTutor(true)}
-        className="fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom))] right-4 z-30 inline-flex items-center gap-2 rounded-full bg-ink-950 px-4 py-3 text-sm font-bold text-white shadow-lift transition active:scale-95 lg:hidden"
+        className="fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom))] right-4 z-30 inline-flex items-center gap-2 rounded-full border border-ink-950 bg-lilac-200 py-2 pl-2 pr-4 text-sm font-semibold text-ink-950 shadow-ink-sm transition active:scale-95 lg:hidden"
       >
-        <Bot className="h-4 w-4 text-brand-300" /> Ask AI Tutor
+        <span className="h-7 w-7 animate-ghost-float" aria-hidden>
+          <GhostMascot className="h-full w-full" />
+        </span>
+        Ask AI Tutor
       </button>
       <Modal open={mobileTutor} onClose={() => setMobileTutor(false)} title="AI Tutor" description={title}>
         <TutorPanel
@@ -702,21 +737,21 @@ The learner has been finding this module difficult. Write ONE new practice quest
   };
 
   return (
-    <Card className="mt-6 animate-fade-up border-clay-200/80 bg-gradient-to-br from-clay-50/70 to-white">
+    <Card className="mt-6 animate-ghost-in rounded-4xl border-clay-300/40 bg-blush-100/60">
       <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-clay-100 text-clay-600">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-ink-950 bg-clay-400 text-ink-950">
           <Zap className="h-5 w-5" />
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-[15px] font-bold text-ink-950">Extra practice recommended</h3>
+            <h3 className="font-display text-2xl leading-tight text-ink-950">Extra practice</h3>
             {q && <AISourceBadge source={q.source} />}
           </div>
           <p className="mt-0.5 text-sm text-slate-600">A couple of questions were tricky first time — that's normal. Practise with a question tailored to your role. Get two right to return to standard pace.</p>
         </div>
       </div>
       {q ? (
-        <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+        <div className="mt-4 animate-ghost-in rounded-3xl border border-ink-950/10 bg-paper p-4 sm:p-5">
           <QuizView
             key={round}
             block={q.quiz}
@@ -752,13 +787,12 @@ The learner has been finding this module difficult. Write ONE new practice quest
 // ───────────────────────── Completion ─────────────────────────
 
 const CONFETTI = [
-  { l: '8%', t: '14%', c: 'bg-brand-400', d: '0ms' },
-  { l: '18%', t: '70%', c: 'bg-gold-400', d: '300ms' },
-  { l: '30%', t: '8%', c: 'bg-sky-400', d: '600ms' },
-  { l: '70%', t: '10%', c: 'bg-clay-400', d: '150ms' },
-  { l: '84%', t: '62%', c: 'bg-violet-400', d: '450ms' },
-  { l: '92%', t: '22%', c: 'bg-brand-300', d: '750ms' },
-  { l: '52%', t: '4%', c: 'bg-gold-300', d: '900ms' },
+  { l: '8%', t: '14%', c: '#034f46', d: '0ms' },
+  { l: '14%', t: '70%', c: '#ffa946', d: '300ms' },
+  { l: '28%', t: '8%', c: '#ffbcf2', d: '600ms' },
+  { l: '70%', t: '10%', c: '#ff6c4c', d: '150ms' },
+  { l: '86%', t: '62%', c: '#1a1a1a', d: '450ms' },
+  { l: '90%', t: '22%', c: '#1b8f78', d: '750ms' },
 ];
 
 function CompletionView({
@@ -785,17 +819,25 @@ function CompletionView({
   const fastTrack = summary.quizTotal > 0 && summary.mastery >= 90;
   return (
     <div className="space-y-4">
-      <Card className="relative animate-scale-in overflow-hidden text-center sm:p-10">
+      <Card className="relative animate-ghost-in overflow-hidden rounded-4xl text-center sm:p-12">
+        <TutorialStyles />
         {CONFETTI.map((c, i) => (
-          <span key={i} className={cn('pointer-events-none absolute h-2.5 w-2.5 animate-float rounded-full opacity-70', c.c)} style={{ left: c.l, top: c.t, animationDelay: c.d }} />
+          <span key={i} className="pointer-events-none absolute h-5 w-5 animate-float" style={{ left: c.l, top: c.t, animationDelay: c.d }} aria-hidden>
+            <Sparkle className="h-full w-full" color={c.c} />
+          </span>
         ))}
-        <div className="relative mx-auto flex h-20 w-20 animate-float items-center justify-center rounded-3xl bg-gradient-to-br from-gold-300 to-gold-500 text-ink-950 shadow-lift">
-          <Trophy className="h-10 w-10" />
+        <div className="relative mx-auto h-28 w-28 sm:h-32 sm:w-32" aria-hidden>
+          <div className="tut-pop h-full w-full">
+            <div className="h-full w-full animate-float">
+              <CertificateRibbon className="h-full w-full" />
+            </div>
+          </div>
+          <SparkleBurst className="left-1/2 top-1/2" count={20} radius={160} delay={250} />
         </div>
-        <p className="mt-5 text-xs font-bold uppercase tracking-[0.16em] text-brand-600">Module complete</p>
-        <h1 className="mx-auto mt-2 max-w-xl text-2xl font-extrabold tracking-tight text-ink-950 sm:text-3xl">{title}</h1>
-        <p className="mx-auto mt-2 max-w-md text-[15px] text-slate-500">
-          {summary.completedNow ? 'Brilliant work — your skills profile has been updated with this evidence.' : 'You have completed every lesson in this module.'}
+        <p className="mt-5 text-xs font-semibold uppercase tracking-[0.2em] text-ink-500">Module complete</p>
+        <h1 className="mx-auto mt-3 max-w-xl text-4xl leading-[1.02] text-ink-950 sm:text-5xl">{title}</h1>
+        <p className="mx-auto mt-3 max-w-md text-[15px] text-ink-500">
+          {summary.completedNow ? 'Your skills profile has been updated.' : 'Every lesson, complete.'}
         </p>
 
         <div className="mt-7 flex flex-wrap items-center justify-center gap-6 sm:gap-10">
@@ -806,20 +848,20 @@ function CompletionView({
               ['Time invested', formatMinutes(summary.minutes || 0)],
               ['Quick checks', summary.quizTotal ? `${summary.quizCorrect}/${summary.quizTotal} first time` : '—'],
               ['Pace', pace === 'accelerated' ? 'Fast-track' : pace === 'supported' ? 'Supported' : 'Standard'],
-            ].map(([k, v]) => (
-              <div key={k} className="rounded-2xl bg-slate-50 px-4 py-3">
-                <p className="text-[11px] font-bold uppercase tracking-wide text-slate-400">{k}</p>
-                <p className="mt-0.5 text-sm font-extrabold text-ink-950">{v}</p>
+            ].map(([k, v], i) => (
+              <div key={k} className="animate-ghost-in rounded-2xl bg-sand-200/60 px-4 py-3" style={{ animationDelay: `${400 + i * 90}ms` }}>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-400">{k}</p>
+                <p className="mt-0.5 font-display text-lg leading-tight text-ink-950">{v}</p>
               </div>
             ))}
           </div>
         </div>
 
         <div className="mt-7">
-          <p className="text-xs font-bold uppercase tracking-wide text-slate-400">Skills strengthened</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-400">Skills strengthened</p>
           <div className="mt-2.5 flex flex-wrap justify-center gap-2">
-            {summary.skills.map((s) => (
-              <span key={s.id} className={cn('inline-flex animate-fade-up items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold', SKILL_LEVEL_COLORS[s.level].bg, SKILL_LEVEL_COLORS[s.level].text)}>
+            {summary.skills.map((s, i) => (
+              <span key={s.id} className={cn('inline-flex animate-ghost-in items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold', SKILL_LEVEL_COLORS[s.level].bg, SKILL_LEVEL_COLORS[s.level].text)} style={{ animationDelay: `${700 + i * 90}ms` }}>
                 <span className={cn('h-2 w-2 rounded-full', SKILL_LEVEL_COLORS[s.level].dot)} />
                 {skillName(s.id)} · {SKILL_LEVEL_LABELS[s.level]}
               </span>
@@ -829,15 +871,15 @@ function CompletionView({
       </Card>
 
       {activity && (
-        <Card className="animate-fade-up border-0 bg-gradient-to-br from-brand-600 to-brand-800 text-white" style={{ animationDelay: '120ms' }}>
+        <Card className="animate-ghost-in rounded-4xl border-0 bg-brand-800 text-canvas" style={{ animationDelay: '220ms' }}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/15">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-canvas/15">
               <ClipboardCheck className="h-6 w-6" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-bold uppercase tracking-wide text-brand-100">Now prove it</p>
-              <p className="mt-0.5 text-lg font-bold">{activity.title}</p>
-              <p className="text-sm text-brand-50/90">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-canvas/60">Now prove it</p>
+              <p className="mt-0.5 font-display text-2xl leading-tight">{activity.title}</p>
+              <p className="text-sm text-canvas/75">
                 {activity.best >= 0 ? `Your best score so far: ${activity.best}%. ` : ''}A realistic workplace task with instant AI feedback — it counts towards certification.
               </p>
             </div>
@@ -849,7 +891,7 @@ function CompletionView({
       )}
 
       {fastTrack && (
-        <Card className="animate-fade-up border-gold-200 bg-gradient-to-br from-gold-50 to-white" style={{ animationDelay: '200ms' }}>
+        <Card className="animate-ghost-in rounded-4xl border-gold-300/60 bg-gold-50" style={{ animationDelay: '300ms' }}>
           <div className="flex items-start gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gold-400 text-ink-950">
               <Rocket className="h-5 w-5" />

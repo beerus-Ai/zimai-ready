@@ -21,9 +21,9 @@ import { nowISO } from './utils';
  */
 
 export const LEVEL_META: Record<CertificationLevel, { label: string; description: string; color: string; rank: number }> = {
-  AI_AWARE: { label: 'AI Aware', description: 'Understands AI concepts and risks.', color: '#0284c7', rank: 1 },
-  AI_CAPABLE: { label: 'AI Capable', description: 'Can effectively use AI for selected professional activities.', color: '#d98300', rank: 2 },
-  AI_READY: { label: 'AI Ready', description: 'Can responsibly integrate AI into professional workflows and demonstrate practical competency.', color: '#0a8a5f', rank: 3 },
+  AI_AWARE: { label: 'AI Aware', description: 'Understands AI concepts and risks.', color: '#2f9f72', rank: 1 },
+  AI_CAPABLE: { label: 'AI Capable', description: 'Can effectively use AI for selected professional activities.', color: '#dc7110', rank: 2 },
+  AI_READY: { label: 'AI Ready', description: 'Can responsibly integrate AI into professional workflows and demonstrate practical competency.', color: '#034f46', rank: 3 },
 };
 
 export const LEVEL_ORDER: CertificationLevel[] = ['AI_AWARE', 'AI_CAPABLE', 'AI_READY'];

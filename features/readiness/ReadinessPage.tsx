@@ -46,6 +46,7 @@ import {
   useToast,
 } from '../../components/ui';
 import type { Tone } from '../../components/ui';
+import { MagnifierSprout } from '../../components/illustrations';
 import { getModule } from '../../data/catalog';
 import { industryName } from '../../data/industries';
 import { roleName } from '../../data/roles';
@@ -64,7 +65,7 @@ import { cn, formatDate, nowISO } from '../../lib/utils';
  */
 
 export const CATEGORY_META: Record<PrescriptionCategory, { label: string; tone: Tone }> = {
-  fundamentals: { label: 'Fundamentals', tone: 'sky' },
+  fundamentals: { label: 'Fundamentals', tone: 'neutral' },
   domain: { label: 'Role-specific', tone: 'brand' },
   responsible: { label: 'Responsible AI', tone: 'violet' },
   practical: { label: 'Practical challenge', tone: 'gold' },
@@ -72,13 +73,13 @@ export const CATEGORY_META: Record<PrescriptionCategory, { label: string; tone: 
   advanced: { label: 'Advanced', tone: 'dark' },
 };
 
-const EXPOSURE_HEX = '#394b65';
+const EXPOSURE_HEX = '#7f1c34';
 
 const PRIORITY_VISUAL = {
   warn: { tone: 'clay' as Tone, icon: <AlertTriangle className="h-3.5 w-3.5" />, panel: 'bg-clay-50/70 ring-clay-200/70', text: 'text-clay-800' },
   good: { tone: 'brand' as Tone, icon: <CheckCircle2 className="h-3.5 w-3.5" />, panel: 'bg-brand-50/70 ring-brand-200/70', text: 'text-brand-800' },
-  info: { tone: 'sky' as Tone, icon: <Rocket className="h-3.5 w-3.5" />, panel: 'bg-sky-50/70 ring-sky-200/70', text: 'text-sky-800' },
-  neutral: { tone: 'neutral' as Tone, icon: <Sprout className="h-3.5 w-3.5" />, panel: 'bg-slate-50 ring-slate-200', text: 'text-slate-700' },
+  info: { tone: 'violet' as Tone, icon: <Rocket className="h-3.5 w-3.5" />, panel: 'bg-lilac-50/70 ring-lilac-200/70', text: 'text-lilac-800' },
+  neutral: { tone: 'neutral' as Tone, icon: <Sprout className="h-3.5 w-3.5" />, panel: 'bg-sand-100 ring-slate-200', text: 'text-slate-700' },
 };
 
 export default function ReadinessPage() {
@@ -100,7 +101,7 @@ export default function ReadinessPage() {
   if (!a) {
     return (
       <>
-        <PageHeader eyebrow="AI Readiness" title="Your AI Readiness Profile" />
+        <PageHeader eyebrow="AI Readiness" title={<>Your AI Readiness <em>Profile</em></>} />
         <EmptyState
           icon={<Gauge className="h-6 w-6" />}
           title="No readiness assessment yet"
@@ -172,10 +173,12 @@ export default function ReadinessPage() {
 
   return (
     <div className="pb-6">
+      <div className="relative flex items-end gap-4">
       <PageHeader
+        className="min-w-0 flex-1"
         eyebrow="AI Readiness"
-        title="Your AI Readiness Profile"
-        description={`${a.kind === 'reassessment' ? 'Reassessment' : 'Initial assessment'} · ${formatDate(a.createdAt)} · personalised to your role, workplace and goals.`}
+        title={<>Your AI Readiness <em>Profile</em></>}
+        description={`${a.kind === 'reassessment' ? 'Reassessment' : 'Initial assessment'} · ${formatDate(a.createdAt)}`}
         actions={
           <>
             <Button to="/onboarding?retake=1" variant="outline" size="sm" icon={<RefreshCw className="h-4 w-4" />}>
@@ -187,17 +190,18 @@ export default function ReadinessPage() {
           </>
         }
       />
+        <MagnifierSprout className="mb-6 hidden h-28 w-28 shrink-0 animate-ghost-in xl:block" animated />
+      </div>
 
       {isNew && (
-        <div className="relative mb-6 animate-scale-in overflow-hidden rounded-2xl bg-gradient-to-r from-brand-700 via-brand-600 to-brand-500 p-4 text-white shadow-glow sm:p-5">
-          <div className="bg-grid-dark pointer-events-none absolute inset-0 opacity-60" aria-hidden />
+        <div className="relative mb-8 animate-ghost-in overflow-hidden rounded-3xl bg-brand-800 p-4 text-canvas sm:p-5">
           <div className="relative flex items-start gap-3 sm:items-center">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 ring-1 ring-white/25">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gold-400 text-ink-950">
               <PartyPopper className="h-5 w-5" />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-[15px] font-bold">Analysis complete</p>
-              <p className="text-sm text-brand-50/90">
+              <p className="font-display text-2xl leading-tight">Analysis <em>complete</em></p>
+              <p className="text-sm text-canvas/80">
                 {a.kind === 'reassessment' ? 'Your profile has been updated. See what changed below.' : 'Here is where you stand with AI — and exactly what to learn next.'}
               </p>
             </div>
@@ -210,38 +214,37 @@ export default function ReadinessPage() {
       )}
 
       {/* ── Hero: scores + quadrant ── */}
-      <Card className="animate-fade-up overflow-hidden p-0 sm:p-0" style={reveal(0)} padded={false}>
+      <Card className="animate-ghost-in overflow-hidden rounded-4xl p-0 sm:p-0" style={reveal(0)} padded={false}>
         <div className="grid lg:grid-cols-[1fr_minmax(300px,380px)]">
-          <div className="relative p-5 sm:p-7">
-            <div className="pointer-events-none absolute -left-24 -top-24 h-64 w-64 rounded-full bg-brand-100/50 blur-3xl" aria-hidden />
-            <div className="relative grid grid-cols-2 gap-4 sm:gap-8">
+          <div className="relative p-5 sm:p-10">
+            <div className="relative grid grid-cols-2 gap-4 sm:gap-10">
               <ScoreBlock
                 title="Personal AI Readiness"
                 hint="How prepared you are to work with AI"
-                ring={<ScoreRing value={a.personalReadiness} color={level.hex} label={a.readinessLevel} size={150} stroke={13} className="scale-[0.82] sm:scale-100" />}
+                ring={<ScoreRing value={a.personalReadiness} color={level.hex} label={a.readinessLevel} size={164} stroke={10} className="scale-[0.78] sm:scale-100" />}
               />
               <ScoreBlock
                 title="Workplace AI Exposure"
                 hint="How much AI is changing your work"
-                ring={<ScoreRing value={a.workplaceExposure} color={EXPOSURE_HEX} label={exposureLabel(a.workplaceExposure)} size={150} stroke={13} className="scale-[0.82] sm:scale-100" />}
+                ring={<ScoreRing value={a.workplaceExposure} color={EXPOSURE_HEX} label={exposureLabel(a.workplaceExposure)} size={164} stroke={10} className="scale-[0.78] sm:scale-100" />}
               />
             </div>
-            <div className={cn('relative mt-5 rounded-2xl p-4 ring-1 ring-inset', pvis.panel)}>
+            <div className={cn('relative mt-8 rounded-2xl p-4 ring-1 ring-inset', pvis.panel)}>
               <Badge tone={pvis.tone} icon={pvis.icon}>
                 {a.priorityState}
               </Badge>
               <p className={cn('mt-2 text-sm leading-relaxed', pvis.text)}>{pmeta.description}</p>
             </div>
           </div>
-          <div className="border-t border-slate-100 bg-slate-50/60 p-5 sm:p-7 lg:border-l lg:border-t-0">
-            <p className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-slate-500">Where you stand</p>
+          <div className="border-t border-ink-950/5 bg-sand-100 p-5 sm:p-10 lg:border-l lg:border-t-0">
+            <p className="mb-3 font-display text-xl italic text-ink-700">Where you stand</p>
             <Quadrant readiness={a.personalReadiness} exposure={a.workplaceExposure} previous={comparison} />
           </div>
         </div>
       </Card>
 
       {/* ── Profile chips ── */}
-      <div className="mt-4 flex animate-fade-up flex-wrap gap-2" style={reveal(1)}>
+      <div className="mt-6 flex animate-ghost-in flex-wrap gap-2" style={reveal(1)}>
         <ProfileChip icon={<Briefcase className="h-3.5 w-3.5" />} label={answers.jobTitle || roleName(answers.roleId, answers.roleOther)} />
         <ProfileChip icon={<Building2 className="h-3.5 w-3.5" />} label={industryName(answers.industryId, answers.industryOther)} />
         <span className={cn('inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-semibold ring-1 ring-inset', level.bg, level.text, level.ring)}>
@@ -252,14 +255,14 @@ export default function ReadinessPage() {
       </div>
 
       {/* ── Summary ── */}
-      <Card className="mt-6 animate-fade-up" style={reveal(2)}>
+      <Card className="mt-8 animate-ghost-in !p-6 sm:!p-10" style={reveal(2)}>
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-brand-600">
+          <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-brand-800">
             <Sparkles className="h-4 w-4" /> Your personalised analysis
           </p>
           <AISourceBadge source={a.source} />
         </div>
-        <p className="mt-3 text-[16px] leading-relaxed text-ink-900 sm:text-[17px]">{a.summary}</p>
+        <p className="mt-3 font-display text-xl leading-snug text-ink-900 sm:text-2xl">{a.summary}</p>
         {a.improvementExplanation && (
           <div className="mt-4 rounded-xl bg-brand-50/60 p-4 ring-1 ring-inset ring-brand-200/60">
             <p className="flex items-center gap-2 text-sm font-bold text-brand-800">
@@ -283,7 +286,7 @@ export default function ReadinessPage() {
       {a.careerTransition && (
         <Link
           to="/app/career"
-          className="group mt-4 flex animate-fade-up flex-col gap-4 overflow-hidden rounded-2xl bg-ink-950 p-5 text-white shadow-lift transition hover:-translate-y-0.5 sm:flex-row sm:items-center sm:p-6"
+          className="group mt-6 flex animate-ghost-in flex-col gap-4 overflow-hidden rounded-3xl bg-ink-950 p-5 text-canvas transition hover:-translate-y-0.5 hover:shadow-lift sm:flex-row sm:items-center sm:p-8"
           style={reveal(3)}
         >
           <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-400 text-ink-950">
@@ -291,12 +294,12 @@ export default function ReadinessPage() {
           </span>
           <div className="min-w-0 flex-1">
             <p className="text-xs font-bold uppercase tracking-[0.14em] text-gold-300">Career transition</p>
-            <p className="mt-1 text-lg font-extrabold tracking-tight sm:text-xl">
+            <p className="mt-1 font-display text-2xl leading-tight sm:text-3xl">
               {a.careerTransition.currentRole} <span className="text-gold-300">→</span> {a.careerTransition.targetRole}
             </p>
             <div className="mt-2 flex max-w-sm items-center gap-3">
               <ProgressBar value={a.careerTransition.readiness} tone="gold" size="xs" className="flex-1" />
-              <span className="text-sm font-semibold tabular-nums text-slate-200">Transition readiness {a.careerTransition.readiness}%</span>
+              <span className="text-sm font-semibold tabular-nums text-canvas/80">Transition readiness {a.careerTransition.readiness}%</span>
             </div>
           </div>
           <span className="inline-flex items-center gap-1.5 text-sm font-bold text-gold-300 group-hover:text-gold-200">
@@ -306,16 +309,16 @@ export default function ReadinessPage() {
       )}
 
       {/* ── Five insight sections ── */}
-      <div className="mt-6 grid gap-4 md:grid-cols-2">
+      <div className="mt-8 grid gap-6 md:grid-cols-2">
         <InsightCard style={reveal(4)} title="Your strengths" icon={<Star className="h-5 w-5" />} tone="brand" items={a.strengths} bullet={<Check className="h-3.5 w-3.5" strokeWidth={3} />} />
         <InsightCard style={reveal(5)} title="Your AI skills gaps" icon={<Target className="h-5 w-5" />} tone="clay" items={a.gaps} bullet={<span className="h-1.5 w-1.5 rounded-full bg-current" />} />
-        <InsightCard style={reveal(6)} title="How AI is changing your role" icon={<Workflow className="h-5 w-5" />} tone="sky" items={a.roleChanges} bullet={<RefreshCw className="h-3 w-3" />} />
+        <InsightCard style={reveal(6)} title="How AI is changing your role" icon={<Workflow className="h-5 w-5" />} tone="violet" items={a.roleChanges} bullet={<RefreshCw className="h-3 w-3" />} />
         <InsightCard style={reveal(7)} title="What you should learn next" icon={<GraduationCap className="h-5 w-5" />} tone="violet" items={a.learnNext} numbered />
-        <Card className="animate-fade-up md:col-span-2" style={reveal(8)}>
+        <Card className="animate-ghost-in md:col-span-2" style={reveal(8)}>
           <SectionHead title="Career opportunities" icon={<TrendingUp className="h-5 w-5" />} tone="gold" />
           <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
             {a.careerOpportunities.map((c) => (
-              <div key={c} className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50/60 px-3.5 py-3">
+              <div key={c} className="flex items-center gap-2.5 rounded-xl border border-gold-200 bg-gold-50/70 px-3.5 py-3">
                 <Briefcase className="h-4 w-4 shrink-0 text-gold-600" />
                 <span className="text-sm font-semibold text-ink-950">{c}</span>
               </div>
@@ -325,23 +328,23 @@ export default function ReadinessPage() {
       </div>
 
       {/* ── Transparency ── */}
-      <div className="mt-4 animate-fade-up" style={reveal(9)}>
+      <div className="mt-6 animate-ghost-in" style={reveal(9)}>
         <HowCalculated assessment={a} />
       </div>
 
       {/* ── Initial vs latest ── */}
       {comparison && (
-        <div className="mt-4 animate-fade-up" style={reveal(10)}>
+        <div className="mt-6 animate-ghost-in" style={reveal(10)}>
           <Comparison initial={comparison} latest={a} />
         </div>
       )}
 
       {/* ── Prescription ── */}
-      <Card className="mt-6 animate-fade-up" style={reveal(11)}>
-        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <Card className="mt-8 animate-ghost-in !p-6 sm:!p-10" style={reveal(11)}>
+        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.12em] text-brand-600">Recommend</p>
-            <h2 className="mt-1 text-xl font-extrabold tracking-tight text-ink-950 sm:text-2xl">Your AI Skills Prescription</h2>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-800">Recommend</p>
+            <h2 className="mt-1 text-3xl leading-tight text-ink-950 sm:text-4xl">Your AI Skills <em>Prescription</em></h2>
             <p className="mt-1 text-sm text-slate-500">
               {a.prescription.length} modules · about {Math.round(totalMinutes / 5) * 5} minutes · in the order that matters most for you
             </p>
@@ -357,23 +360,23 @@ export default function ReadinessPage() {
             const last = i === a.prescription.length - 1;
             return (
               <li key={p.moduleId} className="relative flex gap-3.5 pb-5 sm:gap-4">
-                {!last && <span className="absolute left-[17px] top-10 h-[calc(100%-2.5rem)] w-px bg-slate-200 sm:left-[19px]" aria-hidden />}
+                {!last && <span className="absolute left-[17px] top-10 h-[calc(100%-2.5rem)] w-px border-l border-dashed border-ink-950/20 sm:left-[19px]" aria-hidden />}
                 <span
                   className={cn(
-                    'relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-extrabold tabular-nums sm:h-10 sm:w-10',
-                    status === 'completed' ? 'bg-brand-600 text-white' : i === 0 ? 'bg-ink-950 text-white' : 'bg-white text-ink-900 ring-2 ring-slate-200',
+                    'relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-condensed text-base tabular-nums sm:h-10 sm:w-10',
+                    status === 'completed' ? 'bg-brand-800 text-canvas' : i === 0 ? 'border border-ink-950 bg-lilac-200 text-ink-950 shadow-ink-sm' : 'bg-paper text-ink-900 ring-2 ring-ink-950/10',
                   )}
                 >
                   {status === 'completed' ? <Check className="h-4 w-4" strokeWidth={3} /> : p.priority}
                 </span>
-                <div className="min-w-0 flex-1 rounded-2xl border border-slate-200/80 bg-white p-4 transition hover:border-slate-300 hover:shadow-card">
+                <div className="min-w-0 flex-1 rounded-2xl border border-ink-950/10 bg-paper p-4 transition hover:-translate-y-0.5 hover:border-ink-950 hover:shadow-ink-sm">
                   <div className="flex flex-wrap items-center gap-1.5">
                     <Badge tone={cat.tone}>{cat.label}</Badge>
                     <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-500">
                       <Clock className="h-3.5 w-3.5" /> {p.estimatedMinutes} min
                     </span>
                     {status === 'completed' && <Badge tone="brand" icon={<Check className="h-3 w-3" />}>Completed</Badge>}
-                    {status === 'in-progress' && <Badge tone="sky">In progress</Badge>}
+                    {status === 'in-progress' && <Badge tone="violet">In progress</Badge>}
                     {progress && !inPath && <Badge tone="gold" icon={<Plus className="h-3 w-3" />}>Not yet in your path</Badge>}
                   </div>
                   <h3 className="mt-2 text-[15px] font-bold leading-snug text-ink-950 sm:text-base">{p.title}</h3>
@@ -384,7 +387,7 @@ export default function ReadinessPage() {
                   {p.skillIds.length > 0 && (
                     <div className="mt-3 flex flex-wrap gap-1.5">
                       {p.skillIds.map((s) => (
-                        <span key={s} className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
+                        <span key={s} className="rounded-md bg-sand-200/70 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
                           {skillName(s)}
                         </span>
                       ))}
@@ -401,8 +404,8 @@ export default function ReadinessPage() {
             {progress
               ? missing.length
                 ? `${missing.length} prescribed module${missing.length === 1 ? ' is' : 's are'} not yet in your learning path.`
-                : 'Your learning path already includes every prescribed module.'
-              : 'Your path adapts as you learn — modules you master move you forward faster.'}
+                : 'Your learning path includes every prescribed module.'
+              : null}
           </p>
           <div className="flex flex-col gap-2 sm:flex-row">
             {progress && missing.length > 0 && (
@@ -429,16 +432,15 @@ export default function ReadinessPage() {
 function ScoreBlock({ title, hint, ring }: { title: string; hint: string; ring: ReactNode }) {
   return (
     <div className="flex flex-col items-center text-center">
-      <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500 sm:text-xs">{title}</p>
-      <div className="-my-3 sm:my-3">{ring}</div>
-      <p className="max-w-[12rem] text-xs text-slate-500 sm:text-[13px]">{hint}</p>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 sm:text-xs">{title}</p>
+      <div className="-my-3 sm:my-4" title={hint}>{ring}</div>
     </div>
   );
 }
 
 function ProfileChip({ icon, label }: { icon: ReactNode; label: string }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[13px] font-semibold text-slate-700 shadow-card ring-1 ring-inset ring-slate-200">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-paper px-3 py-1.5 text-[13px] font-semibold text-slate-700 shadow-card ring-1 ring-inset ring-ink-950/10">
       <span className="text-slate-400">{icon}</span>
       {label}
     </span>
@@ -448,8 +450,8 @@ function ProfileChip({ icon, label }: { icon: ReactNode; label: string }) {
 const SECTION_TONES = {
   brand: 'bg-brand-50 text-brand-700',
   clay: 'bg-clay-50 text-clay-600',
-  sky: 'bg-sky-50 text-sky-700',
-  violet: 'bg-violet-50 text-violet-700',
+  sky: 'bg-lilac-100 text-lilac-700',
+  violet: 'bg-lilac-100 text-lilac-800',
   gold: 'bg-gold-50 text-gold-700',
 } as const;
 
@@ -457,7 +459,7 @@ function SectionHead({ title, icon, tone }: { title: string; icon: ReactNode; to
   return (
     <div className="mb-4 flex items-center gap-3">
       <span className={cn('flex h-10 w-10 items-center justify-center rounded-xl', SECTION_TONES[tone])}>{icon}</span>
-      <h3 className="text-xs font-extrabold uppercase tracking-[0.12em] text-ink-950">{title}</h3>
+      <h3 className="font-display text-2xl leading-tight text-ink-950">{title}</h3>
     </div>
   );
 }
@@ -472,7 +474,7 @@ function InsightCard({ title, icon, tone, items, bullet, numbered, style }: {
   style?: CSSProperties;
 }) {
   return (
-    <Card className="animate-fade-up" style={style}>
+    <Card className="animate-ghost-in" style={style}>
       <SectionHead title={title} icon={icon} tone={tone} />
       <ul className="space-y-3">
         {items.map((it, i) => (
@@ -511,7 +513,7 @@ export function Quadrant({ readiness, exposure, previous, compact }: { readiness
         <div className="flex w-4 items-center justify-center">
           <span className="-rotate-90 whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">Readiness →</span>
         </div>
-        <div className="relative aspect-square w-full max-w-full overflow-hidden rounded-2xl border border-slate-200 bg-white">
+        <div className="relative aspect-square w-full max-w-full overflow-hidden rounded-2xl border border-ink-950/15 bg-paper">
           <div className="grid h-full w-full grid-cols-2 grid-rows-2">
             {QUADRANTS.map((q) => {
               const on = q.key === current;
@@ -525,12 +527,12 @@ export function Quadrant({ readiness, exposure, previous, compact }: { readiness
                     q.pos === 'top-left' && 'border-b border-r border-dashed border-slate-200',
                     q.pos === 'top-right' && 'border-b border-dashed border-slate-200',
                     q.pos === 'bottom-left' && 'border-r border-dashed border-slate-200',
-                    on ? (q.key === 'Priority Upskilling Recommended' ? 'bg-clay-50' : q.key === 'Well Positioned' ? 'bg-brand-50' : q.key === 'Future Ready' ? 'bg-sky-50' : 'bg-slate-100/70') : 'bg-white',
+                    on ? (q.key === 'Priority Upskilling Recommended' ? 'bg-clay-50' : q.key === 'Well Positioned' ? 'bg-brand-50' : q.key === 'Future Ready' ? 'bg-lilac-50' : 'bg-gold-50') : 'bg-paper',
                   )}
                 >
                   <span className="max-w-[92%]">
                     <span className={cn('block text-[10px] font-extrabold leading-tight sm:text-[11px]', on ? 'text-ink-950' : 'text-slate-400')}>{q.key === 'Priority Upskilling Recommended' ? 'Priority Upskilling' : q.key}</span>
-                    {!compact && <span className={cn('mt-0.5 hidden text-[10px] leading-tight sm:block', on ? 'text-slate-600' : 'text-slate-300')}>{q.note}</span>}
+                    {!compact && <span className={cn('mt-0.5 hidden text-[10px] leading-tight lg:block', on ? 'text-slate-600' : 'text-transparent')}>{q.note}</span>}
                   </span>
                 </div>
               );
@@ -538,7 +540,7 @@ export function Quadrant({ readiness, exposure, previous, compact }: { readiness
           </div>
           {previous && (
             <span
-              className="absolute h-3 w-3 -translate-x-1/2 translate-y-1/2 rounded-full border-2 border-dashed border-slate-400 bg-white"
+              className="absolute h-3 w-3 -translate-x-1/2 translate-y-1/2 rounded-full border-2 border-dashed border-slate-400 bg-paper"
               style={{ left: `${pad(previous.workplaceExposure)}%`, bottom: `${pad(previous.personalReadiness)}%` }}
               title={`Initial: readiness ${previous.personalReadiness}%, exposure ${previous.workplaceExposure}%`}
             />
@@ -547,8 +549,8 @@ export function Quadrant({ readiness, exposure, previous, compact }: { readiness
             className="absolute -translate-x-1/2 translate-y-1/2"
             style={{ left: `${x}%`, bottom: `${y}%`, transition: 'left 1.2s cubic-bezier(.2,.8,.2,1), bottom 1.2s cubic-bezier(.2,.8,.2,1)' }}
           >
-            <span className="absolute inset-0 -m-2 animate-ping-slow rounded-full bg-brand-500/40" />
-            <span className="relative block h-4 w-4 rounded-full border-[3px] border-white bg-brand-600 shadow-lift" />
+            <span className="absolute inset-0 -m-2 animate-ping-slow rounded-full bg-gold-400/50" />
+            <span className="relative block h-4 w-4 rounded-full border-[3px] border-paper bg-brand-800 shadow-ink-sm" />
           </span>
         </div>
       </div>
@@ -559,7 +561,7 @@ export function Quadrant({ readiness, exposure, previous, compact }: { readiness
             <span className="h-2.5 w-2.5 rounded-full border-2 border-dashed border-slate-400" /> Initial
           </span>
           <span className="inline-flex items-center gap-1">
-            <span className="h-2.5 w-2.5 rounded-full bg-brand-600" /> Now
+            <span className="h-2.5 w-2.5 rounded-full bg-brand-800" /> Now
           </span>
         </p>
       )}
@@ -580,12 +582,12 @@ function HowCalculated({ assessment }: { assessment: ReadinessAssessment }) {
   return (
     <Card padded={false}>
       <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="flex w-full items-center gap-3 p-5 text-left sm:px-6">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-ink-900">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-lilac-100 text-ink-900 ring-1 ring-inset ring-ink-950/10">
           <Calculator className="h-5 w-5" />
         </span>
         <span className="min-w-0 flex-1">
           <span className="block text-[15px] font-bold text-ink-950">How we calculated this</span>
-          <span className="block text-sm text-slate-500">Transparent, rule-based scoring — the same answers always give the same scores.</span>
+          <span className="block text-sm text-slate-500">Transparent, rule-based scoring</span>
         </span>
         <ChevronDown className={cn('h-5 w-5 shrink-0 text-slate-400 transition-transform', open && 'rotate-180')} />
       </button>
@@ -595,7 +597,7 @@ function HowCalculated({ assessment }: { assessment: ReadinessAssessment }) {
             <FactorGroup title="Personal AI readiness" icon={<Gauge className="h-4 w-4" />} total={s.personalReadiness} factors={personal} maxes={PERSONAL_MAX} color={LEVEL_COLORS[assessment.readinessLevel].hex} />
             <FactorGroup title="Workplace AI exposure" icon={<Radar className="h-4 w-4" />} total={s.workplaceExposure} factors={exposure} maxes={EXPOSURE_MAX} color={EXPOSURE_HEX} />
           </div>
-          <div className="mt-5 space-y-1.5 rounded-xl bg-slate-50 p-4 text-[13px] leading-relaxed text-slate-600">
+          <div className="mt-5 space-y-1.5 rounded-xl bg-sand-100 p-4 text-[13px] leading-relaxed text-slate-600">
             <p>
               <span className="font-semibold text-ink-900">Personal AI readiness</span> = how often you use AI (max 38) + confidence (max 26) + breadth of AI use (max 22) + experience (max 5) + AI in your workplace (max 8).
             </p>
@@ -624,7 +626,7 @@ function FactorGroup({ title, icon, total, factors, maxes, color }: { title: str
         <p className="flex items-center gap-2 text-sm font-bold text-ink-950">
           <span className="text-slate-400">{icon}</span> {title}
         </p>
-        <span className="text-sm font-extrabold tabular-nums text-ink-950">{total}/100</span>
+        <span className="font-display text-2xl font-medium leading-none tabular-nums text-ink-950">{total}<span className="text-sm text-slate-400">/100</span></span>
       </div>
       <ul className="space-y-2.5">
         {factors.map((f, i) => {
@@ -639,8 +641,8 @@ function FactorGroup({ title, icon, total, factors, maxes, color }: { title: str
                   {f.impact}
                 </span>
               </div>
-              <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-slate-100">
-                <div className="h-full rounded-full transition-[width] duration-700" style={{ width: `${Math.min(100, (Math.abs(f.impact) / max) * 100)}%`, background: neg ? '#f4511e' : color }} />
+              <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-sand-200">
+                <div className="h-full rounded-full transition-[width] duration-700" style={{ width: `${Math.min(100, (Math.abs(f.impact) / max) * 100)}%`, background: neg ? '#ff6c4c' : color }} />
               </div>
             </li>
           );
@@ -677,7 +679,7 @@ function Comparison({ initial, latest }: { initial: ReadinessAssessment; latest:
     <Card>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <p className="flex items-center gap-2 text-[15px] font-bold text-ink-950">
-          <TrendingUp className="h-4 w-4 text-brand-600" /> Initial vs latest
+          <TrendingUp className="h-4 w-4 text-brand-800" /> Initial vs latest
         </p>
         <p className="text-xs text-slate-500">
           {formatDate(initial.createdAt)} → {formatDate(latest.createdAt)}
@@ -685,17 +687,17 @@ function Comparison({ initial, latest }: { initial: ReadinessAssessment; latest:
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         {rows.map((r) => (
-          <div key={r.label} className="rounded-xl border border-slate-200 p-4">
+          <div key={r.label} className="rounded-xl border border-ink-950/10 bg-sand-100/60 p-4">
             <div className="flex items-center justify-between gap-2">
               <p className="text-[13px] font-semibold text-slate-600">{r.label}</p>
               <Delta value={r.to - r.from} />
             </div>
-            <p className="mt-1 text-2xl font-extrabold tabular-nums text-ink-950">
-              <span className="text-base font-bold text-slate-400">{r.from}% → </span>
+            <p className="mt-1 font-display text-4xl font-medium leading-none tabular-nums text-ink-950">
+              <span className="text-lg text-slate-400">{r.from}% → </span>
               {r.to}%
             </p>
-            <div className="relative mt-2 h-2 rounded-full bg-slate-100">
-              <div className="absolute inset-y-0 left-0 rounded-full bg-slate-300" style={{ width: `${r.from}%` }} />
+            <div className="relative mt-2 h-2 rounded-full bg-sand-200">
+              <div className="absolute inset-y-0 left-0 rounded-full bg-sand-400" style={{ width: `${r.from}%` }} />
               <div className="absolute inset-y-0 left-0 rounded-full opacity-90 transition-[width] duration-700" style={{ width: `${r.to}%`, background: r.color }} />
             </div>
           </div>

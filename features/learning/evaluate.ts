@@ -14,10 +14,10 @@ export const verdictFor = (score: number): AIFeedback['verdict'] =>
   score >= 85 ? 'excellent' : score >= 70 ? 'good' : score >= 50 ? 'developing' : 'needs-work';
 
 export const VERDICT_META: Record<AIFeedback['verdict'], { label: string; tone: 'brand' | 'sky' | 'gold' | 'clay'; hex: string }> = {
-  excellent: { label: 'Excellent', tone: 'brand', hex: '#0a8a5f' },
-  good: { label: 'Good', tone: 'sky', hex: '#0284c7' },
-  developing: { label: 'Developing', tone: 'gold', hex: '#d98300' },
-  'needs-work': { label: 'Needs work', tone: 'clay', hex: '#e03a0c' },
+  excellent: { label: 'Excellent', tone: 'brand', hex: '#034f46' },
+  good: { label: 'Good', tone: 'sky', hex: '#2f9f72' },
+  developing: { label: 'Developing', tone: 'gold', hex: '#dc7110' },
+  'needs-work': { label: 'Needs work', tone: 'clay', hex: '#d6361c' },
 };
 
 export const PASS_MARK = 60;

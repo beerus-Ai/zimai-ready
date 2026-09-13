@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, CircleCheck, CircleX, ClipboardCheck, Clock, Eye, ListChecks, LogOut, RotateCcw, Route, Send, Sparkles, Wrench } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CircleCheck, CircleX, ClipboardCheck, Clock, Eye, ListChecks, LogOut, RotateCcw, Route, Send, Wrench } from 'lucide-react';
 import {
   AIDisclaimer, AISourceBadge, Badge, Button, Card, CardTitle, EmptyState, ErrorState, Icon, LoadingState, Modal, OptionCard, PageHeader,
   ProgressBar, ScoreRing, Tabs, useToast,
@@ -15,6 +15,7 @@ import type { AISource, AssessmentResult } from '../../types';
 import { DIMENSION_META, DIMENSIONS, generateFinalAssessment, QUESTION_COUNT, scoreFinalAssessment, SUGGESTED_MINUTES } from './assessmentEngine';
 import type { AssessmentQuestion, FinalScore } from './assessmentEngine';
 import { BreakdownBars, Fact, LockedPanel, scoreHex } from './assessment-components';
+import { Reveal } from '../../components/motion';
 
 type Phase = 'intro' | 'loading' | 'test' | 'review' | 'saving' | 'results' | 'error';
 const LETTERS = ['A', 'B', 'C', 'D'];
@@ -95,7 +96,7 @@ export default function FinalAssessmentPage() {
     <PageHeader
       eyebrow="Stage 3 · Final knowledge assessment"
       title="Final Knowledge Assessment"
-      description={`Scenario-based questions tailored to ${domain?.name ?? 'your profession'}. Demonstrate how you use AI — knowledgeably, critically and responsibly.`}
+      description={`Scenario questions tailored to ${domain?.name ?? 'your profession'}.`}
     />
   );
 
@@ -241,9 +242,9 @@ export default function FinalAssessmentPage() {
         <div className="mb-4 flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2">
             <span className="text-sm font-bold text-ink-950">
-              Question {index + 1} <span className="font-medium text-slate-400">of {questions.length}</span>
+              Question <span className="font-display text-lg font-medium tabular-nums">{index + 1}</span> <span className="font-medium text-slate-400">of {questions.length}</span>
             </span>
-            <Badge tone="sky" icon={<Icon name={DIMENSION_META[qn.dimension].icon} className="h-3 w-3" />} className="hidden sm:inline-flex">
+            <Badge tone="violet" icon={<Icon name={DIMENSION_META[qn.dimension].icon} className="h-3 w-3" />} className="hidden sm:inline-flex">
               {DIMENSION_META[qn.dimension].label}
             </Badge>
           </div>
@@ -259,12 +260,12 @@ export default function FinalAssessmentPage() {
         </div>
         <ProgressBar value={((index + (answers[index] != null ? 1 : 0)) / questions.length) * 100} size="xs" className="mb-6" />
 
-        <Card key={qn.id} className="animate-slide-up">
-          <Badge tone="sky" icon={<Icon name={DIMENSION_META[qn.dimension].icon} className="h-3 w-3" />} className="mb-3 sm:hidden">
+        <Card key={qn.id} className="animate-ghost-in rounded-3xl">
+          <Badge tone="violet" icon={<Icon name={DIMENSION_META[qn.dimension].icon} className="h-3 w-3" />} className="mb-3 sm:hidden">
             {DIMENSION_META[qn.dimension].label}
           </Badge>
-          {qn.scenario && <p className="mb-4 rounded-xl border border-slate-100 bg-slate-50 p-4 text-[15px] leading-relaxed text-slate-700">{qn.scenario}</p>}
-          <h2 className="text-lg font-bold leading-snug text-ink-950 sm:text-xl">{qn.question}</h2>
+          {qn.scenario && <p className="mb-4 rounded-2xl border border-ink-950/10 bg-sand-100 p-4 text-[15px] leading-relaxed text-ink-700">{qn.scenario}</p>}
+          <h2 className="text-2xl leading-snug text-ink-950 sm:text-3xl">{qn.question}</h2>
           <div className="mt-5 space-y-2.5" role="radiogroup" aria-label="Answer options">
             {qn.options.map((opt, i) => (
               <OptionCard
@@ -298,7 +299,7 @@ export default function FinalAssessmentPage() {
               aria-current={i === index}
               className={cn(
                 'h-8 w-8 rounded-lg text-xs font-bold tabular-nums transition',
-                i === index ? 'bg-ink-950 text-white' : answers[i] != null ? 'bg-brand-100 text-brand-800 hover:bg-brand-200' : 'bg-slate-100 text-slate-500 hover:bg-slate-200',
+                i === index ? 'bg-ink-950 text-canvas' : answers[i] != null ? 'border border-ink-950/20 bg-lilac-200 text-ink-950 hover:bg-lilac-300' : 'bg-sand-200/70 text-ink-500 hover:bg-sand-300',
               )}
             >
               {i + 1}
@@ -320,12 +321,12 @@ export default function FinalAssessmentPage() {
     const unanswered = answers.filter((a) => a == null).length;
     return (
       <div className="mx-auto max-w-3xl animate-fade-in">
-        <PageHeader eyebrow="Final knowledge assessment" title="Review your answers" description="Check your choices before you submit. You can change any answer — once submitted, your result is recorded." />
-        <Card padded={false}>
-          <ul className="divide-y divide-slate-100">
+        <PageHeader eyebrow="Final knowledge assessment" title="Review your answers" description="Once submitted, your result is recorded." />
+        <Card padded={false} className="animate-ghost-in overflow-hidden rounded-3xl">
+          <ul className="divide-y divide-ink-950/5">
             {questions.map((x, i) => (
               <li key={x.id} className="flex items-start gap-3 px-5 py-4 sm:px-6">
-                <span className={cn('mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold', answers[i] != null ? 'bg-brand-50 text-brand-700' : 'bg-clay-50 text-clay-700')}>{i + 1}</span>
+                <span className={cn('mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold', answers[i] != null ? 'bg-lilac-100 text-ink-950' : 'bg-clay-50 text-clay-700')}>{i + 1}</span>
                 <div className="min-w-0 flex-1">
                   <p className="line-clamp-2 text-sm font-semibold text-ink-950">{x.question}</p>
                   <p className={cn('mt-0.5 text-[13px]', answers[i] != null ? 'text-slate-500' : 'font-semibold text-clay-700')}>
@@ -380,16 +381,17 @@ export default function FinalAssessmentPage() {
     ];
     const shown = sc.perQuestion.filter((p) => (filter === 'all' ? true : filter === 'correct' ? p.correct : !p.correct));
     return (
-      <div className="animate-fade-up space-y-6">
+      <div className="animate-fade-up space-y-8 sm:space-y-10">
         <PageHeader
           eyebrow="Final knowledge assessment · Results"
           title={sc.passed ? 'Knowledge competency demonstrated' : 'Not yet — you are building towards it'}
           description={sc.passed ? 'You passed the final knowledge assessment. Your practical capstone is the next step to AI Ready.' : `You scored ${sc.score}%. The pass mark is ${CERT_RULES.knowledgePassMark}%. Review the explanations below, then retake whenever you are ready.`}
         />
 
-        <Card>
-          <div className="flex flex-col items-center gap-6 md:flex-row md:items-center">
-            <ScoreRing value={sc.score} color={color} label={sc.passed ? 'Passed' : 'Score'} />
+        <Reveal>
+        <Card className="rounded-4xl">
+          <div className="flex flex-col items-center gap-8 p-1 sm:p-3 md:flex-row md:items-center md:gap-10">
+            <ScoreRing value={sc.score} size={208} stroke={16} color={color} label={sc.passed ? 'Passed' : 'Score'} />
             <div className="w-full min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge tone={sc.passed ? 'brand' : sc.score >= CERT_RULES.awareKnowledgeMark ? 'gold' : 'clay'} icon={sc.passed ? <CircleCheck className="h-3 w-3" /> : undefined}>
@@ -397,7 +399,7 @@ export default function FinalAssessmentPage() {
                 </Badge>
                 <AISourceBadge source={source} />
               </div>
-              <dl className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+              <dl className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
                 <Fact label="Correct" value={`${sc.correct}/${sc.total}`} />
                 <Fact label="Responsible AI" value={`${sc.responsibleAIScore}%`} />
                 <Fact label="Time taken" value={fmtTime(seconds)} />
@@ -416,14 +418,15 @@ export default function FinalAssessmentPage() {
             </div>
           </div>
         </Card>
+        </Reveal>
 
-        <div className="grid gap-6 lg:grid-cols-5">
-          <Card className="lg:col-span-3">
-            <CardTitle icon={<ListChecks className="h-5 w-5" />} title="Score by dimension" subtitle="Correct answers in each competency dimension." />
+        <Reveal delay={80} className="grid gap-6 lg:grid-cols-5 lg:gap-8">
+          <Card className="rounded-3xl lg:col-span-3">
+            <CardTitle icon={<ListChecks className="h-5 w-5" />} title="Score by dimension" />
             <BreakdownBars items={sc.breakdown} />
           </Card>
-          <Card className="lg:col-span-2">
-            <CardTitle icon={<Sparkles className="h-5 w-5" />} title="What happens next" />
+          <Card className="rounded-3xl lg:col-span-2">
+            <CardTitle icon={<ArrowRight className="h-5 w-5" />} title="What happens next" />
             <div className="space-y-3 text-sm text-slate-600">
               {status.capstoneUnlocked ? (
                 <p>
@@ -451,13 +454,13 @@ export default function FinalAssessmentPage() {
               </Button>
             </div>
           </Card>
-        </div>
+        </Reveal>
 
-        <Card>
+        <Reveal delay={120}>
+        <Card className="rounded-3xl">
           <CardTitle
             icon={<Eye className="h-5 w-5" />}
             title="Review every question"
-            subtitle="Learn from the explanations — they are the fastest way to improve."
           />
           <Tabs
             className="mb-5"
@@ -470,13 +473,13 @@ export default function FinalAssessmentPage() {
             ]}
           />
           {shown.length === 0 ? (
-            <p className="rounded-xl bg-slate-50 p-4 text-center text-sm text-slate-500">{filter === 'incorrect' ? 'Nothing to review — every answer was correct.' : 'No questions in this view.'}</p>
+            <p className="rounded-xl bg-sand-100 p-4 text-center text-sm text-slate-500">{filter === 'incorrect' ? 'Nothing to review — every answer was correct.' : 'No questions in this view.'}</p>
           ) : (
             <ol className="space-y-4">
               {shown.map((p) => {
                 const n = sc.perQuestion.indexOf(p) + 1;
                 return (
-                  <li key={p.question.id} className={cn('rounded-2xl border p-4 sm:p-5', p.correct ? 'border-brand-200/80 bg-brand-50/30' : 'border-clay-200/80 bg-clay-50/30')}>
+                  <li key={p.question.id} className={cn('rounded-2xl border p-4 sm:p-5', p.correct ? 'border-brand-800/15 bg-brand-50/40' : 'border-clay-200/80 bg-clay-50/40')}>
                     <div className="flex flex-wrap items-center gap-2">
                       {p.correct ? <CircleCheck className="h-5 w-5 text-brand-600" /> : <CircleX className="h-5 w-5 text-clay-600" />}
                       <span className="text-sm font-bold text-ink-950">Question {n}</span>
@@ -519,6 +522,7 @@ export default function FinalAssessmentPage() {
             <AIDisclaimer className="mt-5">Questions came from the ZimAI Ready question bank{notice ? ' because Gemini was unavailable' : ''}. Scenarios feature fictional organisations and people.</AIDisclaimer>
           )}
         </Card>
+        </Reveal>
       </div>
     );
   }
@@ -526,20 +530,21 @@ export default function FinalAssessmentPage() {
   // ───────────── Intro ─────────────
   const best = status.bestKnowledge;
   return (
-    <div className="animate-fade-up space-y-6">
+    <div className="animate-fade-up space-y-8 sm:space-y-10">
       {header}
-      <div className="grid gap-6 lg:grid-cols-5">
-        <Card className="lg:col-span-3">
+      <div className="grid gap-6 lg:grid-cols-5 lg:gap-8">
+        <Reveal className="lg:col-span-3">
+        <Card className="h-full rounded-4xl p-6 sm:p-8">
           <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-600 text-white shadow-glow">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-800 text-canvas">
               <ClipboardCheck className="h-6 w-6" />
             </div>
             <div className="min-w-0">
-              <h2 className="text-lg font-extrabold text-ink-950">Before you begin</h2>
-              <p className="mt-1 text-sm text-slate-500">Find a quiet moment. There is no hard time limit — take the time you need to think each scenario through.</p>
+              <h2 className="text-3xl leading-tight text-ink-950">Before you <em>begin</em></h2>
+              <p className="mt-1 text-sm text-slate-500">No hard time limit — take the time you need.</p>
             </div>
           </div>
-          <dl className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Fact label="Questions" value={QUESTION_COUNT} />
             <Fact label="Time" value={`~${SUGGESTED_MINUTES} min`} />
             <Fact label="Pass mark" value={`${CERT_RULES.knowledgePassMark}%`} />
@@ -547,10 +552,9 @@ export default function FinalAssessmentPage() {
           </dl>
           <ul className="mt-5 space-y-2.5 text-sm text-slate-600">
             {[
-              'One question per screen — choose the best answer for each workplace scenario.',
-              'No feedback during the test. You can move back and forth freely.',
-              'Review all your answers before you submit.',
-              'Your results include a dimension breakdown and an explanation for every question.',
+              'One scenario per screen.',
+              'No feedback until you submit — move back and forth freely.',
+              'Review your answers before submitting.',
             ].map((t) => (
               <li key={t} className="flex gap-2">
                 <CircleCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
@@ -568,14 +572,15 @@ export default function FinalAssessmentPage() {
           </div>
           <p className="mt-4 text-xs text-slate-400">Questions are generated by Gemini for {domain?.professional ?? 'your profession'}, or drawn from the ZimAI Ready question bank when AI is unavailable.</p>
         </Card>
+        </Reveal>
 
-        <div className="space-y-6 lg:col-span-2">
-          <Card>
-            <CardTitle title="What is assessed" subtitle="Six competency dimensions" />
+        <Reveal delay={100} className="space-y-6 lg:col-span-2">
+          <Card className="rounded-3xl">
+            <CardTitle title="What is assessed" />
             <ul className="space-y-3">
               {DIMENSIONS.map((d) => (
                 <li key={d} className="flex items-start gap-3">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-lilac-100 text-ink-800">
                     <Icon name={DIMENSION_META[d].icon} className="h-4 w-4" />
                   </span>
                   <div className="min-w-0 flex-1">
@@ -591,15 +596,15 @@ export default function FinalAssessmentPage() {
               ))}
             </ul>
           </Card>
-          <Card>
+          <Card className="rounded-3xl">
             <CardTitle title="Your attempts" subtitle={best ? `Best score ${best.score}%` : 'No attempts yet'} />
             {attempts.length ? (
               <ul className="space-y-2">
                 {attempts.slice(0, 4).map((a) => (
-                  <li key={a.id} className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2 text-sm">
+                  <li key={a.id} className="flex items-center justify-between rounded-xl bg-sand-100 px-3 py-2 text-sm">
                     <span className="text-slate-600">{formatDate(a.createdAt)}</span>
                     <span className="flex items-center gap-2">
-                      <span className="font-bold tabular-nums text-ink-950">{a.score}%</span>
+                      <span className="font-display text-xl font-medium leading-none tabular-nums text-ink-950">{a.score}%</span>
                       <Badge tone={a.passed ? 'brand' : 'neutral'}>{a.passed ? 'Passed' : 'Not yet'}</Badge>
                     </span>
                   </li>
@@ -609,7 +614,7 @@ export default function FinalAssessmentPage() {
               <p className="text-sm text-slate-500">Your first attempt will appear here. Only your best score counts towards certification.</p>
             )}
           </Card>
-        </div>
+        </Reveal>
       </div>
     </div>
   );

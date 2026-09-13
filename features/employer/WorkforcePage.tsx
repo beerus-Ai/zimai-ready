@@ -9,7 +9,9 @@ import { skillName } from '../../data/skills';
 import { useWorkforce } from './useWorkforce';
 import { departmentNames, requiredLevelFor, STATUS_ORDER, statusSplit } from './analytics';
 import { StackedBar } from './charts';
-import { CertBadge, MemberDetailModal, PrivacyNote, ReadinessCell, SampleDataBanner, StatusBadge, WorkforceGate } from './components';
+import { CertBadge, HeroArt, MemberDetailModal, PrivacyNote, ReadinessCell, SampleDataBanner, StatusBadge, WorkforceGate } from './components';
+import { Reveal } from '../../components/motion';
+import { TeamIdeas } from '../../components/illustrations';
 
 const PAGE_SIZE = 20;
 
@@ -51,7 +53,7 @@ function Select({ label, value, onChange, children }: { label: string; value: st
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={cn('h-10 w-full rounded-xl border bg-white px-3 text-sm text-ink-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200', value ? 'border-brand-300' : 'border-slate-200')}
+        className={cn('h-10 w-full rounded-xl border bg-paper px-3 text-sm text-ink-900 focus:border-ink-950 focus:outline-none focus:ring-2 focus:ring-lilac-200', value ? 'border-ink-950/60 bg-lilac-50' : 'border-ink-950/15')}
       >
         {children}
       </select>
@@ -147,10 +149,20 @@ function Workforce({ org, members }: { org: Organisation; members: WorkforceMemb
 
   return (
     <div className="animate-fade-in">
-      <PageHeader eyebrow={org.name} title="Employees" description="Every employee’s AI readiness, exposure, learning progress and certification — filter to find who needs support and who can lead." />
+      <PageHeader
+        eyebrow={org.name}
+        title="Employees"
+        description="Find who needs support — and who can lead."
+        actions={
+          <HeroArt>
+            <TeamIdeas className="h-28 w-36 lg:h-32 lg:w-40" animated />
+          </HeroArt>
+        }
+      />
       <SampleDataBanner organisation={org} />
 
-      <Card className="mb-4">
+      <Reveal>
+      <Card className="mb-6 rounded-3xl sm:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
           <label className="relative block flex-1">
             <span className="sr-only">Search employees</span>
@@ -159,13 +171,13 @@ function Workforce({ org, members }: { org: Organisation; members: WorkforceMemb
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by name, role or department"
-              className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200"
+              className="h-11 w-full rounded-full border border-ink-950/15 bg-paper pl-9 pr-4 text-sm focus:border-ink-950 focus:outline-none focus:ring-2 focus:ring-lilac-200"
             />
           </label>
           <div className="flex gap-2">
             <label className="block flex-1 sm:w-56">
               <span className="sr-only">Sort</span>
-              <select value={sort} onChange={(e) => setSort(e.target.value)} className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-ink-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200" aria-label="Sort employees">
+              <select value={sort} onChange={(e) => setSort(e.target.value)} className="h-11 w-full rounded-full border border-ink-950/15 bg-paper px-4 text-sm text-ink-900 focus:border-ink-950 focus:outline-none focus:ring-2 focus:ring-lilac-200" aria-label="Sort employees">
                 {SORTS.map((s) => (
                   <option key={s.id} value={s.id}>
                     Sort: {s.label}
@@ -179,7 +191,7 @@ function Workforce({ org, members }: { org: Organisation; members: WorkforceMemb
           </div>
         </div>
         {showFilters && (
-          <div className="mt-4 grid animate-fade-in gap-3 border-t border-slate-100 pt-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-4 grid animate-ghost-in gap-3 border-t border-ink-950/5 pt-4 sm:grid-cols-2 lg:grid-cols-4">
             <Select label="Department" value={department} onChange={setDepartment}>
               <option value="">All departments</option>
               {departments.map((d) => (
@@ -244,12 +256,13 @@ function Workforce({ org, members }: { org: Organisation; members: WorkforceMemb
           </div>
         )}
       </Card>
+      </Reveal>
 
       {/* Filtered summary */}
-      <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-slate-600">
-          <strong className="text-ink-950">{filtered.length}</strong> of {members.length} employees · average readiness{' '}
-          <strong className="text-ink-950">{Math.round(average(filtered.map((m) => m.readiness)))}%</strong>
+          <strong className="font-display text-xl font-medium text-ink-950">{filtered.length}</strong> of {members.length} employees · average readiness{' '}
+          <strong className="font-display text-xl font-medium text-ink-950">{Math.round(average(filtered.map((m) => m.readiness)))}%</strong>
           {skill && (
             <>
               {' '}
@@ -269,10 +282,10 @@ function Workforce({ org, members }: { org: Organisation; members: WorkforceMemb
       ) : (
         <>
           {/* Desktop table */}
-          <Card padded={false} className="hidden overflow-hidden lg:block">
+          <Card padded={false} className="hidden animate-ghost-in overflow-hidden rounded-3xl lg:block">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="border-b border-slate-100 bg-slate-50/70 text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                <thead className="border-b border-ink-950/10 bg-sand-200/60 text-[11px] font-bold uppercase tracking-[0.14em] text-ink-500">
                   <tr>
                     <th scope="col" className="px-5 py-3">Employee</th>
                     <th scope="col" className="px-3 py-3">Department</th>
@@ -284,11 +297,11 @@ function Workforce({ org, members }: { org: Organisation; members: WorkforceMemb
                     <th scope="col" className="px-5 py-3 text-right">Active</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-ink-950/5">
                   {rows.map((m) => (
-                    <tr key={m.id} className="cursor-pointer transition hover:bg-slate-50/80" onClick={() => setSelected(m)}>
+                    <tr key={m.id} className="cursor-pointer transition hover:bg-lilac-50" onClick={() => setSelected(m)}>
                       <td className="px-5 py-3">
-                        <button type="button" className="flex items-center gap-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400" onClick={(e) => { e.stopPropagation(); setSelected(m); }}>
+                        <button type="button" className="flex items-center gap-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lilac-400" onClick={(e) => { e.stopPropagation(); setSelected(m); }}>
                           <Avatar name={m.name} size={32} />
                           <span className="min-w-0">
                             <span className="block font-semibold text-ink-950">{m.name}</span>
@@ -301,7 +314,7 @@ function Workforce({ org, members }: { org: Organisation; members: WorkforceMemb
                       <td className="px-3 py-3 tabular-nums text-slate-700">{m.exposure}%</td>
                       <td className="px-3 py-3">
                         <div className="flex items-center gap-2">
-                          <div className="h-1.5 w-12 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-sky-500" style={{ width: `${m.learningProgress}%` }} /></div>
+                          <div className="h-1.5 w-12 overflow-hidden rounded-full bg-sand-200"><div className="h-full rounded-full bg-lilac-500" style={{ width: `${m.learningProgress}%` }} /></div>
                           <span className="tabular-nums text-slate-700">{m.learningProgress}%</span>
                         </div>
                       </td>
@@ -317,9 +330,9 @@ function Workforce({ org, members }: { org: Organisation; members: WorkforceMemb
 
           {/* Mobile cards */}
           <ul className="space-y-2.5 lg:hidden">
-            {rows.map((m) => (
-              <li key={m.id}>
-                <button type="button" onClick={() => setSelected(m)} className="w-full rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-card transition active:scale-[0.99]">
+            {rows.map((m, i) => (
+              <li key={m.id} className="animate-ghost-in" style={{ animationDelay: `${Math.min(i, 10) * 40}ms` }}>
+                <button type="button" onClick={() => setSelected(m)} className="w-full rounded-3xl border border-ink-950/10 bg-paper p-4 text-left shadow-card transition hover:border-ink-950 hover:shadow-ink-sm active:scale-[0.99]">
                   <div className="flex items-start gap-3">
                     <Avatar name={m.name} size={38} />
                     <div className="min-w-0 flex-1">
@@ -331,17 +344,17 @@ function Workforce({ org, members }: { org: Organisation; members: WorkforceMemb
                     <StatusBadge status={m.status} className="shrink-0" />
                   </div>
                   <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-                    <div className="rounded-lg bg-slate-50 py-1.5">
+                    <div className="rounded-xl bg-sand-100 py-1.5">
                       <p className="text-[10px] font-semibold uppercase text-slate-500">Readiness</p>
-                      <p className="text-sm font-bold tabular-nums text-ink-950">{m.readiness}%</p>
+                      <p className="font-display text-xl font-medium leading-tight tabular-nums text-ink-950">{m.readiness}%</p>
                     </div>
-                    <div className="rounded-lg bg-slate-50 py-1.5">
+                    <div className="rounded-xl bg-sand-100 py-1.5">
                       <p className="text-[10px] font-semibold uppercase text-slate-500">Exposure</p>
-                      <p className="text-sm font-bold tabular-nums text-ink-950">{m.exposure}%</p>
+                      <p className="font-display text-xl font-medium leading-tight tabular-nums text-ink-950">{m.exposure}%</p>
                     </div>
-                    <div className="rounded-lg bg-slate-50 py-1.5">
+                    <div className="rounded-xl bg-sand-100 py-1.5">
                       <p className="text-[10px] font-semibold uppercase text-slate-500">Learning</p>
-                      <p className="text-sm font-bold tabular-nums text-ink-950">{m.learningProgress}%</p>
+                      <p className="font-display text-xl font-medium leading-tight tabular-nums text-ink-950">{m.learningProgress}%</p>
                     </div>
                   </div>
                   <div className="mt-2.5 flex items-center justify-between">
@@ -355,7 +368,7 @@ function Workforce({ org, members }: { org: Organisation; members: WorkforceMemb
 
           {/* Pagination */}
           {pages > 1 && (
-            <nav className="mt-4 flex items-center justify-between gap-3" aria-label="Pagination">
+            <nav className="mt-6 flex items-center justify-between gap-3" aria-label="Pagination">
               <p className="text-xs text-slate-500">
                 Showing {(current - 1) * PAGE_SIZE + 1}–{Math.min(current * PAGE_SIZE, filtered.length)} of {filtered.length}
               </p>
@@ -370,7 +383,7 @@ function Workforce({ org, members }: { org: Organisation; members: WorkforceMemb
                         type="button"
                         onClick={() => setPage(p)}
                         aria-current={p === current ? 'page' : undefined}
-                        className={cn('h-9 min-w-9 rounded-lg px-2.5 text-sm font-semibold', p === current ? 'bg-ink-950 text-white' : 'text-slate-600 hover:bg-slate-100')}
+                        className={cn('h-9 min-w-9 rounded-lg px-2.5 text-sm font-semibold', p === current ? 'bg-ink-950 text-canvas' : 'text-slate-600 hover:bg-sand-200/60')}
                       >
                         {p}
                       </button>
@@ -383,7 +396,7 @@ function Workforce({ org, members }: { org: Organisation; members: WorkforceMemb
         </>
       )}
 
-      <PrivacyNote className="mt-6" />
+      <PrivacyNote className="mt-10" />
       <MemberDetailModal member={selected} org={org} onClose={() => setSelected(null)} />
     </div>
   );

@@ -4,7 +4,7 @@ import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Building, Check, CircleHelp, FlaskConical, Layers, Plus, Rocket, Sparkles, X } from 'lucide-react';
 import type { OrgAdoption, Organisation, WorkforceSize } from '../../types';
 import { Button, Chip, ErrorState, Icon, LoadingState, OptionCard, useToast } from '../../components/ui';
-import { AccentBar, Logo } from '../../components/brand';
+import { Logo } from '../../components/brand';
 import { useApp } from '../../services/store';
 import { COLLECTIONS } from '../../services/backend';
 import { INDUSTRIES } from '../../data/industries';
@@ -15,6 +15,7 @@ import { assessMaturity } from './maturity';
 import { competenciesFromTemplate } from './competencyTemplates';
 import { SAMPLE_COUNT_BY_SIZE } from './workforceModel';
 import { invalidateWorkforce } from './useWorkforce';
+import { TeamIdeas } from '../../components/illustrations';
 
 interface Draft {
   name: string;
@@ -101,7 +102,7 @@ function AddCustom({ placeholder, onAdd, existing, label }: { placeholder: strin
             }
           }}
           placeholder={placeholder}
-          className="h-11 min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200"
+          className="h-11 min-w-0 flex-1 rounded-xl border border-ink-950/15 bg-paper px-3 text-sm focus:border-ink-950 focus:outline-none focus:ring-2 focus:ring-lilac-200"
         />
         <Button variant="outline" onClick={submit} icon={<Plus className="h-4 w-4" />}>
           Add
@@ -150,7 +151,7 @@ export default function EmployerOnboarding() {
           onKeyDown={(e) => e.key === 'Enter' && next()}
           placeholder="e.g. Highveld Logistics Group"
           maxLength={90}
-          className="h-14 w-full rounded-2xl border-2 border-slate-200 bg-white px-4 text-lg font-semibold text-ink-950 focus:border-brand-500 focus:outline-none"
+          className="h-16 w-full rounded-2xl border-2 border-ink-950/15 bg-paper px-5 font-display text-2xl text-ink-950 placeholder:text-ink-300 focus:border-ink-950 focus:shadow-ink-sm focus:outline-none"
           aria-label="Organisation name"
         />
       ),
@@ -221,7 +222,7 @@ export default function EmployerOnboarding() {
               </Chip>
             ))}
           </div>
-          <button type="button" onClick={() => set('departmentsUsingAI', [])} className={cn('mt-4 text-sm font-semibold', draft.departmentsUsingAI.length ? 'text-slate-500 hover:text-ink-900' : 'text-brand-700')}>
+          <button type="button" onClick={() => set('departmentsUsingAI', [])} className={cn('mt-4 text-sm font-semibold', draft.departmentsUsingAI.length ? 'text-slate-500 hover:text-ink-900' : 'text-brand-800')}>
             {draft.departmentsUsingAI.length ? 'Clear — none of our departments use AI yet' : '✓ None of our departments use AI yet'}
           </button>
         </>
@@ -265,11 +266,11 @@ export default function EmployerOnboarding() {
       body: (
         <div className="space-y-4">
           <p className="text-sm font-semibold text-slate-600">
-            {draft.desiredSkills.length}/{MAX_SKILLS} selected
+            <span className="font-condensed text-lg text-ink-950">{draft.desiredSkills.length}/{MAX_SKILLS}</span> selected
           </p>
           {SKILL_GROUPS.map((g) => (
             <div key={g.label}>
-              <p className="mb-2 text-[11px] font-bold uppercase tracking-wide text-slate-400">{g.label}</p>
+              <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-500">{g.label}</p>
               <div className="flex flex-wrap gap-2">
                 {SKILLS.filter((s) => g.categories.includes(s.category) && !s.id.startsWith('domain-')).map((s) => {
                   const sel = draft.desiredSkills.includes(s.id);
@@ -369,7 +370,7 @@ export default function EmployerOnboarding() {
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
-      <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-white/90 backdrop-blur-xl">
+      <header className="sticky top-0 z-30 border-b border-ink-950/10 bg-canvas/90 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-3xl items-center justify-between gap-3 px-4 sm:px-6">
           <Logo to={organisation ? '/employer' : '/'} />
           <div className="flex items-center gap-3">
@@ -377,7 +378,7 @@ export default function EmployerOnboarding() {
             <button
               type="button"
               onClick={() => navigate(organisation ? '/employer/maturity' : '/')}
-              className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-ink-900"
+              className="rounded-full p-2 text-slate-500 hover:bg-sand-200/70 hover:text-ink-900"
               aria-label="Exit assessment"
             >
               <X className="h-5 w-5" />
@@ -386,39 +387,47 @@ export default function EmployerOnboarding() {
         </div>
         <div className="mx-auto max-w-3xl px-4 pb-3 sm:px-6">
           <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500">
-            <span>
-              Step {step + 1} of {steps.length}
+            <span className="uppercase tracking-[0.16em]">
+              Step <span className="font-condensed text-sm tracking-normal text-ink-950">{step + 1}</span> of {steps.length}
             </span>
             <span>{Math.round((step / steps.length) * 100)}% complete</span>
           </div>
           <div className="mt-1.5 flex gap-1" role="progressbar" aria-valuemin={1} aria-valuemax={steps.length} aria-valuenow={step + 1}>
             {steps.map((_, i) => (
-              <span key={i} className={cn('h-1.5 flex-1 rounded-full transition-colors', i < step ? 'bg-brand-500' : i === step ? 'bg-brand-300' : 'bg-slate-200')} />
+              <span key={i} className={cn('h-1.5 flex-1 rounded-full transition-colors', i < step ? 'bg-brand-800' : i === step ? 'bg-gold-400' : 'bg-sand-300')} />
             ))}
           </div>
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 pb-32 pt-8 sm:px-6 sm:pt-12">
-        <div key={step} className="animate-fade-up">
-          {step === 0 && !edit && (
-            <p className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700">
-              <Sparkles className="h-3.5 w-3.5" /> About 3 minutes · 9 short questions
-            </p>
-          )}
-          <h1 className="text-2xl font-extrabold tracking-tight text-ink-950 sm:text-3xl">{current.title}</h1>
-          <p className="mt-2 text-[15px] text-slate-500">{current.subtitle}</p>
-          <div className="mt-6">{current.body}</div>
+      <main className="mx-auto w-full max-w-3xl flex-1 px-4 pb-36 pt-10 sm:px-6 sm:pt-16">
+        <div key={step} className="animate-ghost-in">
+          <div className="flex items-end justify-between gap-4">
+            <div className="min-w-0">
+              {step === 0 && !edit && (
+                <p className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-ink-950 bg-lilac-200 px-3 py-1 text-xs font-semibold text-ink-950">
+                  <Sparkles className="h-3.5 w-3.5" /> About 3 minutes · 9 short questions
+                </p>
+              )}
+              <h1 className="text-3xl leading-[1.05] text-ink-950 sm:text-5xl">{current.title}</h1>
+              <p className="mt-3 text-[15px] text-ink-600">{current.subtitle}</p>
+            </div>
+            {step === 0 && (
+              <div className="pointer-events-none hidden shrink-0 animate-float sm:block" aria-hidden>
+                <TeamIdeas className="h-28 w-36 md:h-32 md:w-40" animated />
+              </div>
+            )}
+          </div>
+          <div className="mt-8 sm:mt-10">{current.body}</div>
           {touched && err && (
-            <p role="alert" className="mt-4 rounded-xl bg-clay-50 px-3.5 py-2.5 text-sm font-medium text-clay-700">
+            <p role="alert" className="mt-4 animate-ghost-in rounded-xl border border-clay-200 bg-clay-50 px-3.5 py-2.5 text-sm font-medium text-clay-700">
               {err}
             </p>
           )}
         </div>
       </main>
 
-      <footer className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl">
-        <AccentBar className="rounded-none opacity-60" />
+      <footer className="fixed inset-x-0 bottom-0 z-30 border-t border-ink-950/10 bg-canvas/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <Button variant="ghost" onClick={() => setStep((s) => Math.max(0, s - 1))} disabled={step === 0} icon={<ArrowLeft className="h-4 w-4" />}>
             Back

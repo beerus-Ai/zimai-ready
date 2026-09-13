@@ -10,7 +10,9 @@ import {
   advancedReady, competencyCoverage, competencyHeatmap, departmentsNeedingAttention, emergingSkills, mostVulnerableSkills, reskillingCandidates, reskillingPlan,
 } from './analytics';
 import { Heatmap, HorizontalBarList } from './charts';
-import { CertBadge, InsightsCard, KpiTile, MemberDetailModal, MemberRow, SampleDataBanner, WorkforceGate } from './components';
+import { CertBadge, HeroArt, InsightsCard, KpiTile, MemberDetailModal, MemberRow, SampleDataBanner, WorkforceGate } from './components';
+import { Reveal } from '../../components/motion';
+import { BrainSpark } from '../../components/illustrations';
 import { PRIORITY_META } from './competencyTemplates';
 
 export default function SkillsGapPage() {
@@ -41,26 +43,32 @@ function SkillsGap({ org, members }: { org: Organisation; members: WorkforceMemb
     <div className="animate-fade-in">
       <PageHeader
         eyebrow={org.name}
-        title="Skills-gap intelligence"
-        description="Which skills are vulnerable, which are emerging, which departments need attention — and a targeted reskilling plan for each."
+        title={<>Skills-gap <em>intelligence</em></>}
+        description="Vulnerable skills, emerging needs and where to reskill."
         actions={
-          <Button to="/employer/advisor" variant="outline" iconRight={<ArrowRight className="h-4 w-4" />}>
-            Ask the Advisor
-          </Button>
+          <div className="flex items-end gap-5">
+            <HeroArt>
+              <BrainSpark className="h-28 w-28 lg:h-32 lg:w-32" animated />
+            </HeroArt>
+            <Button to="/employer/advisor" variant="outline" iconRight={<ArrowRight className="h-4 w-4" />}>
+              Ask the Advisor
+            </Button>
+          </div>
         }
       />
       <SampleDataBanner organisation={org} />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <KpiTile label="Critical competency coverage" value={criticalAvg != null ? `${criticalAvg}%` : '—'} sub="Average share meeting critical competencies" accent="#e8590c" />
-        <KpiTile label="Most vulnerable skill" value={<span className="text-lg sm:text-xl">{vulnerable[0]?.name ?? '—'}</span>} sub={vulnerable[0] ? `${vulnerable[0].belowPct}% below required level` : undefined} accent="#e0a400" />
-        <KpiTile label="Require reskilling" value={candidates.length} sub="High AI exposure, low readiness" accent="#e8590c" />
-        <KpiTile label="Ready for advanced AI" value={advanced.length} sub="Readiness ≥ 80% and certified" accent="#0a8a5f" />
+      <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4">
+        <Reveal delay={0}><KpiTile variant="blush" label="Critical coverage" value={criticalAvg != null ? `${criticalAvg}%` : '—'} /></Reveal>
+        <Reveal delay={60}><KpiTile variant="gold" label="Most vulnerable skill" value={<span className="block text-2xl leading-tight sm:text-[28px]">{vulnerable[0]?.name ?? '—'}</span>} sub={vulnerable[0] ? `${vulnerable[0].belowPct}% below required` : undefined} /></Reveal>
+        <Reveal delay={120}><KpiTile variant="lilac" label="Require reskilling" value={candidates.length} sub="High exposure · low readiness" /></Reveal>
+        <Reveal delay={180}><KpiTile variant="sand" label="Ready for advanced AI" value={advanced.length} sub="≥ 80% · certified" /></Reveal>
       </div>
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <Card>
-          <CardTitle icon={<TrendingDown className="h-5 w-5" />} title="Most vulnerable skills" subtitle="Share of employees below the level your organisation requires" />
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <Reveal>
+        <Card className="h-full sm:p-8">
+          <CardTitle icon={<TrendingDown className="h-5 w-5" />} title="Most vulnerable skills" subtitle="% of employees below required level" />
           {vulnerable.length ? (
             <HorizontalBarList
               labelWidth="11rem"
@@ -68,7 +76,7 @@ function SkillsGap({ org, members }: { org: Organisation; members: WorkforceMemb
                 id: s.skillId,
                 label: s.name,
                 value: s.belowPct,
-                color: s.source === 'critical' ? '#e8590c' : s.source === 'important' ? '#e0a400' : '#94a3b8',
+                color: s.source === 'critical' ? '#ff6c4c' : s.source === 'important' ? '#ffa946' : '#a3a390',
                 sublabel: `${s.competencies[0] ?? (s.source === 'desired' ? 'Management priority' : 'Core AI skill')} · needs ${SKILL_LEVEL_LABELS[s.required]}`,
               }))}
               onSelect={(it) => navigate(`/employer/workforce?skill=${encodeURIComponent(it.id!)}`)}
@@ -78,23 +86,25 @@ function SkillsGap({ org, members }: { org: Organisation; members: WorkforceMemb
             <p className="text-sm text-slate-500">No skills are below the required level. Excellent.</p>
           )}
           <p className="mt-3 flex flex-wrap gap-3 text-[11px] text-slate-500">
-            <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-[3px] bg-[#e8590c]" />Critical competency</span>
-            <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-[3px] bg-[#e0a400]" />Important competency</span>
-            <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-[3px] bg-slate-400" />Other</span>
+            <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-[3px] bg-[#ff6c4c]" />Critical competency</span>
+            <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-[3px] bg-[#ffa946]" />Important competency</span>
+            <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-[3px] bg-[#a3a390]" />Other</span>
           </p>
         </Card>
-        <Card>
-          <CardTitle icon={<Sprout className="h-5 w-5" />} title="Emerging skills" subtitle="Needed for AI transformation or prioritised by management — low coverage today" />
+        </Reveal>
+        <Reveal delay={80}>
+        <Card className="h-full sm:p-8">
+          <CardTitle icon={<Sprout className="h-5 w-5" />} title="Emerging skills" subtitle="Low coverage today" />
           {emerging.length ? (
             <ul className="space-y-3">
               {emerging.map((s) => (
-                <li key={s.skillId} className="rounded-xl border border-slate-200 p-3">
+                <li key={s.skillId} className="rounded-2xl border border-ink-950/10 bg-sand-100 p-3">
                   <div className="flex items-center justify-between gap-3">
                     <p className="text-sm font-bold text-ink-950">{s.name}</p>
-                    <span className="text-sm font-bold tabular-nums text-ink-950">{s.coveragePct}%</span>
+                    <span className="font-display text-2xl font-medium leading-none tabular-nums text-ink-950">{s.coveragePct}%</span>
                   </div>
-                  <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100">
-                    <div className="h-full rounded-full bg-sky-500" style={{ width: `${s.coveragePct}%` }} />
+                  <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-sand-300/70">
+                    <div className="h-full rounded-full bg-lilac-500" style={{ width: `${s.coveragePct}%` }} />
                   </div>
                   <p className="mt-1.5 text-xs text-slate-500">
                     {s.reason} · % competent or above
@@ -106,13 +116,15 @@ function SkillsGap({ org, members }: { org: Organisation; members: WorkforceMemb
             <p className="text-sm text-slate-500">Emerging skills are already well covered.</p>
           )}
         </Card>
+        </Reveal>
       </div>
 
-      <Card className="mt-4">
+      <Reveal className="mt-6">
+      <Card className="sm:p-8">
         <CardTitle
           icon={<ShieldAlert className="h-5 w-5" />}
           title="Organisation-wide competency gaps"
-          subtitle="Share of each department meeting your employer-defined competencies"
+          subtitle="% of each department meeting each competency"
           action={
             <Button size="sm" variant="ghost" to="/employer/competencies" iconRight={<ArrowRight className="h-4 w-4" />}>
               Edit
@@ -131,26 +143,28 @@ function SkillsGap({ org, members }: { org: Organisation; members: WorkforceMemb
           <EmptyState title="No employer competencies defined" description="Define what AI readiness means for your organisation to see competency gaps." action={<Button to="/employer/competencies">Define competencies</Button>} />
         )}
       </Card>
+      </Reveal>
 
-      <Card className="mt-4">
-        <CardTitle icon={<AlertTriangle className="h-5 w-5" />} title="Departments requiring attention" subtitle="Ranked by exposure gap, low competency, priority reskilling and transformation plans" />
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <Reveal className="mt-6">
+      <Card className="sm:p-8">
+        <CardTitle icon={<AlertTriangle className="h-5 w-5" />} title="Departments requiring attention" />
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {attention.map((a) => (
             <button
               key={a.stat.department}
               type="button"
               onClick={() => navigate(`/employer/workforce?department=${encodeURIComponent(a.stat.department)}`)}
-              className={cn('rounded-2xl border p-4 text-left transition hover:shadow-lift', a.severity === 'high' ? 'border-clay-200 bg-clay-50/50' : a.severity === 'medium' ? 'border-gold-200 bg-gold-50/40' : 'border-slate-200 bg-white')}
+              className={cn('rounded-3xl border p-4 text-left transition duration-300 hover:-translate-y-0.5 hover:border-ink-950 hover:shadow-ink-sm', a.severity === 'high' ? 'border-clay-200 bg-clay-50' : a.severity === 'medium' ? 'border-gold-200 bg-gold-50' : 'border-ink-950/10 bg-sand-100')}
             >
               <div className="flex items-center justify-between gap-2">
                 <p className="font-bold text-ink-950">{a.stat.department}</p>
                 <Badge tone={a.severity === 'high' ? 'clay' : a.severity === 'medium' ? 'gold' : 'neutral'}>{a.severity}</Badge>
               </div>
-              <p className="mt-2 text-2xl font-extrabold tabular-nums text-ink-950">
-                {a.stat.readiness}% <span className="text-sm font-semibold text-slate-400">vs {a.stat.exposure}% exposure</span>
+              <p className="mt-2 font-display text-4xl font-medium leading-none tabular-nums text-ink-950">
+                {a.stat.readiness}% <span className="font-sans text-sm font-semibold text-slate-500">vs {a.stat.exposure}% exposure</span>
               </p>
               <ul className="mt-2 space-y-1 text-xs leading-snug text-slate-600">
-                {a.reasons.slice(0, 3).map((r) => (
+                {a.reasons.slice(0, 2).map((r) => (
                   <li key={r}>· {r}</li>
                 ))}
               </ul>
@@ -158,13 +172,14 @@ function SkillsGap({ org, members }: { org: Organisation; members: WorkforceMemb
           ))}
         </div>
       </Card>
+      </Reveal>
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <Card>
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <Reveal>
+        <Card className="h-full sm:p-8">
           <CardTitle
             icon={<Users className="h-5 w-5" />}
             title="Employees requiring reskilling"
-            subtitle={`${candidates.length} employees combine high AI exposure with low readiness`}
             action={
               <Button size="sm" variant="ghost" to="/employer/workforce?status=priority-reskilling" iconRight={<ArrowRight className="h-4 w-4" />}>
                 All
@@ -172,7 +187,7 @@ function SkillsGap({ org, members }: { org: Organisation; members: WorkforceMemb
             }
           />
           {candidates.length ? (
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-ink-950/5">
               {candidates.slice(0, 7).map((m) => (
                 <MemberRow
                   key={m.id}
@@ -191,11 +206,12 @@ function SkillsGap({ org, members }: { org: Organisation; members: WorkforceMemb
             <p className="text-sm text-slate-500">No employees currently need priority reskilling.</p>
           )}
         </Card>
-        <Card>
+        </Reveal>
+        <Reveal delay={80}>
+        <Card className="h-full sm:p-8">
           <CardTitle
             icon={<Rocket className="h-5 w-5" />}
             title="Ready for advanced AI responsibilities"
-            subtitle="Readiness ≥ 80% and certified — pilots, output review and mentoring"
             action={
               <Button size="sm" variant="ghost" to="/employer/workforce?sort=readiness" iconRight={<ArrowRight className="h-4 w-4" />}>
                 All
@@ -203,7 +219,7 @@ function SkillsGap({ org, members }: { org: Organisation; members: WorkforceMemb
             }
           />
           {advanced.length ? (
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-ink-950/5">
               {advanced.slice(0, 7).map((m) => (
                 <MemberRow key={m.id} member={m} onClick={() => setSelected(m)} right={<span className="flex flex-col items-end gap-0.5"><span className="text-sm font-bold tabular-nums text-brand-700">{m.readiness}%</span><CertBadge certification={m.certification} compact /></span>} />
               ))}
@@ -212,25 +228,29 @@ function SkillsGap({ org, members }: { org: Organisation; members: WorkforceMemb
             <p className="text-sm text-slate-500">No employees meet the advanced threshold yet.</p>
           )}
         </Card>
+        </Reveal>
       </div>
 
-      <InsightsCard org={org} members={members} focus="skills" title="AI skills-gap insights" className="mt-4" />
+      <Reveal className="mt-6">
+        <InsightsCard org={org} members={members} focus="skills" title="AI skills-gap insights" />
+      </Reveal>
 
       {plan && (
-        <Card className="mt-4">
-          <CardTitle icon={<BookOpen className="h-5 w-5" />} title="Targeted reskilling plans" subtitle="Recommended ZimAI Ready modules per department, ranked by the skills gap they close" />
+        <Reveal className="mt-6">
+        <Card className="sm:p-8">
+          <CardTitle icon={<BookOpen className="h-5 w-5" />} title="Targeted reskilling plans" subtitle="Recommended modules per department" />
           <Tabs tabs={plans.map((p) => ({ id: p.department, label: p.department }))} value={plan.department} onChange={setPlanDept} className="mb-4" />
-          <div key={plan.department} className="grid animate-fade-in gap-5 lg:grid-cols-[1fr_2fr]">
+          <div key={plan.department} className="grid animate-ghost-in gap-5 lg:grid-cols-[1fr_2fr]">
             <div className="space-y-3">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge tone={HORIZON_TONE[plan.horizon]}>{plan.horizon}</Badge>
                 <Badge tone="neutral">{plan.domainName}</Badge>
               </div>
               <dl className="grid grid-cols-2 gap-2 text-sm">
-                <div className="rounded-xl bg-slate-50 p-3"><dt className="text-[11px] font-semibold uppercase text-slate-500">Readiness</dt><dd className="text-xl font-extrabold tabular-nums">{plan.stat.readiness}%</dd></div>
-                <div className="rounded-xl bg-slate-50 p-3"><dt className="text-[11px] font-semibold uppercase text-slate-500">Exposure</dt><dd className="text-xl font-extrabold tabular-nums">{plan.stat.exposure}%</dd></div>
-                <div className="rounded-xl bg-slate-50 p-3"><dt className="text-[11px] font-semibold uppercase text-slate-500">Target group</dt><dd className="text-xl font-extrabold tabular-nums">{plan.targetEmployees}</dd></div>
-                <div className="rounded-xl bg-slate-50 p-3"><dt className="text-[11px] font-semibold uppercase text-slate-500">Learning time</dt><dd className="text-xl font-extrabold tabular-nums">{Math.round((plan.totalMinutes / 60) * 10) / 10}h</dd></div>
+                <div className="rounded-2xl bg-sand-100 p-3"><dt className="text-[11px] font-semibold uppercase text-slate-500">Readiness</dt><dd className="mt-0.5 font-display text-3xl font-medium leading-none tabular-nums text-ink-950">{plan.stat.readiness}%</dd></div>
+                <div className="rounded-2xl bg-sand-100 p-3"><dt className="text-[11px] font-semibold uppercase text-slate-500">Exposure</dt><dd className="mt-0.5 font-display text-3xl font-medium leading-none tabular-nums text-ink-950">{plan.stat.exposure}%</dd></div>
+                <div className="rounded-2xl bg-sand-100 p-3"><dt className="text-[11px] font-semibold uppercase text-slate-500">Target group</dt><dd className="mt-0.5 font-display text-3xl font-medium leading-none tabular-nums text-ink-950">{plan.targetEmployees}</dd></div>
+                <div className="rounded-2xl bg-sand-100 p-3"><dt className="text-[11px] font-semibold uppercase text-slate-500">Learning time</dt><dd className="mt-0.5 font-display text-3xl font-medium leading-none tabular-nums text-ink-950">{Math.round((plan.totalMinutes / 60) * 10) / 10}h</dd></div>
               </dl>
               <div>
                 <p className="mb-1.5 text-xs font-bold uppercase tracking-wide text-slate-500">Focus skills</p>
@@ -247,8 +267,8 @@ function SkillsGap({ org, members }: { org: Organisation; members: WorkforceMemb
             <div>
               <ol className="space-y-2.5">
                 {plan.modules.map((m, i) => (
-                  <li key={m.moduleId} className="flex gap-3 rounded-xl border border-slate-200 p-3.5">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white">{i + 1}</span>
+                  <li key={m.moduleId} className="flex gap-3 rounded-2xl border border-ink-950/10 bg-paper p-3.5 transition hover:border-ink-950/30">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-800 font-condensed text-sm text-canvas">{i + 1}</span>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-bold text-ink-950">{m.title}</p>
                       <p className="mt-0.5 text-xs text-slate-500">{m.reason}</p>
@@ -272,6 +292,7 @@ function SkillsGap({ org, members }: { org: Organisation; members: WorkforceMemb
             </div>
           </div>
         </Card>
+        </Reveal>
       )}
 
       <MemberDetailModal member={selected} org={org} onClose={() => setSelected(null)} />

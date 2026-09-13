@@ -8,7 +8,9 @@ import { skillName } from '../../data/skills';
 import { useWorkforce } from './useWorkforce';
 import { certificationSummary, competencyCoverage } from './analytics';
 import { ChartLegend, StackedBar } from './charts';
-import { CertBadge, KpiTile, MemberDetailModal, MemberRow, SampleDataBanner, WorkforceGate } from './components';
+import { CertBadge, HeroArt, KpiTile, MemberDetailModal, MemberRow, SampleDataBanner, WorkforceGate } from './components';
+import { Reveal } from '../../components/motion';
+import { CertificateRibbon } from '../../components/illustrations';
 import { PRIORITY_META } from './competencyTemplates';
 
 export default function EmployerCertificationPage() {
@@ -34,89 +36,85 @@ function Certification({ org, members }: { org: Organisation; members: Workforce
       <PageHeader
         eyebrow={org.name}
         title="Certification"
-        description="Two complementary credentials: independent Domain AI Ready certification, and Employer AI Ready certification against your own competency framework."
+        description="Independent domain credentials, plus your own employer standard."
         actions={
-          <Button variant="outline" to="/employer/competencies" icon={<Target className="h-4 w-4" />}>
-            Edit competencies
-          </Button>
+          <div className="flex items-end gap-5">
+            <HeroArt>
+              <CertificateRibbon className="h-28 w-28 lg:h-32 lg:w-32" animated />
+            </HeroArt>
+            <Button variant="outline" to="/employer/competencies" icon={<Target className="h-4 w-4" />}>
+              Edit competencies
+            </Button>
+          </div>
         }
       />
       <SampleDataBanner organisation={org} />
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card className="relative overflow-hidden">
-          <span className="absolute inset-x-0 top-0 h-1 bg-sky-500" aria-hidden />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Reveal>
+        <Card className="relative h-full overflow-hidden rounded-4xl border-0 bg-lilac-100/70 shadow-none sm:p-8">
           <div className="flex items-start gap-3">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-700">
+            <span className="mt-1 shrink-0 text-ink-700">
               <Globe2 className="h-6 w-6" />
             </span>
             <div className="min-w-0">
-              <h2 className="text-lg font-extrabold text-ink-950">{CERT_TYPE_META.domain.label}</h2>
-              <p className="mt-1 text-sm leading-relaxed text-slate-600">{CERT_TYPE_META.domain.description}</p>
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                <Badge tone="sky">Independent</Badge>
-                <Badge tone="sky">Profession-based</Badge>
-                <Badge tone="sky">Portable</Badge>
-              </div>
+              <h2 className="text-2xl leading-tight text-ink-950 sm:text-3xl">{CERT_TYPE_META.domain.label}</h2>
+              <p className="mt-1 text-sm leading-relaxed text-ink-600">{CERT_TYPE_META.domain.description}</p>
             </div>
           </div>
-          <div className="mt-5 flex items-end justify-between gap-4">
+          <div className="mt-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-4xl font-extrabold tabular-nums text-ink-950">{cert.domainTotal}</p>
-              <p className="text-xs text-slate-500">holders in your workforce</p>
+              <p className="font-display text-7xl font-medium leading-none tabular-nums text-ink-950">{cert.domainTotal}</p>
+              <p className="mt-1 text-xs text-ink-600">holders in your workforce</p>
             </div>
-            <div className="w-full max-w-[16rem]">
+            <div className="w-full sm:max-w-[16rem]">
               <StackedBar segments={levels.map((l) => ({ label: LEVEL_META[l].label, value: cert.domain[l], color: LEVEL_META[l].color }))} />
               <ChartLegend className="mt-2" items={levels.map((l) => ({ label: LEVEL_META[l].label, color: LEVEL_META[l].color, value: cert.domain[l] }))} />
             </div>
           </div>
-          <p className="mt-4 rounded-xl bg-slate-50 px-3 py-2 text-xs leading-relaxed text-slate-500">
-            Earned by the employee through assessments and a practical capstone in their profession. It stays with them if they change employer.
-          </p>
+          <p className="mt-6 text-xs leading-relaxed text-ink-500">Earned by the employee · stays with them if they change employer.</p>
         </Card>
+        </Reveal>
 
-        <Card className="relative overflow-hidden">
-          <span className="absolute inset-x-0 top-0 h-1 bg-brand-600" aria-hidden />
+        <Reveal delay={80}>
+        <Card className="relative h-full overflow-hidden rounded-4xl border-0 bg-brand-800 text-canvas shadow-none sm:p-8">
           <div className="flex items-start gap-3">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+            <span className="mt-1 shrink-0 text-canvas/80">
               <Building2 className="h-6 w-6" />
             </span>
             <div className="min-w-0">
-              <h2 className="text-lg font-extrabold text-ink-950">{CERT_TYPE_META.employer.label}</h2>
-              <p className="mt-1 text-sm leading-relaxed text-slate-600">{CERT_TYPE_META.employer.description}</p>
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                <Badge tone="brand">{org.name}</Badge>
-                <Badge tone="brand">Competency-based</Badge>
-                <Badge tone="brand">{org.requiredCompetencies.length} requirements</Badge>
-              </div>
+              <h2 className="text-2xl leading-tight text-canvas sm:text-3xl">{CERT_TYPE_META.employer.label}</h2>
+              <p className="mt-1 text-sm leading-relaxed text-canvas/75">{CERT_TYPE_META.employer.description}</p>
             </div>
           </div>
-          <div className="mt-5 grid grid-cols-2 gap-3">
+          <div className="mt-8 grid grid-cols-2 gap-5">
             <div>
-              <p className="text-4xl font-extrabold tabular-nums text-ink-950">{cert.employer}</p>
-              <p className="text-xs text-slate-500">holders</p>
+              <p className="font-display text-7xl font-medium leading-none tabular-nums text-canvas">{cert.employer}</p>
+              <p className="mt-1 text-xs text-canvas/65">holders</p>
             </div>
             <div>
-              <p className="text-4xl font-extrabold tabular-nums text-brand-700">{cert.eligibleNow.length}</p>
-              <p className="text-xs text-slate-500">eligible now</p>
+              <p className="font-display text-7xl font-medium leading-none tabular-nums text-gold-300">{cert.eligibleNow.length}</p>
+              <p className="mt-1 text-xs text-canvas/65">eligible now</p>
             </div>
           </div>
-          <p className="mt-4 rounded-xl bg-brand-50/60 px-3 py-2 text-xs leading-relaxed text-brand-900">
+          <p className="mt-6 text-xs leading-relaxed text-canvas/75">
             Requires <strong>Domain AI Capable or above</strong> plus every <strong>critical</strong> and <strong>important</strong> competency in your framework.
           </p>
         </Card>
+        </Reveal>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <KpiTile label="Total certified" value={cert.total} sub={`${cert.pct}% of ${members.length} employees`} accent={LEVEL_META.AI_READY.color} />
-        <KpiTile label="Domain AI Ready" value={cert.domainTotal} sub={`${cert.domain.AI_READY} at AI Ready level`} accent="#0284c7" />
-        <KpiTile label="Employer AI Ready" value={cert.employer} sub={`Against ${org.requiredCompetencies.length} competencies`} accent="#0a8a5f" />
-        <KpiTile label="Eligible now" value={cert.eligibleNow.length} sub="Ready for Employer AI Ready" accent="#e0a400" />
+      <div className="mt-6 grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4">
+        <Reveal><KpiTile variant="gold" label="Total certified" value={cert.total} sub={`${cert.pct}% of ${members.length} employees`} accent={LEVEL_META.AI_READY.color} /></Reveal>
+        <Reveal delay={60}><KpiTile variant="lilac" label="Domain AI Ready" value={cert.domainTotal} sub={`${cert.domain.AI_READY} at AI Ready level`} accent="#2f9f72" /></Reveal>
+        <Reveal delay={120}><KpiTile variant="sand" label="Employer AI Ready" value={cert.employer} sub={`Against ${org.requiredCompetencies.length} competencies`} accent="#034f46" /></Reveal>
+        <Reveal delay={180}><KpiTile variant="blush" label="Eligible now" value={cert.eligibleNow.length} sub="Ready for Employer AI Ready" accent="#ffa946" /></Reveal>
       </div>
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-5">
-        <Card className="lg:col-span-3">
-          <CardTitle icon={<Award className="h-5 w-5" />} title="Certificate holders" subtitle="Select an employee to see their competency evidence" />
+      <div className="mt-6 grid gap-6 lg:grid-cols-5">
+        <Reveal className="lg:col-span-3">
+        <Card className="h-full sm:p-8">
+          <CardTitle icon={<Award className="h-5 w-5" />} title="Certificate holders" subtitle="Select an employee for evidence" />
           <Tabs<TabId>
             className="mb-3"
             value={tab}
@@ -130,7 +128,7 @@ function Certification({ org, members }: { org: Organisation; members: Workforce
           {list.length === 0 ? (
             <EmptyState className="py-8" title={tab === 'eligible' ? 'Nobody is eligible yet' : 'No holders yet'} description={tab === 'eligible' ? 'Employees become eligible once they hold Domain AI Capable or above and meet your critical and important competencies.' : undefined} />
           ) : (
-            <div className="max-h-[480px] divide-y divide-slate-100 overflow-y-auto pr-1">
+            <div className="max-h-[480px] divide-y divide-ink-950/5 overflow-y-auto pr-1">
               {list.map((m) => (
                 <div key={m.id} className="flex items-center gap-2">
                   <div className="min-w-0 flex-1">
@@ -146,10 +144,12 @@ function Certification({ org, members }: { org: Organisation; members: Workforce
             </div>
           )}
         </Card>
+        </Reveal>
 
-        <Card className="lg:col-span-2">
+        <Reveal delay={80} className="lg:col-span-2">
+        <Card className="h-full sm:p-8">
           <CardTitle icon={<BadgeCheck className="h-5 w-5" />} title="How Employer AI Ready is earned" />
-          <ol className="space-y-3 text-sm">
+          <ol className="space-y-5 text-sm">
             {[
               { t: 'Domain certification', d: 'Hold Domain AI Ready at AI Capable level or above.' },
               { t: 'Critical competencies', d: `Meet all ${org.requiredCompetencies.filter((c) => c.priority === 'critical').length} critical competencies.` },
@@ -157,7 +157,7 @@ function Certification({ org, members }: { org: Organisation; members: Workforce
               { t: 'Renew annually', d: 'Readiness is not permanent — reassess and renew every 12 months.' },
             ].map((s, i) => (
               <li key={s.t} className="flex gap-3">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-50 text-xs font-bold text-brand-700">{i + 1}</span>
+                <span className="w-5 shrink-0 font-display text-2xl leading-none text-ink-400 tabular-nums">{i + 1}</span>
                 <span>
                   <strong className="block text-ink-950">{s.t}</strong>
                   <span className="text-slate-600">{s.d}</span>
@@ -166,13 +166,14 @@ function Certification({ org, members }: { org: Organisation; members: Workforce
             ))}
           </ol>
         </Card>
+        </Reveal>
       </div>
 
-      <Card className="mt-4">
+      <Reveal className="mt-6">
+      <Card className="sm:p-8">
         <CardTitle
           icon={<CheckCircle2 className="h-5 w-5" />}
           title="Employer AI Ready criteria"
-          subtitle={`Derived from ${org.name}'s required competencies`}
           action={
             <Button size="sm" variant="ghost" to="/employer/competencies" iconRight={<ArrowRight className="h-4 w-4" />}>
               Manage
@@ -184,7 +185,7 @@ function Certification({ org, members }: { org: Organisation; members: Workforce
         ) : (
           <div className="-mx-1 overflow-x-auto px-1">
             <table className="w-full min-w-[640px] text-left text-sm">
-              <thead className="border-b border-slate-100 text-[11px] font-bold uppercase tracking-wide text-slate-500">
+              <thead className="border-b border-ink-950/10 text-[11px] font-bold uppercase tracking-[0.14em] text-ink-500">
                 <tr>
                   <th scope="col" className="py-2.5 pr-3">Competency</th>
                   <th scope="col" className="px-3 py-2.5">Measured by</th>
@@ -194,7 +195,7 @@ function Certification({ org, members }: { org: Organisation; members: Workforce
                   <th scope="col" className="py-2.5 pl-3 text-right">Workforce meeting</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-ink-950/5">
                 {coverage.map((c) => (
                   <tr key={c.competency.id}>
                     <td className="py-3 pr-3 font-semibold text-ink-950">{c.competency.name}</td>
@@ -205,7 +206,7 @@ function Certification({ org, members }: { org: Organisation; members: Workforce
                     </td>
                     <td className="px-3 py-3 text-slate-600">{c.competency.priority === 'desirable' ? 'Tracked only' : 'Required'}</td>
                     <td className="py-3 pl-3 text-right font-bold tabular-nums text-ink-950">
-                      {c.pct}% <span className="font-medium text-slate-400">({c.met})</span>
+                      <span className="font-display text-lg font-medium">{c.pct}%</span> <span className="font-medium text-slate-400">({c.met})</span>
                     </td>
                   </tr>
                 ))}
@@ -214,6 +215,7 @@ function Certification({ org, members }: { org: Organisation; members: Workforce
           </div>
         )}
       </Card>
+      </Reveal>
 
       <MemberDetailModal member={selected} org={org} onClose={() => setSelected(null)} />
     </div>

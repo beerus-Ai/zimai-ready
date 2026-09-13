@@ -8,6 +8,21 @@ import { cn } from '../../lib/utils';
  * accessible text alternatives on every chart.
  */
 
+/** Warm, harmonious chart palette. Semantics: good = teal, mid = orange, risk = coral. */
+export const CHART_COLORS = {
+  teal: '#034f46',
+  green: '#1b8f78',
+  orange: '#ffa946',
+  coral: '#ff6c4c',
+  lilac: '#4fbf8e',
+  wine: '#7f1c34',
+  sand: '#d2d2b9',
+  good: '#034f46',
+  mid: '#ffa946',
+  risk: '#ff6c4c',
+} as const;
+export const CHART_SERIES = ['#034f46', '#ffa946', '#4fbf8e', '#ff6c4c', '#1b8f78', '#7f1c34', '#d2d2b9'] as const;
+
 // ───────────────────────── Hooks & primitives ─────────────────────────
 
 export function useAppear(delay = 80) {
@@ -37,7 +52,7 @@ export function useElementWidth<T extends HTMLElement>() {
 function Tip({ x, y, width, children }: { x: number; y: number; width: number; children: ReactNode }) {
   const left = Math.max(80, Math.min(Math.max(80, width - 80), x));
   return (
-    <div className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-lg bg-ink-950 px-2.5 py-1.5 text-xs text-white shadow-lift" style={{ left, top: y - 8 }}>
+    <div className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-xl border border-ink-950 bg-ink-950 px-2.5 py-1.5 text-xs text-canvas shadow-lift" style={{ left, top: y - 8 }}>
       {children}
     </div>
   );
@@ -98,7 +113,7 @@ export function DonutChart({ segments, size = 184, thickness = 20, centerValue, 
   return (
     <div className={cn('relative inline-flex shrink-0 items-center justify-center', className)} style={{ width: size, height: size }} role="img" aria-label={summary}>
       <svg width={size} height={size} className="-rotate-90" aria-hidden>
-        <circle cx={size / 2} cy={size / 2} r={rad} fill="none" stroke="#eef1f4" strokeWidth={thickness} />
+        <circle cx={size / 2} cy={size / 2} r={rad} fill="none" stroke="#ebebd8" strokeWidth={thickness} />
         {arcs.map((a, i) => (
           <circle
             key={segments[i].label}
@@ -120,14 +135,14 @@ export function DonutChart({ segments, size = 184, thickness = 20, centerValue, 
       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
         {h ? (
           <>
-            <span className="text-3xl font-extrabold tabular-nums text-ink-950">{Math.round((h.value / total) * 100)}%</span>
+            <span className="font-display text-4xl font-medium leading-none tabular-nums text-ink-950">{Math.round((h.value / total) * 100)}%</span>
             <span className="mt-0.5 max-w-[70%] text-[11px] font-semibold leading-tight text-slate-500">
               {h.label} · {h.value}
             </span>
           </>
         ) : (
           <>
-            <span className="text-3xl font-extrabold tabular-nums text-ink-950">{centerValue}</span>
+            <span className="font-display text-4xl font-medium leading-none tabular-nums text-ink-950">{centerValue}</span>
             {centerLabel && <span className="mt-0.5 max-w-[70%] text-[11px] font-semibold uppercase leading-tight tracking-wide text-slate-500">{centerLabel}</span>}
           </>
         )}
@@ -142,7 +157,7 @@ export function StackedBar({ segments, height = 8, className, label }: { segment
   const on = useAppear();
   const total = segments.reduce((a, s) => a + s.value, 0) || 1;
   return (
-    <div className={cn('flex w-full gap-[2px] overflow-hidden rounded-full bg-slate-100', className)} style={{ height }} role="img" aria-label={label ?? segments.map((s) => `${s.label} ${s.value}`).join(', ')}>
+    <div className={cn('flex w-full gap-[2px] overflow-hidden rounded-full bg-sand-200', className)} style={{ height }} role="img" aria-label={label ?? segments.map((s) => `${s.label} ${s.value}`).join(', ')}>
       {segments
         .filter((s) => s.value > 0)
         .map((s) => (
@@ -189,10 +204,10 @@ export function HorizontalBarList({ items, max = 100, onSelect, labelWidth = '9.
               <span className="block truncate text-[13px] font-semibold text-ink-900">{it.label}</span>
               {it.sublabel && <span className="block truncate text-[11px] text-slate-500">{it.sublabel}</span>}
             </span>
-            <span className="relative h-2.5 w-full rounded-full bg-slate-100">
+            <span className="relative h-2.5 w-full rounded-full bg-sand-200">
               <span
                 className="absolute inset-y-0 left-0 rounded-full"
-                style={{ width: on ? `${w}%` : '0%', background: it.color ?? '#0a8a5f', transition: 'width .9s cubic-bezier(.2,.8,.2,1)' }}
+                style={{ width: on ? `${w}%` : '0%', background: it.color ?? CHART_COLORS.good, transition: 'width .9s cubic-bezier(.2,.8,.2,1)' }}
               />
               {it.marker != null && (
                 <span
@@ -212,11 +227,11 @@ export function HorizontalBarList({ items, max = 100, onSelect, labelWidth = '9.
         return (
           <li key={it.id ?? it.label}>
             {onSelect ? (
-              <button type="button" onClick={() => onSelect(it)} className={cn(cls, 'transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400')} style={style} title={title}>
+              <button type="button" onClick={() => onSelect(it)} className={cn(cls, 'transition hover:bg-sand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lilac-400')} style={style} title={title}>
                 {content}
               </button>
             ) : (
-              <div className={cn(cls, 'hover:bg-slate-50')} style={style} title={title}>
+              <div className={cn(cls, 'hover:bg-sand-100')} style={style} title={title}>
                 {content}
               </div>
             )}
@@ -261,8 +276,8 @@ export function VerticalBarChart({ data, height = 190, max = 100, suffix = '%', 
                 <div key={d.label} className="relative flex h-full flex-1 flex-col items-center justify-end" onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)}>
                   <span className={cn('mb-1 text-[11px] font-bold tabular-nums transition', hover === i ? 'text-ink-950' : 'text-slate-600')}>{d.display ?? `${Math.round(d.value)}${suffix}`}</span>
                   <div
-                    className="w-full max-w-[42px] rounded-t-[4px] transition-[height,opacity] duration-700 ease-out"
-                    style={{ height: on ? `${h}%` : '0%', background: d.color ?? '#0a8a5f', opacity: hover == null || hover === i ? 1 : 0.55 }}
+                    className="w-full max-w-[42px] rounded-t-lg transition-[height,opacity] duration-700 ease-out"
+                    style={{ height: on ? `${h}%` : '0%', background: d.color ?? CHART_COLORS.good, opacity: hover == null || hover === i ? 1 : 0.55 }}
                   />
                 </div>
               );
@@ -289,15 +304,15 @@ const mix = (a: string, b: string, t: number) => {
   const [rb, gb, bb] = hexToRgb(b);
   return `rgb(${Math.round(ra + (rb - ra) * t)}, ${Math.round(ga + (gb - ga) * t)}, ${Math.round(ba + (bb - ba) * t)})`;
 };
-const LOW = '#e8590c';
-const MID = '#eef1f4';
-const HIGH = '#0a8a5f';
+const LOW = CHART_COLORS.risk;
+const MID = '#f5f5e6';
+const HIGH = CHART_COLORS.good;
 
-/** Diverging colour: clay below the target, neutral grey at the target, green above. */
+/** Diverging colour: coral below the target, warm sand at the target, teal above. */
 export function divergingColor(v: number, mid = 50): { bg: string; fg: string } {
   const t = v < mid ? (mid - v) / mid : (v - mid) / (100 - mid);
   const bg = v < mid ? mix(MID, LOW, Math.min(1, t)) : mix(MID, HIGH, Math.min(1, t));
-  return { bg, fg: t > 0.55 ? '#ffffff' : '#0b1220' };
+  return { bg, fg: t > 0.55 && v >= mid ? '#fffeeb' : '#1a1a1a' };
 }
 
 export function Heatmap({ rows, cols, values, mid = 50, format = (v: number) => `${v}%`, rowHeader = 'Department', onCellClick, describe }: {
@@ -317,7 +332,7 @@ export function Heatmap({ rows, cols, values, mid = 50, format = (v: number) => 
         <table className="w-full min-w-[560px] border-separate" style={{ borderSpacing: 3 }}>
           <thead>
             <tr>
-              <th scope="col" className="sticky left-0 z-10 bg-white px-2 pb-2 text-left align-bottom text-[11px] font-bold uppercase tracking-wide text-slate-400">
+              <th scope="col" className="sticky left-0 z-10 bg-paper px-2 pb-2 text-left align-bottom text-[11px] font-bold uppercase tracking-wide text-slate-400">
                 {rowHeader}
               </th>
               {cols.map((c) => (
@@ -331,7 +346,7 @@ export function Heatmap({ rows, cols, values, mid = 50, format = (v: number) => 
           <tbody>
             {rows.map((row, ri) => (
               <tr key={row.id}>
-                <th scope="row" className="sticky left-0 z-10 bg-white pr-3 text-left">
+                <th scope="row" className="sticky left-0 z-10 bg-paper pr-3 text-left">
                   <span className="block whitespace-nowrap text-[13px] font-semibold text-ink-900">{row.label}</span>
                   {row.sub && <span className="block text-[11px] font-normal text-slate-400">{row.sub}</span>}
                 </th>
@@ -341,7 +356,7 @@ export function Heatmap({ rows, cols, values, mid = 50, format = (v: number) => 
                   const text = describe ? describe(ri, ci, v) : `${row.label} — ${c.label}: ${format(v)}`;
                   const cell = (
                     <span
-                      className="flex h-11 items-center justify-center rounded-md text-[13px] font-bold tabular-nums transition-opacity duration-500"
+                      className="flex h-11 items-center justify-center rounded-lg text-[13px] font-bold tabular-nums transition-opacity duration-500"
                       style={{ background: bg, color: fg, opacity: on ? 1 : 0, transitionDelay: `${(ri * cols.length + ci) * 12}ms` }}
                     >
                       {format(v)}
@@ -350,7 +365,7 @@ export function Heatmap({ rows, cols, values, mid = 50, format = (v: number) => 
                   return (
                     <td key={c.id} className="p-0" title={text}>
                       {onCellClick ? (
-                        <button type="button" className="block w-full rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 hover:ring-2 hover:ring-ink-900/20" onClick={() => onCellClick(ri, ci)} aria-label={text}>
+                        <button type="button" className="block w-full rounded-lg transition hover:-translate-y-px hover:shadow-ink-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lilac-400" onClick={() => onCellClick(ri, ci)} aria-label={text}>
                           {cell}
                         </button>
                       ) : (
@@ -370,7 +385,7 @@ export function Heatmap({ rows, cols, values, mid = 50, format = (v: number) => 
         <span>0%</span>
         <span className="h-2 w-40 rounded-full" style={{ background: `linear-gradient(90deg, ${LOW}, ${MID}, ${HIGH})` }} aria-hidden />
         <span>100%</span>
-        <span className="text-slate-400">· grey = {mid}% target · each cell shows the share meeting the requirement</span>
+        <span className="text-slate-400">· sand = {mid}% target · each cell shows the share meeting the requirement</span>
       </div>
     </div>
   );
@@ -415,10 +430,10 @@ export function QuadrantScatter({ points, xThreshold = 65, yThreshold = 60, xLab
   const ticksY = Array.from({ length: Math.floor((100 - y0) / 20) + 1 }, (_, i) => y0 + i * 20);
   const rOf = (p: ScatterPoint) => (p.size ? Math.max(7, Math.min(24, 5 + Math.sqrt(p.size) * 2.6)) : 5);
   const quad = [
-    { x: pad.l, y: pad.t, w: xt - pad.l, h: yt - pad.t, fill: '#f0f9ff', label: 'Future ready', ax: pad.l + 8, ay: pad.t + 16, anchor: 'start' as const },
-    { x: xt, y: pad.t, w: pad.l + pw - xt, h: yt - pad.t, fill: '#edfcf5', label: 'Well positioned', ax: pad.l + pw - 8, ay: pad.t + 16, anchor: 'end' as const },
-    { x: pad.l, y: yt, w: xt - pad.l, h: pad.t + ph - yt, fill: '#f8fafc', label: 'Build foundations', ax: pad.l + 8, ay: pad.t + ph - 8, anchor: 'start' as const },
-    { x: xt, y: yt, w: pad.l + pw - xt, h: pad.t + ph - yt, fill: '#fff4ed', label: 'Priority reskilling', ax: pad.l + pw - 8, ay: pad.t + ph - 8, anchor: 'end' as const },
+    { x: pad.l, y: pad.t, w: xt - pad.l, h: yt - pad.t, fill: '#f1fbf6', label: 'Future ready', ax: pad.l + 8, ay: pad.t + 16, anchor: 'start' as const },
+    { x: xt, y: pad.t, w: pad.l + pw - xt, h: yt - pad.t, fill: '#eefaf6', label: 'Well positioned', ax: pad.l + pw - 8, ay: pad.t + 16, anchor: 'end' as const },
+    { x: pad.l, y: yt, w: xt - pad.l, h: pad.t + ph - yt, fill: '#fbfbf1', label: 'Build foundations', ax: pad.l + 8, ay: pad.t + ph - 8, anchor: 'start' as const },
+    { x: xt, y: yt, w: pad.l + pw - xt, h: pad.t + ph - yt, fill: '#fff3ef', label: 'Priority reskilling', ax: pad.l + pw - 8, ay: pad.t + ph - 8, anchor: 'end' as const },
   ];
   return (
     <div ref={ref} className="relative w-full" style={{ height }}>
@@ -442,10 +457,10 @@ export function QuadrantScatter({ points, xThreshold = 65, yThreshold = 60, xLab
               {t}
             </text>
           ))}
-          <line x1={pad.l} x2={pad.l + pw} y1={pad.t + ph} y2={pad.t + ph} stroke="#cbd5e1" />
-          <line x1={pad.l} x2={pad.l} y1={pad.t} y2={pad.t + ph} stroke="#cbd5e1" />
-          <line x1={xt} x2={xt} y1={pad.t} y2={pad.t + ph} stroke="#94a3b8" strokeDasharray="4 4" />
-          <line x1={pad.l} x2={pad.l + pw} y1={yt} y2={yt} stroke="#94a3b8" strokeDasharray="4 4" />
+          <line x1={pad.l} x2={pad.l + pw} y1={pad.t + ph} y2={pad.t + ph} stroke="#d2d2b9" />
+          <line x1={pad.l} x2={pad.l} y1={pad.t} y2={pad.t + ph} stroke="#d2d2b9" />
+          <line x1={xt} x2={xt} y1={pad.t} y2={pad.t + ph} stroke="#a3a390" strokeDasharray="4 4" />
+          <line x1={pad.l} x2={pad.l + pw} y1={yt} y2={yt} stroke="#a3a390" strokeDasharray="4 4" />
           <text x={pad.l + pw / 2} y={height - 4} textAnchor="middle" className="fill-slate-500" style={{ fontSize: 11, fontWeight: 600 }}>
             {xLabel} (%) →
           </text>
@@ -467,9 +482,9 @@ export function QuadrantScatter({ points, xThreshold = 65, yThreshold = 60, xLab
                 style={{ opacity: on ? 1 : 0, transition: `opacity .5s ease ${i * 40}ms` }}
               >
                 <circle cx={cx} cy={cy} r={Math.max(rr, 12)} fill="transparent" />
-                <circle cx={cx} cy={cy} r={hover?.id === p.id ? rr + 2 : rr} fill={p.color ?? '#0a8a5f'} fillOpacity={0.88} stroke="#ffffff" strokeWidth={2} />
+                <circle cx={cx} cy={cy} r={hover?.id === p.id ? rr + 2 : rr} fill={p.color ?? CHART_COLORS.good} fillOpacity={0.9} stroke="#1a1a1a" strokeOpacity={hover?.id === p.id ? 1 : 0.5} strokeWidth={hover?.id === p.id ? 1.5 : 1} />
                 {showLabels && (
-                  <text x={right ? cx + rr + 5 : cx - rr - 5} y={cy + 4} textAnchor={right ? 'start' : 'end'} className="fill-ink-900" style={{ fontSize: 11.5, fontWeight: 700, paintOrder: 'stroke', stroke: '#ffffff', strokeWidth: 3 }}>
+                  <text x={right ? cx + rr + 5 : cx - rr - 5} y={cy + 4} textAnchor={right ? 'start' : 'end'} className="fill-ink-900" style={{ fontSize: 11.5, fontWeight: 700, paintOrder: 'stroke', stroke: '#fffdf6', strokeWidth: 3 }}>
                     {p.label}
                   </text>
                 )}
@@ -481,7 +496,7 @@ export function QuadrantScatter({ points, xThreshold = 65, yThreshold = 60, xLab
       {hover && (
         <Tip x={sx(hover.x)} y={sy(hover.y) - rOf(hover)} width={width}>
           <p className="font-bold">{hover.label}</p>
-          <p className="text-slate-300">
+          <p className="text-canvas/70">
             Exposure {hover.x}% · Readiness {hover.y}%{hover.sub ? ` · ${hover.sub}` : ''}
           </p>
         </Tip>
@@ -492,7 +507,7 @@ export function QuadrantScatter({ points, xThreshold = 65, yThreshold = 60, xLab
 
 // ───────────────────────── Radar ─────────────────────────
 
-export function RadarChart({ axes, max = 100, color = '#0a8a5f', size = 320, className, compare }: {
+export function RadarChart({ axes, max = 100, color = CHART_COLORS.good, size = 320, className, compare }: {
   axes: { label: string; value: number }[];
   max?: number;
   color?: string;
@@ -515,18 +530,18 @@ export function RadarChart({ axes, max = 100, color = '#0a8a5f', size = 320, cla
       {width > 0 && (
         <svg width={w} height={w} overflow="visible" style={{ overflow: 'visible' }} role="img" aria-label={axes.map((a) => `${a.label} ${a.value}`).join(', ')}>
           {[0.2, 0.4, 0.6, 0.8, 1].map((f) => (
-            <polygon key={f} points={axes.map((_, i) => pt(i, max * f).join(',')).join(' ')} fill="none" stroke="#e2e8f0" strokeWidth={1} />
+            <polygon key={f} points={axes.map((_, i) => pt(i, max * f).join(',')).join(' ')} fill="none" stroke="#e4e4d0" strokeWidth={1} />
           ))}
           {axes.map((_, i) => {
             const [x, y] = pt(i, max);
-            return <line key={i} x1={c} y1={c} x2={x} y2={y} stroke="#e2e8f0" />;
+            return <line key={i} x1={c} y1={c} x2={x} y2={y} stroke="#e4e4d0" />;
           })}
-          {compare && <polygon points={poly(compare.values)} fill="none" stroke="#94a3b8" strokeWidth={1.5} strokeDasharray="4 3" />}
+          {compare && <polygon points={poly(compare.values)} fill="none" stroke="#a3a390" strokeWidth={1.5} strokeDasharray="4 3" />}
           <g style={{ transform: `scale(${on ? 1 : 0.2})`, transformOrigin: `${c}px ${c}px`, opacity: on ? 1 : 0, transition: 'transform .9s cubic-bezier(.2,.8,.2,1), opacity .5s' }}>
-            <polygon points={poly(axes.map((a) => a.value))} fill={color} fillOpacity={0.16} stroke={color} strokeWidth={2} strokeLinejoin="round" />
+            <polygon points={poly(axes.map((a) => a.value))} fill={color} fillOpacity={0.18} stroke={color} strokeWidth={2.25} strokeLinejoin="round" />
             {axes.map((a, i) => {
               const [x, y] = pt(i, a.value);
-              return <circle key={a.label} cx={x} cy={y} r={4} fill={color} stroke="#fff" strokeWidth={2} />;
+              return <circle key={a.label} cx={x} cy={y} r={4} fill={color} stroke="#fffdf6" strokeWidth={2} />;
             })}
           </g>
           {axes.map((a, i) => {
@@ -603,7 +618,7 @@ export function AreaLine({ series, labels, height = 220, yMax = 100, yMin = 0, s
             </defs>
             {ticks.map((t) => (
               <g key={t}>
-                <line x1={pad.l} x2={pad.l + pw} y1={sy(t)} y2={sy(t)} stroke={t === yMin ? '#cbd5e1' : '#eef1f4'} strokeDasharray={t === yMin ? undefined : '3 4'} />
+                <line x1={pad.l} x2={pad.l + pw} y1={sy(t)} y2={sy(t)} stroke={t === yMin ? '#d2d2b9' : '#ebebd8'} strokeDasharray={t === yMin ? undefined : '3 4'} />
                 <text x={pad.l - 6} y={sy(t) + 3} textAnchor="end" className="fill-slate-400" style={{ fontSize: 10 }}>
                   {t}
                 </text>
@@ -617,11 +632,11 @@ export function AreaLine({ series, labels, height = 220, yMax = 100, yMin = 0, s
             <g clipPath={`url(#clip-${gid})`}>
               {series[0] && <path d={`${path(series[0].values)} L${sx(n - 1)},${sy(yMin)} L${sx(0)},${sy(yMin)} Z`} fill={`url(#area-${gid})`} />}
               {series.map((s) => (
-                <path key={s.id} d={path(s.values)} fill="none" stroke={s.color} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
+                <path key={s.id} d={path(s.values)} fill="none" stroke={s.color} strokeWidth={2.25} strokeLinejoin="round" strokeLinecap="round" />
               ))}
               {series.map((s) => (
                 <g key={`end-${s.id}`}>
-                  <circle cx={sx(n - 1)} cy={sy(s.values[n - 1])} r={4} fill={s.color} stroke="#fff" strokeWidth={2} />
+                  <circle cx={sx(n - 1)} cy={sy(s.values[n - 1])} r={4} fill={s.color} stroke="#fffdf6" strokeWidth={2} />
                   <text x={sx(n - 1) + 7} y={sy(s.values[n - 1]) + 4} className="fill-ink-900" style={{ fontSize: 11, fontWeight: 700 }}>
                     {s.values[n - 1]}
                     {suffix}
@@ -631,9 +646,9 @@ export function AreaLine({ series, labels, height = 220, yMax = 100, yMin = 0, s
             </g>
             {idx != null && (
               <g pointerEvents="none">
-                <line x1={sx(idx)} x2={sx(idx)} y1={pad.t} y2={pad.t + ph} stroke="#94a3b8" strokeDasharray="3 3" />
+                <line x1={sx(idx)} x2={sx(idx)} y1={pad.t} y2={pad.t + ph} stroke="#a3a390" strokeDasharray="3 3" />
                 {series.map((s) => (
-                  <circle key={s.id} cx={sx(idx)} cy={sy(s.values[idx])} r={4.5} fill={s.color} stroke="#fff" strokeWidth={2} />
+                  <circle key={s.id} cx={sx(idx)} cy={sy(s.values[idx])} r={4.5} fill={s.color} stroke="#fffdf6" strokeWidth={2} />
                 ))}
               </g>
             )}
@@ -644,9 +659,9 @@ export function AreaLine({ series, labels, height = 220, yMax = 100, yMin = 0, s
           <Tip x={sx(idx)} y={Math.min(...series.map((s) => sy(s.values[idx])))} width={width}>
             <p className="mb-0.5 font-bold">{labels[idx]}</p>
             {series.map((s) => (
-              <p key={s.id} className="flex items-center gap-1.5 text-slate-200">
+              <p key={s.id} className="flex items-center gap-1.5 text-canvas/80">
                 <span className="h-2 w-2 rounded-full" style={{ background: s.color }} />
-                {s.label}: <span className="font-semibold text-white">{s.values[idx]}{suffix}</span>
+                {s.label}: <span className="font-semibold text-canvas">{s.values[idx]}{suffix}</span>
               </p>
             ))}
           </Tip>
@@ -657,7 +672,7 @@ export function AreaLine({ series, labels, height = 220, yMax = 100, yMin = 0, s
   );
 }
 
-export function Sparkline({ values, color = '#0a8a5f', height = 36, className, fill = true, label }: { values: number[]; color?: string; height?: number; className?: string; fill?: boolean; label?: string }) {
+export function Sparkline({ values, color = CHART_COLORS.good, height = 36, className, fill = true, label }: { values: number[]; color?: string; height?: number; className?: string; fill?: boolean; label?: string }) {
   const gid = useId().replace(/:/g, '');
   const min = Math.min(...values);
   const max = Math.max(...values);

@@ -1,8 +1,9 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertTriangle, CheckCircle2, Cpu, Info, Loader2, RefreshCw, Rocket, Sparkles, X, Hammer } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, ChevronDown, Cpu, Info, Loader2, RefreshCw, Rocket, Sparkles, X, Hammer } from 'lucide-react';
 import { cn, initials } from '../../lib/utils';
+import { GhostMascot } from '../illustrations';
 import type { AISource } from '../../types';
 
 export { Icon, ICONS } from './Icon';
@@ -11,20 +12,20 @@ export { RichText } from './RichText';
 /* ───────────────────────────── Button ───────────────────────────── */
 
 const VARIANTS = {
-  primary: 'bg-brand-600 text-white hover:bg-brand-700 shadow-sm shadow-brand-900/10 focus-visible:ring-brand-500',
-  secondary: 'bg-brand-50 text-brand-800 hover:bg-brand-100 focus-visible:ring-brand-400',
-  outline: 'border border-slate-200 bg-white text-slate-800 hover:bg-slate-50 hover:border-slate-300 focus-visible:ring-slate-400',
-  ghost: 'text-slate-700 hover:bg-slate-100 focus-visible:ring-slate-400',
-  gold: 'bg-gold-400 text-ink-950 hover:bg-gold-300 shadow-sm shadow-gold-900/10 focus-visible:ring-gold-500',
-  dark: 'bg-ink-950 text-white hover:bg-ink-800 focus-visible:ring-ink-700',
-  white: 'bg-white text-ink-950 hover:bg-slate-100 shadow-sm focus-visible:ring-white',
-  danger: 'bg-clay-600 text-white hover:bg-clay-700 focus-visible:ring-clay-500',
+  primary: 'border border-ink-950 bg-lilac-200 text-ink-950 hover:bg-lilac-300 hover:-translate-y-px hover:shadow-ink-sm focus-visible:ring-lilac-400',
+  secondary: 'border border-brand-800/10 bg-brand-50 text-brand-800 hover:bg-brand-100 focus-visible:ring-brand-400',
+  outline: 'border border-ink-950/15 bg-paper text-ink-900 hover:border-ink-950/40 hover:bg-white focus-visible:ring-ink-400',
+  ghost: 'text-ink-700 hover:bg-ink-950/5 focus-visible:ring-ink-400',
+  gold: 'border border-ink-950 bg-gold-400 text-ink-950 hover:bg-gold-300 hover:-translate-y-px hover:shadow-ink-sm focus-visible:ring-gold-500',
+  dark: 'border border-ink-950 bg-ink-950 text-canvas hover:bg-ink-800 focus-visible:ring-ink-700',
+  white: 'border border-canvas bg-canvas text-ink-950 hover:bg-lilac-200 focus-visible:ring-canvas',
+  danger: 'border border-clay-800 bg-clay-600 text-white hover:bg-clay-700 focus-visible:ring-clay-500',
 } as const;
 
 const SIZES = {
-  sm: 'h-9 px-3.5 text-sm gap-1.5 rounded-lg',
+  sm: 'h-9 px-3.5 text-sm gap-1.5 rounded-[10px]',
   md: 'h-11 px-5 text-[15px] gap-2 rounded-xl',
-  lg: 'h-12 sm:h-14 px-6 sm:px-7 text-base gap-2.5 rounded-xl',
+  lg: 'h-12 sm:h-14 px-6 sm:px-7 text-base gap-2.5 rounded-2xl',
 } as const;
 
 export type ButtonVariant = keyof typeof VARIANTS;
@@ -44,7 +45,7 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 export function Button({ variant = 'primary', size = 'md', loading, icon, iconRight, full, to, href, className, children, disabled, type, ...rest }: ButtonProps) {
   const cls = cn(
-    'inline-flex items-center justify-center font-semibold transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none select-none whitespace-nowrap',
+    'inline-flex items-center justify-center font-semibold transition-all duration-200 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none select-none whitespace-nowrap',
     VARIANTS[variant],
     SIZES[size],
     full && 'w-full',
@@ -92,11 +93,11 @@ export function Card({ className, children, hover, padded = true, ...rest }: HTM
       className={cn(
         'rounded-2xl',
         !noBorder && !borderWidth && 'border',
-        !noBorder && !borderColour && 'border-slate-200/80',
-        !hasBg && 'bg-white',
+        !noBorder && !borderColour && 'border-ink-950/[0.08]',
+        !hasBg && 'bg-paper',
         !hasShadow && 'shadow-card',
         padded && 'p-5 sm:p-6',
-        hover && 'transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lift',
+        hover && 'transition duration-300 hover:-translate-y-1 hover:border-ink-950/20 hover:shadow-lift',
         className,
       )}
       {...rest}
@@ -110,7 +111,7 @@ export function CardTitle({ icon, title, subtitle, action, className }: { icon?:
   return (
     <div className={cn('mb-4 flex items-start justify-between gap-3', className)}>
       <div className="flex min-w-0 items-start gap-3">
-        {icon && <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700">{icon}</div>}
+        {icon && <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-lilac-100 text-ink-900 ring-1 ring-inset ring-ink-950/10">{icon}</div>}
         <div className="min-w-0">
           <h3 className="text-[15px] font-bold text-ink-950">{title}</h3>
           {subtitle && <p className="mt-0.5 text-sm text-slate-500">{subtitle}</p>}
@@ -124,14 +125,14 @@ export function CardTitle({ icon, title, subtitle, action, className }: { icon?:
 /* ───────────────────────────── Badge & Chip ───────────────────────────── */
 
 const TONES = {
-  neutral: 'bg-slate-100 text-slate-700',
-  brand: 'bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-200/70',
-  gold: 'bg-gold-50 text-gold-800 ring-1 ring-inset ring-gold-200',
-  clay: 'bg-clay-50 text-clay-700 ring-1 ring-inset ring-clay-200/70',
+  neutral: 'bg-sand-200/70 text-ink-700',
+  brand: 'bg-brand-50 text-brand-800 ring-1 ring-inset ring-brand-800/15',
+  gold: 'bg-gold-50 text-gold-800 ring-1 ring-inset ring-gold-300/60',
+  clay: 'bg-clay-50 text-clay-700 ring-1 ring-inset ring-clay-300/50',
   sky: 'bg-sky-50 text-sky-700 ring-1 ring-inset ring-sky-200/70',
-  violet: 'bg-violet-50 text-violet-700 ring-1 ring-inset ring-violet-200/70',
-  dark: 'bg-ink-950 text-white',
-  white: 'bg-white/10 text-white ring-1 ring-inset ring-white/20',
+  violet: 'bg-lilac-100 text-lilac-800 ring-1 ring-inset ring-lilac-300/60',
+  dark: 'bg-ink-950 text-canvas',
+  white: 'bg-canvas/10 text-canvas ring-1 ring-inset ring-canvas/20',
 } as const;
 export type Tone = keyof typeof TONES;
 
@@ -153,7 +154,7 @@ export function Chip({ selected, onClick, icon, children, className, disabled }:
       aria-pressed={selected}
       className={cn(
         'inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm font-medium transition-all active:scale-[0.97] disabled:opacity-50',
-        selected ? 'border-brand-600 bg-brand-600 text-white shadow-sm' : 'border-slate-200 bg-white text-slate-700 hover:border-brand-300 hover:bg-brand-50/50',
+        selected ? 'border-ink-950 bg-ink-950 text-canvas shadow-sm' : 'border-ink-950/15 bg-paper text-ink-700 hover:border-ink-950/40 hover:bg-lilac-50',
         className,
       )}
     >
@@ -181,14 +182,14 @@ export function OptionCard({ selected, onClick, icon, label, description, multi,
       onClick={onClick}
       aria-pressed={selected}
       className={cn(
-        'group relative flex w-full items-center gap-3 rounded-2xl border-2 bg-white text-left transition-all duration-150 active:scale-[0.985]',
+        'group relative flex w-full items-center gap-3 rounded-2xl border-2 bg-paper text-left transition-all duration-200 active:scale-[0.985]',
         compact ? 'px-3.5 py-3' : 'px-4 py-4',
-        selected ? 'border-brand-500 bg-brand-50/60 shadow-sm shadow-brand-900/5' : 'border-slate-200 hover:border-brand-300 hover:bg-slate-50/60',
+        selected ? 'border-ink-950 bg-lilac-100 shadow-ink-sm' : 'border-ink-950/10 hover:border-ink-950/35 hover:bg-white',
         className,
       )}
     >
       {icon && (
-        <span className={cn('flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors', selected ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-600 group-hover:bg-brand-100 group-hover:text-brand-700')}>
+        <span className={cn('flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors', selected ? 'bg-ink-950 text-canvas' : 'bg-sand-200/80 text-ink-700 group-hover:bg-lilac-200 group-hover:text-ink-950')}>
           {icon}
         </span>
       )}
@@ -200,7 +201,7 @@ export function OptionCard({ selected, onClick, icon, label, description, multi,
         className={cn(
           'flex h-5 w-5 shrink-0 items-center justify-center border-2 transition-all',
           multi ? 'rounded-md' : 'rounded-full',
-          selected ? 'border-brand-600 bg-brand-600 text-white' : 'border-slate-300 bg-white',
+          selected ? 'border-ink-950 bg-ink-950 text-canvas' : 'border-ink-950/25 bg-paper',
         )}
       >
         {selected && <CheckCircle2 className="h-3.5 w-3.5" strokeWidth={3} />}
@@ -256,7 +257,7 @@ export function useCountUp(target: number, duration = 1100) {
 }
 
 /** Animated circular score gauge. */
-export function ScoreRing({ value, size = 168, stroke = 14, color = '#0a8a5f', track = '#e9eef3', label, suffix = '%', children, className }: {
+export function ScoreRing({ value, size = 168, stroke = 14, color = '#034f46', track = '#ebebd8', label, suffix = '%', children, className }: {
   value: number;
   size?: number;
   stroke?: number;
@@ -296,7 +297,7 @@ export function ScoreRing({ value, size = 168, stroke = 14, color = '#0a8a5f', t
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
         {children ?? (
           <>
-            <span className="font-extrabold leading-none tracking-tight text-ink-950 tabular-nums" style={{ fontSize: size * 0.23 }}>
+            <span className="font-display font-medium leading-none tracking-tight text-ink-950 tabular-nums" style={{ fontSize: size * 0.27 }}>
               {count}
               <span style={{ fontSize: size * 0.11 }} className="align-top text-slate-400">
                 {suffix}
@@ -313,11 +314,11 @@ export function ScoreRing({ value, size = 168, stroke = 14, color = '#0a8a5f', t
 /* ───────────────────────────── Loading / empty / error ───────────────────────────── */
 
 export function Spinner({ className }: { className?: string }) {
-  return <Loader2 className={cn('h-5 w-5 animate-spin text-brand-600', className)} />;
+  return <Loader2 className={cn('h-5 w-5 animate-spin text-brand-800', className)} />;
 }
 
 export function Skeleton({ className }: { className?: string }) {
-  return <div className={cn('animate-pulse rounded-xl bg-slate-200/70', className)} />;
+  return <div className={cn('animate-ghost-pulse rounded-xl bg-sand-300/70', className)} />;
 }
 
 /** Loading state. variant="ai" shows an animated Gemini "thinking" orb with cycling step messages. */
@@ -331,16 +332,13 @@ export function LoadingState({ title = 'Loading…', messages, variant = 'defaul
   if (variant === 'ai')
     return (
       <div className={cn('flex flex-col items-center justify-center px-6 py-14 text-center', className)}>
-        <div className="relative mb-7 h-24 w-24">
-          <span className="absolute inset-0 animate-ping-slow rounded-full bg-brand-400/30" />
-          <span className="absolute inset-2 animate-spin-slow rounded-full bg-[conic-gradient(from_0deg,#15ae7c,#ffc21a,#0ea5e9,#15ae7c)] blur-[2px]" />
-          <span className="absolute inset-4 flex items-center justify-center rounded-full bg-white shadow-inner">
-            <Sparkles className="h-8 w-8 text-brand-600" />
-          </span>
+        <div className="relative mb-6 h-28 w-28">
+          <span className="absolute inset-3 animate-ghost-pulse rounded-full bg-lilac-300/60 blur-xl" />
+          <GhostMascot mood="thinking" className="relative h-28 w-28" />
         </div>
-        <h3 className="text-lg font-bold text-ink-950">{title}</h3>
+        <h3 className="font-display text-2xl text-ink-950">{title}</h3>
         {messages?.length ? (
-          <p key={i} className="mt-2 animate-fade-in text-sm text-slate-500">
+          <p key={i} className="mt-2 animate-ghost-in text-sm text-ink-500">
             {messages[i]}
           </p>
         ) : null}
@@ -357,16 +355,22 @@ export function LoadingState({ title = 'Loading…', messages, variant = 'defaul
 export function FullPageLoader({ title = 'Loading ZimAI Ready…' }: { title?: string }) {
   return (
     <div className="flex min-h-[60vh] items-center justify-center">
-      <LoadingState title={title} />
+      <div className="flex flex-col items-center gap-4 text-center">
+        <GhostMascot className="h-16 w-16" />
+        <p className="animate-ghost-pulse font-display text-xl text-ink-700">{title}</p>
+      </div>
     </div>
   );
 }
 
 export function EmptyState({ icon, title, description, action, className }: { icon?: ReactNode; title: string; description?: ReactNode; action?: ReactNode; className?: string }) {
   return (
-    <div className={cn('flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white/60 px-6 py-12 text-center', className)}>
-      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-500">{icon ?? <Info className="h-6 w-6" />}</div>
-      <h3 className="text-base font-bold text-ink-950">{title}</h3>
+    <div className={cn('flex flex-col items-center justify-center rounded-3xl border border-dashed border-ink-950/20 bg-paper/70 px-6 py-12 text-center', className)}>
+      <div className="relative mb-4">
+        <GhostMascot className="h-20 w-20" />
+        <span className="absolute -bottom-1 -right-2 flex h-9 w-9 items-center justify-center rounded-xl border border-ink-950 bg-lilac-200 text-ink-950 shadow-ink-sm">{icon ?? <Info className="h-4 w-4" />}</span>
+      </div>
+      <h3 className="font-display text-2xl text-ink-950">{title}</h3>
       {description && <p className="mt-1.5 max-w-md text-sm text-slate-500">{description}</p>}
       {action && <div className="mt-5">{action}</div>}
     </div>
@@ -475,7 +479,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {children}
       <div className="pointer-events-none fixed inset-x-0 bottom-20 z-[100] flex flex-col items-center gap-2 px-4 sm:bottom-6 sm:right-6 sm:left-auto sm:items-end">
         {items.map((t) => (
-          <div key={t.id} role="status" className="pointer-events-auto flex w-full max-w-sm animate-slide-up items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-lift">
+          <div key={t.id} role="status" className="pointer-events-auto flex w-full max-w-sm animate-ghost-in items-start gap-3 rounded-2xl border border-ink-950 bg-paper p-4 shadow-ink">
             {ICON[t.tone]}
             <div className="min-w-0 flex-1">
               <p className="text-sm font-bold text-ink-950">{t.title}</p>
@@ -524,11 +528,11 @@ export function Modal({ open, onClose, title, description, children, footer, siz
   return (
     <div className="fixed inset-0 z-[90] flex items-end justify-center p-0 sm:items-center sm:p-4" role="dialog" aria-modal="true">
       <div className="absolute inset-0 animate-fade-in bg-ink-950/50 backdrop-blur-sm" onClick={onClose} />
-      <div className={cn('relative max-h-[92vh] w-full animate-scale-in overflow-y-auto rounded-t-3xl bg-white shadow-2xl sm:rounded-3xl', width)}>
+      <div className={cn('relative max-h-[92vh] w-full animate-ghost-in overflow-y-auto rounded-t-4xl border border-ink-950/10 bg-paper shadow-2xl sm:rounded-4xl', width)}>
         {(title || description) && (
-          <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-slate-100 bg-white/95 px-6 py-5 backdrop-blur">
+          <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-ink-950/5 bg-paper/95 px-6 py-5 backdrop-blur">
             <div>
-              {title && <h2 className="text-lg font-bold text-ink-950">{title}</h2>}
+              {title && <h2 className="text-2xl text-ink-950">{title}</h2>}
               {description && <p className="mt-1 text-sm text-slate-500">{description}</p>}
             </div>
             <button onClick={onClose} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="Close">
@@ -553,7 +557,7 @@ export function Tabs<T extends string>({ tabs, value, onChange, className }: {
 }) {
   return (
     <div className={cn('no-scrollbar -mx-1 flex gap-1 overflow-x-auto px-1', className)} role="tablist">
-      <div className="inline-flex gap-1 rounded-xl bg-slate-100 p-1">
+      <div className="inline-flex gap-1 rounded-full border border-ink-950/10 bg-sand-200/60 p-1">
         {tabs.map((t) => (
           <button
             key={t.id}
@@ -561,8 +565,8 @@ export function Tabs<T extends string>({ tabs, value, onChange, className }: {
             aria-selected={value === t.id}
             onClick={() => onChange(t.id)}
             className={cn(
-              'inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2 text-sm font-semibold transition-all',
-              value === t.id ? 'bg-white text-ink-950 shadow-sm' : 'text-slate-500 hover:text-slate-800',
+              'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-all duration-300',
+              value === t.id ? 'bg-paper text-ink-950 shadow-card ring-1 ring-ink-950/10' : 'text-ink-500 hover:text-ink-900',
             )}
           >
             {t.icon}
@@ -575,15 +579,83 @@ export function Tabs<T extends string>({ tabs, value, onChange, className }: {
   );
 }
 
+/* ───────────────────────────── Expandable section ───────────────────────────── */
+
+/**
+ * A calm, collapsible section: a one-line header with a short summary that expands (smooth height animation)
+ * to reveal detail. Controlled via `open`/`onToggle`, so pages can remember state or offer "expand all".
+ */
+export function ExpandableSection({ id, title, icon, summary, open, onToggle, children, className }: {
+  id: string;
+  title: ReactNode;
+  icon?: ReactNode;
+  summary?: ReactNode;
+  open: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <section id={id} className={cn('scroll-mt-24 rounded-3xl border transition-colors duration-300', open ? 'border-ink-950/15 bg-paper' : 'border-ink-950/[0.08] bg-paper/60 hover:border-ink-950/20 hover:bg-paper', className)}>
+      <h2 className="!m-0 !font-sans !text-base !tracking-normal">
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-expanded={open}
+          aria-controls={`${id}-panel`}
+          className="flex w-full items-center gap-4 rounded-3xl px-4 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lilac-400 sm:px-6"
+        >
+          {icon && <span className={cn('flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-300', open ? 'bg-ink-950 text-canvas' : 'bg-sand-200/80 text-ink-700')}>{icon}</span>}
+          <span className="min-w-0 flex-1">
+            <span className="block text-[15px] font-bold text-ink-950">{title}</span>
+            {summary && <span className="mt-0.5 line-clamp-2 text-sm font-normal leading-snug text-ink-500 sm:line-clamp-1">{summary}</span>}
+          </span>
+          <span className={cn('flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-ink-950/15 text-ink-700 transition-transform duration-300', open && 'rotate-180 border-ink-950 bg-lilac-200 text-ink-950')} aria-hidden>
+            <ChevronDown className="h-4 w-4" />
+          </span>
+        </button>
+      </h2>
+      <div id={`${id}-panel`} className="grid transition-[grid-template-rows] duration-500 ease-out" style={{ gridTemplateRows: open ? '1fr' : '0fr' }}>
+        <div className="min-h-0 overflow-hidden" inert={!open}>
+          <div className={cn('px-4 pb-5 transition-opacity duration-500 sm:px-6 sm:pb-6', open ? 'opacity-100' : 'opacity-0')}>{children}</div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** Remembers which sections are open (per browser). Falls back to in-memory state when storage is unavailable. */
+export function useExpandedSections(storageKey: string, defaults: Record<string, boolean> = {}) {
+  const [open, setOpen] = useState<Record<string, boolean>>(() => {
+    try {
+      const raw = localStorage.getItem(storageKey);
+      return raw ? { ...defaults, ...JSON.parse(raw) } : defaults;
+    } catch {
+      return defaults;
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(open));
+    } catch {
+      /* storage unavailable — keep in memory */
+    }
+  }, [open, storageKey]);
+  const toggle = useCallback((id: string) => setOpen((o) => ({ ...o, [id]: !o[id] })), []);
+  const set = useCallback((id: string, value: boolean) => setOpen((o) => ({ ...o, [id]: value })), []);
+  const setAll = useCallback((ids: string[], value: boolean) => setOpen((o) => ({ ...o, ...Object.fromEntries(ids.map((i) => [i, value])) })), []);
+  return { open, toggle, set, setAll };
+}
+
 /* ───────────────────────────── Page scaffolding ───────────────────────────── */
 
 export function PageHeader({ eyebrow, title, description, actions, className }: { eyebrow?: ReactNode; title: ReactNode; description?: ReactNode; actions?: ReactNode; className?: string }) {
   return (
     <div className={cn('mb-6 flex flex-col gap-4 sm:mb-8 md:flex-row md:items-end md:justify-between', className)}>
       <div className="min-w-0">
-        {eyebrow && <p className="mb-1.5 text-xs font-bold uppercase tracking-[0.14em] text-brand-600">{eyebrow}</p>}
-        <h1 className="text-2xl font-extrabold tracking-tight text-ink-950 sm:text-3xl">{title}</h1>
-        {description && <p className="mt-2 max-w-2xl text-[15px] text-slate-500">{description}</p>}
+        {eyebrow && <p className="mb-2 animate-ghost-in text-xs font-semibold uppercase tracking-[0.2em] text-ink-500">{eyebrow}</p>}
+        <h1 className="animate-ghost-in text-4xl leading-[1.02] text-ink-950 sm:text-5xl" style={{ animationDelay: '60ms' }}>{title}</h1>
+        {description && <p className="mt-3 max-w-2xl animate-ghost-in text-[15px] leading-relaxed text-ink-600" style={{ animationDelay: '120ms' }}>{description}</p>}
       </div>
       {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
     </div>
@@ -592,19 +664,19 @@ export function PageHeader({ eyebrow, title, description, actions, className }: 
 
 export function StatCard({ label, value, icon, hint, tone = 'brand', className }: { label: ReactNode; value: ReactNode; icon?: ReactNode; hint?: ReactNode; tone?: 'brand' | 'gold' | 'clay' | 'sky' | 'violet' | 'ink'; className?: string }) {
   const iconTone = {
-    brand: 'bg-brand-50 text-brand-700',
-    gold: 'bg-gold-50 text-gold-700',
-    clay: 'bg-clay-50 text-clay-600',
-    sky: 'bg-sky-50 text-sky-700',
-    violet: 'bg-violet-50 text-violet-700',
-    ink: 'bg-slate-100 text-ink-900',
+    brand: 'bg-brand-800 text-canvas',
+    gold: 'bg-gold-400 text-ink-950',
+    clay: 'bg-clay-400 text-ink-950',
+    sky: 'bg-sky-200 text-ink-950',
+    violet: 'bg-lilac-200 text-ink-950',
+    ink: 'bg-ink-950 text-canvas',
   }[tone];
   return (
     <Card className={cn('flex items-start gap-4', className)}>
       {icon && <div className={cn('flex h-11 w-11 shrink-0 items-center justify-center rounded-xl', iconTone)}>{icon}</div>}
       <div className="min-w-0">
         <p className="text-[13px] font-semibold text-slate-500">{label}</p>
-        <p className="mt-0.5 text-2xl font-extrabold tracking-tight text-ink-950 tabular-nums">{value}</p>
+        <p className="mt-1 font-display text-4xl leading-none tracking-tight text-ink-950 tabular-nums">{value}</p>
         {hint && <p className="mt-0.5 text-xs text-slate-500">{hint}</p>}
       </div>
     </Card>
@@ -613,7 +685,7 @@ export function StatCard({ label, value, icon, hint, tone = 'brand', className }
 
 export function Avatar({ name, photoURL, size = 36, className }: { name: string; photoURL?: string; size?: number; className?: string }) {
   if (photoURL) return <img src={photoURL} alt={name} className={cn('shrink-0 rounded-full object-cover', className)} style={{ width: size, height: size }} referrerPolicy="no-referrer" />;
-  const palette = ['bg-brand-600', 'bg-sky-600', 'bg-violet-600', 'bg-gold-500', 'bg-clay-500', 'bg-ink-800'];
+  const palette = ['bg-brand-800', 'bg-clay-800', 'bg-lilac-700', 'bg-gold-600', 'bg-clay-500', 'bg-ink-800'];
   const idx = [...name].reduce((a, c) => a + c.charCodeAt(0), 0) % palette.length;
   return (
     <span className={cn('inline-flex shrink-0 items-center justify-center rounded-full font-bold text-white', palette[idx], className)} style={{ width: size, height: size, fontSize: size * 0.38 }}>

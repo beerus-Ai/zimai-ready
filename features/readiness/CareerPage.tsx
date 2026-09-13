@@ -10,6 +10,7 @@ import { emptyModuleProgress } from '../../lib/progress';
 import { cn, nowISO, sleep } from '../../lib/utils';
 import { analyseCareerTransition } from './engine';
 import { TransitionView } from './TransitionView';
+import { GrowthPath } from '../../components/illustrations';
 
 /**
  * /app/career — career pathway. Shows the learner's transition goal (from the
@@ -192,7 +193,7 @@ export default function CareerPage() {
   if (!a || !answers) {
     return (
       <>
-        <PageHeader eyebrow="Career path" title="Your career path" />
+        <PageHeader eyebrow="Career path" title={<>Your career <em>path</em></>} />
         <EmptyState
           icon={<Route className="h-6 w-6" />}
           title="Complete your readiness assessment first"
@@ -259,13 +260,15 @@ export default function CareerPage() {
 
   return (
     <div className="pb-6">
+      <div className="relative flex items-end gap-4">
       <PageHeader
+        className="min-w-0 flex-1"
         eyebrow="Career path"
-        title={goal ? 'Your career transition' : 'Your career path'}
+        title={goal ? <>Your career <em>transition</em></> : <>Your career <em>path</em></>}
         description={
           goal
-            ? `From ${goal.data.currentRole} to ${goal.data.targetRole} — built on the skills you already have, with AI competencies at the core.`
-            : `Where your AI skills can take you as ${currentRole.match(/^[aeiou]/i) ? 'an' : 'a'} ${currentRole} in ${industryName(answers.industryId, answers.industryOther)}.`
+            ? `${goal.data.currentRole} → ${goal.data.targetRole}`
+            : `${currentRole} · ${industryName(answers.industryId, answers.industryOther)}`
         }
         actions={
           <Button to="/app/readiness" variant="outline" size="sm" icon={<Gauge className="h-4 w-4" />}>
@@ -273,13 +276,15 @@ export default function CareerPage() {
           </Button>
         }
       />
+        <GrowthPath className="mb-6 hidden h-28 w-28 shrink-0 animate-ghost-in xl:block" animated />
+      </div>
 
       {goal ? (
         <>
           <TransitionView analysis={goal.data} source={goal.source} progress={progress} isGoal actions={pathActions(goal, false)} />
           {!goal.fromAssessment && (
-            <Card className="mt-4 flex flex-col gap-3 border-brand-200 bg-brand-50/50 sm:flex-row sm:items-center">
-              <RefreshCw className="h-5 w-5 shrink-0 text-brand-700" />
+            <Card className="mt-4 flex animate-ghost-in flex-col gap-3 border-brand-800/15 bg-brand-50/60 sm:flex-row sm:items-center">
+              <RefreshCw className="h-5 w-5 shrink-0 text-brand-800" />
               <p className="flex-1 text-sm text-slate-700">
                 Your readiness profile was built for a different goal. Retake the assessment to rebuild your AI Skills Prescription around <span className="font-semibold">{goal.data.targetRole}</span>.
               </p>
@@ -288,14 +293,14 @@ export default function CareerPage() {
               </Button>
             </Card>
           )}
-          <Card className="mt-6" padded={false}>
+          <Card className="mt-6 animate-ghost-in" padded={false}>
             <button type="button" onClick={() => setExploreOpen((o) => !o)} aria-expanded={exploreOpen} className="flex w-full items-center gap-3 p-5 text-left sm:px-6">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-ink-900">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-lilac-100 text-ink-900 ring-1 ring-inset ring-ink-950/10">
                 <Compass className="h-5 w-5" />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-[15px] font-bold text-ink-950">Explore a different career</span>
-                <span className="block text-sm text-slate-500">Compare another role without changing your current goal.</span>
+                <span className="block font-display text-xl leading-tight text-ink-950">Explore a different career</span>
+                <span className="block text-sm text-slate-500">Your current goal stays unchanged</span>
               </span>
               <ChevronDown className={cn('h-5 w-5 shrink-0 text-slate-400 transition-transform', (exploreOpen || status === 'loading') && 'rotate-180')} />
             </button>
@@ -307,23 +312,20 @@ export default function CareerPage() {
           <LoadingState variant="ai" title={`Analysing your move into ${goalTarget}`} messages={[`Comparing ${currentRole} skills with ${goalTarget} roles…`, 'Identifying your transferable strengths…', 'Designing your personalised pathway…']} />
         </Card>
       ) : (
-        <div className="grid gap-4 lg:grid-cols-[1fr_1.15fr]">
-          <Card className="animate-fade-up">
+        <div className="grid gap-6 lg:grid-cols-[1fr_1.15fr]">
+          <Card className="animate-ghost-in">
             <div className="mb-4 flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gold-50 text-gold-700">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gold-100 text-gold-800">
                   <Briefcase className="h-5 w-5" />
                 </span>
-                <div>
-                  <h3 className="text-xs font-extrabold uppercase tracking-[0.12em] text-ink-950">Career opportunities</h3>
-                  <p className="text-[13px] text-slate-500">Roles your AI skills can open up</p>
-                </div>
+                <h3 className="font-display text-2xl leading-tight text-ink-950">Career opportunities</h3>
               </div>
               <AISourceBadge source={a.source} />
             </div>
             <ul className="space-y-2.5">
               {a.careerOpportunities.map((c, i) => (
-                <li key={c} className="animate-fade-up" style={{ animationDelay: `${i * 60}ms` }}>
+                <li key={c} className="animate-ghost-in" style={{ animationDelay: `${i * 60}ms` }}>
                   <button
                     type="button"
                     onClick={() => {
@@ -331,28 +333,25 @@ export default function CareerPage() {
                       void run(c);
                     }}
                     disabled={status === 'loading'}
-                    className="group flex w-full items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-left transition hover:border-brand-300 hover:bg-brand-50/40 disabled:opacity-60"
+                    className="group flex w-full items-center gap-3 rounded-xl border border-ink-950/10 bg-paper px-4 py-3 text-left transition hover:-translate-y-0.5 hover:border-ink-950 hover:shadow-ink-sm disabled:opacity-60"
                   >
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-sm font-bold text-slate-600 group-hover:bg-brand-100 group-hover:text-brand-700">{i + 1}</span>
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sand-200/80 font-condensed text-base text-slate-600 group-hover:bg-lilac-200 group-hover:text-ink-950">{i + 1}</span>
                     <span className="min-w-0 flex-1 text-sm font-semibold text-ink-950">{c}</span>
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-400 group-hover:text-brand-700">
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-400 group-hover:text-ink-950">
                       Explore <ArrowUpRight className="h-3.5 w-3.5" />
                     </span>
                   </button>
                 </li>
               ))}
             </ul>
-            <p className="mt-4 text-xs text-slate-500">Tap a role to see your transferable skills, gaps and a personalised pathway.</p>
+            
           </Card>
-          <Card className="animate-fade-up [animation-delay:100ms]">
-            <div className="mb-4 flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+          <Card className="animate-ghost-in [animation-delay:100ms]">
+            <div className="mb-6 flex items-center gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-800 text-canvas">
                 <Route className="h-5 w-5" />
               </span>
-              <div>
-                <h3 className="text-xs font-extrabold uppercase tracking-[0.12em] text-ink-950">Explore a career transition</h3>
-                <p className="text-[13px] text-slate-500">What would it take to move from {currentRole} into something new?</p>
-              </div>
+              <h3 className="font-display text-2xl leading-tight text-ink-950">Explore a career transition</h3>
             </div>
             {explorer}
           </Card>
@@ -360,10 +359,10 @@ export default function CareerPage() {
       )}
 
       {showExplored && explored && (
-        <div ref={resultRef} className="mt-8 scroll-mt-20">
-          <div className="mb-3 flex items-center justify-between gap-2">
-            <h2 className="text-lg font-extrabold tracking-tight text-ink-950">
-              Exploring: {explored.data.currentRole} → {explored.data.targetRole}
+        <div ref={resultRef} className="mt-12 animate-ghost-in scroll-mt-20">
+          <div className="mb-5 flex items-center justify-between gap-2">
+            <h2 className="text-2xl leading-tight text-ink-950 sm:text-3xl">
+              <em>Exploring:</em> {explored.data.currentRole} → {explored.data.targetRole}
             </h2>
             <button type="button" onClick={() => setExplored(null)} className="text-sm font-semibold text-slate-500 hover:text-ink-950">
               Clear
@@ -428,7 +427,7 @@ function Explorer({ input, setInput, error, status, pending, currentRole, onRun,
             maxLength={60}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Or type any role, e.g. Supply Chain Analyst"
-            className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-[15px] text-ink-950 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/15"
+            className="h-11 w-full rounded-xl border border-ink-950/20 bg-paper pl-10 pr-4 text-[15px] text-ink-950 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-ink-950 focus:ring-4 focus:ring-lilac-200"
           />
         </label>
         <Button type="submit" iconRight={<ArrowRight className="h-4 w-4" />}>

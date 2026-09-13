@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowRight, Building2, CircleCheck, HardDrive, LogOut, Mail, Sparkles, User as UserIcon } from 'lucide-react';
-import { Avatar, Button, Card, LoadingState, useToast } from '../../components/ui';
-import { AccentBar, ChevronPattern, Logo } from '../../components/brand';
+import { ArrowRight, Building2, HardDrive, LogOut, Mail, Sparkles, User as UserIcon } from 'lucide-react';
+import { Avatar, Button, LoadingState, useToast } from '../../components/ui';
+import { Logo } from '../../components/brand';
+import { GhostBubbles } from '../../components/motion';
+import type { GhostBubble } from '../../components/motion';
+import { GhostMascot, Sparkle, Squiggle } from '../../components/illustrations';
 import { useApp } from '../../services/store';
 import type { User, UserRole } from '../../types';
 import { cn } from '../../lib/utils';
@@ -63,6 +66,44 @@ const COPY: Record<UserRole, { heading: string; sub: string; points: string[]; s
     steps: ['Set up your organisation profile', 'See your workforce readiness dashboard', 'Plan reskilling with the AI Workforce Advisor'],
   },
 };
+
+/* ───────── Decorative panel content (visual only) ───────── */
+
+const img = (file: string) => `${import.meta.env.BASE_URL}images/${file}`;
+
+const PANEL: Record<UserRole, { photo: string; alt: string; bubbles: GhostBubble[]; lines: { quote: string }[] }> = {
+  employee: {
+    photo: 'scene-accountant.webp',
+    alt: 'A fictional Zimbabwean accountant working confidently with AI tools',
+    bubbles: [
+      { name: 'You', text: 'Will AI change my job?', x: '4%', y: '6%', tone: 'dark', nameColor: '#ffa946' },
+      { name: 'ZimAI Ready', text: 'Let’s find out.', x: '38%', y: '40%', tone: 'lilac', nameColor: '#fffeeb' },
+      { name: 'AI Tutor', text: 'Start here.', x: '8%', y: '72%', tone: 'light', nameColor: '#ffbcf2' },
+    ],
+    lines: [{ quote: 'Know your exposure.' }, { quote: 'Learn what matters.' }, { quote: 'Get certified.' }],
+  },
+  employer: {
+    photo: 'scene-certified.webp',
+    alt: 'A fictional Zimbabwean team celebrating their AI Ready certification',
+    bubbles: [
+      { name: 'Chief People Officer', text: 'Who’s ready?', x: '4%', y: '6%', tone: 'dark', nameColor: '#ffa946' },
+      { name: 'Workforce Advisor', text: 'Here’s where to start.', x: '36%', y: '40%', tone: 'lilac', nameColor: '#fffeeb' },
+      { name: 'Head of L&D', text: 'Show me the gaps.', x: '8%', y: '72%', tone: 'light', nameColor: '#ffbcf2' },
+    ],
+    lines: [{ quote: 'See who’s ready.' }, { quote: 'Find the gaps.' }, { quote: 'Reskill with confidence.' }],
+  },
+};
+
+function useRotatingIndex(length: number, ms = 4200) {
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    setI(0);
+    if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    const t = setInterval(() => setI((x) => (x + 1) % length), ms);
+    return () => clearInterval(t);
+  }, [length, ms]);
+  return i;
+}
 
 export default function LoginPage() {
   const { ready, user, supportsGoogle, signInWithGoogle, signInLocal, signOut } = useApp();
@@ -143,34 +184,42 @@ export default function LoginPage() {
   };
 
   const copy = COPY[role];
+  const deco = PANEL[role];
+  const lineIndex = useRotatingIndex(deco.lines.length);
+  const line = deco.lines[lineIndex % deco.lines.length];
 
   let panel: ReactNode;
   if (!ready) {
-    panel = <LoadingState title="Checking your session…" />;
+    panel = <LoadingState variant="ai" title="Checking your session…" />;
   } else if (user && busy !== 'google' && busy !== 'email') {
     panel = (
-      <div className="animate-fade-up text-center">
-        <Avatar name={user.name} photoURL={user.photoURL} size={64} className="mx-auto" />
-        <h1 className="mt-5 text-2xl font-extrabold tracking-tight text-ink-950">You’re signed in as {user.name}</h1>
-        <p className="mt-1.5 text-sm text-slate-500">
+      <div className="animate-ghost-in text-center">
+        <div className="relative mx-auto w-fit">
+          <Avatar name={user.name} photoURL={user.photoURL} size={72} className="mx-auto ring-2 ring-ink-950 ring-offset-4 ring-offset-paper" />
+          <GhostMascot mood="wave" className="absolute -right-10 -top-6 h-12 w-12 animate-ghost-float" animated />
+        </div>
+        <h1 className="mt-6 text-balance text-3xl leading-[1.05] text-ink-950 sm:text-4xl">
+          You’re signed in as <em>{user.name}</em>
+        </h1>
+        <p className="mt-2 text-sm text-ink-500">
           {user.email} · {user.role === 'employer' ? 'Employer' : 'Employee'} account{user.isDemo ? ' (demo)' : ''}
         </p>
-        <div className="mt-7 grid gap-2.5 sm:grid-cols-2">
-          <Button full onClick={() => navigate(destinationFor(user, next), { replace: true })} iconRight={<ArrowRight className="h-4 w-4" />}>
+        <div className="mt-8 grid gap-2.5 sm:grid-cols-2">
+          <Button full size="lg" onClick={() => navigate(destinationFor(user, next), { replace: true })} iconRight={<ArrowRight className="h-4 w-4" />}>
             Continue
           </Button>
-          <Button full variant="outline" loading={busy === 'signout'} onClick={onSignOut} icon={<LogOut className="h-4 w-4" />}>
+          <Button full size="lg" variant="outline" loading={busy === 'signout'} onClick={onSignOut} icon={<LogOut className="h-4 w-4" />}>
             Sign out
           </Button>
         </div>
-        <p className="mt-5 text-xs text-slate-500">Sign out to switch to a different account or role.</p>
+        <p className="mt-5 text-xs text-ink-500">Sign out to switch to a different account or role.</p>
       </div>
     );
   } else {
     panel = (
-      <div className="animate-fade-up">
+      <div className="animate-ghost-in">
         {/* Role toggle */}
-        <div className="grid grid-cols-2 gap-1 rounded-2xl bg-slate-100 p-1" role="radiogroup" aria-label="Account type">
+        <div className="grid grid-cols-2 gap-1 rounded-full border border-ink-950/10 bg-sand-200/70 p-1" role="radiogroup" aria-label="Account type">
           {(
             [
               { id: 'employee', label: 'Employee', icon: <UserIcon className="h-4 w-4" /> },
@@ -184,8 +233,8 @@ export default function LoginPage() {
               aria-checked={role === r.id}
               onClick={() => setParam('role', r.id)}
               className={cn(
-                'inline-flex h-10 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all',
-                role === r.id ? 'bg-white text-ink-950 shadow-sm' : 'text-slate-500 hover:text-slate-800',
+                'inline-flex h-11 items-center justify-center gap-2 rounded-full text-sm font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lilac-400',
+                role === r.id ? 'bg-ink-950 text-canvas shadow-card' : 'text-ink-600 hover:text-ink-950',
               )}
             >
               {r.icon}
@@ -194,9 +243,19 @@ export default function LoginPage() {
           ))}
         </div>
 
-        <div className="mt-7">
-          <h1 className="text-2xl font-extrabold tracking-tight text-ink-950 sm:text-[28px]">{mode === 'signup' ? 'Create your account' : 'Welcome back'}</h1>
-          <p className="mt-1.5 text-sm text-slate-500">
+        <div key={`${mode}-${role}`} className="mt-8 animate-ghost-in">
+          <h1 className="text-balance text-4xl leading-[1] text-ink-950 sm:text-5xl">
+            {mode === 'signup' ? (
+              <>
+                Create your <em className="text-brand-800">account</em>
+              </>
+            ) : (
+              <>
+                Welcome <em className="text-brand-800">back</em>
+              </>
+            )}
+          </h1>
+          <p className="mt-3 text-[15px] leading-relaxed text-ink-600">
             {mode === 'signup'
               ? role === 'employee'
                 ? 'Start with a 2-minute AI readiness assessment.'
@@ -209,16 +268,25 @@ export default function LoginPage() {
 
         {supportsGoogle && (
           <>
-            <Button variant="outline" size="lg" full className="mt-6" loading={busy === 'google'} disabled={!!busy} onClick={onGoogle} icon={busy === 'google' ? undefined : <GoogleMark />}>
+            <Button
+              variant="ghost"
+              size="lg"
+              full
+              className="mt-7 border border-ink-950 bg-paper text-ink-950 hover:-translate-y-px hover:shadow-ink-sm"
+              loading={busy === 'google'}
+              disabled={!!busy}
+              onClick={onGoogle}
+              icon={busy === 'google' ? undefined : <GoogleMark />}
+            >
               Continue with Google
             </Button>
-            <div className="my-6 flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
-              <span className="h-px flex-1 bg-slate-200" /> or use email <span className="h-px flex-1 bg-slate-200" />
+            <div className="my-6 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-ink-400">
+              <span className="h-px flex-1 bg-ink-950/10" /> or use email <span className="h-px flex-1 bg-ink-950/10" />
             </div>
           </>
         )}
 
-        <form onSubmit={onSubmit} noValidate className={cn('space-y-4', !supportsGoogle && 'mt-6')}>
+        <form onSubmit={onSubmit} noValidate className={cn('space-y-4', !supportsGoogle && 'mt-7')}>
           {mode === 'signup' && (
             <Field id="name" label="Full name" error={showName ? nameError : ''}>
               <input
@@ -249,14 +317,14 @@ export default function LoginPage() {
               className={cn(inputCls(!!showEmail), 'pl-10')}
             />
           </Field>
-          {mode === 'signin' && <p className="-mt-1 text-xs text-slate-500">Signing in on a new device? Your display name is taken from your email.</p>}
-          <Button type="submit" size="lg" full loading={busy === 'email'} disabled={!!busy} variant={supportsGoogle ? 'dark' : 'primary'} iconRight={<ArrowRight className="h-4 w-4" />}>
+          {mode === 'signin' && <p className="-mt-1 text-xs text-ink-500">Signing in on a new device? Your display name is taken from your email.</p>}
+          <Button type="submit" size="lg" full loading={busy === 'email'} disabled={!!busy} variant="primary" iconRight={<ArrowRight className="h-4 w-4" />}>
             {mode === 'signup' ? 'Create account' : 'Sign in with email'}
           </Button>
         </form>
 
-        <div className="mt-4 flex items-start gap-2 rounded-xl bg-slate-50 px-3 py-2.5 text-xs leading-relaxed text-slate-500">
-          <HardDrive className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-400" />
+        <div className="mt-4 flex items-start gap-2 rounded-2xl bg-sand-200/60 px-3.5 py-3 text-xs leading-relaxed text-ink-600">
+          <HardDrive className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink-400" />
           <span>
             {supportsGoogle
               ? 'Email accounts keep your data on this device only. Continue with Google to sync securely across devices.'
@@ -264,15 +332,15 @@ export default function LoginPage() {
           </span>
         </div>
 
-        <p className="mt-6 text-center text-sm text-slate-500">
+        <p className="mt-6 text-center text-sm text-ink-600">
           {mode === 'signup' ? 'Already have an account?' : 'New to ZimAI Ready?'}{' '}
-          <button type="button" onClick={() => setParam('mode', mode === 'signup' ? 'signin' : 'signup')} className="font-semibold text-brand-700 hover:text-brand-800">
+          <button type="button" onClick={() => setParam('mode', mode === 'signup' ? 'signin' : 'signup')} className="font-semibold text-ink-950 underline decoration-clay-400 decoration-2 underline-offset-4 hover:decoration-ink-950">
             {mode === 'signup' ? 'Sign in' : 'Create an account'}
           </button>
         </p>
 
-        <div className="mt-6 border-t border-slate-100 pt-5 text-center">
-          <Link to="/demo" className="group inline-flex items-center gap-1.5 text-sm font-semibold text-slate-700 hover:text-ink-950">
+        <div className="mt-6 border-t border-ink-950/10 pt-5 text-center">
+          <Link to="/demo" className="group inline-flex items-center gap-1.5 text-sm font-semibold text-ink-700 hover:text-ink-950">
             <Sparkles className="h-4 w-4 text-gold-500" />
             Explore with a demo profile
             <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
@@ -283,50 +351,68 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-      <div className="grid overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white shadow-lift lg:grid-cols-[1.05fr_1fr]">
-        {/* Brand panel */}
-        <aside className="relative hidden overflow-hidden bg-ink-950 p-10 text-white lg:flex lg:flex-col xl:p-12">
-          <div className="pointer-events-none absolute inset-0 bg-grid-dark" aria-hidden />
-          <ChevronPattern className="text-white" opacity={0.04} />
-          <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-brand-500/25 blur-3xl" aria-hidden />
-          <div className="pointer-events-none absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-gold-400/15 blur-3xl" aria-hidden />
-          <div className="relative flex flex-1 flex-col">
-            <Logo light />
-            <div key={role} className="mt-14 animate-fade-up">
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-gold-300">{role === 'employee' ? 'For employees' : 'For employers'}</p>
-              <h2 className="mt-3 text-3xl font-extrabold leading-tight tracking-tight xl:text-4xl">{copy.heading}</h2>
-              <p className="mt-4 max-w-md text-[15px] leading-relaxed text-slate-300">{copy.sub}</p>
-              <ul className="mt-8 space-y-3">
-                {copy.points.map((p) => (
-                  <li key={p} className="flex items-start gap-3 text-sm text-slate-200">
-                    <CircleCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-400" />
-                    {p}
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur">
-                <p className="text-xs font-bold uppercase tracking-wide text-slate-400">What happens next</p>
-                <ol className="mt-3 space-y-3">
-                  {copy.steps.map((s, i) => (
-                    <li key={s} className="flex items-center gap-3 text-sm text-slate-200">
-                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-500/20 text-xs font-bold text-brand-300 ring-1 ring-inset ring-brand-400/30">{i + 1}</span>
-                      {s}
-                    </li>
-                  ))}
-                </ol>
+    <div className="relative overflow-x-clip">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[32rem] bg-grid [mask-image:radial-gradient(ellipse_at_top,black_20%,transparent_70%)]" aria-hidden />
+      <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-24 sm:px-6 sm:pt-28 lg:px-8 lg:pt-32">
+        <div className="grid gap-5 lg:grid-cols-[1fr_1.05fr] lg:gap-6">
+          {/* Form card */}
+          <div className="relative rounded-4xl border border-ink-950/10 bg-paper shadow-lift">
+            {/* Mobile decorative header */}
+            <div className="relative overflow-hidden rounded-t-4xl bg-brand-800 px-5 py-4 text-canvas lg:hidden">
+              <div className="bg-grid-dark pointer-events-none absolute inset-0" aria-hidden />
+              <div className="relative flex items-center gap-3">
+                <GhostMascot mood="wave" className="h-12 w-12 shrink-0 animate-ghost-float" animated />
+                <div className="min-w-0">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold-300">{role === 'employee' ? 'For employees' : 'For employers'}</p>
+                  <p key={`m-${role}-${lineIndex}`} className="animate-ghost-in font-display text-lg leading-snug">
+                    {line.quote}
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="mt-auto pt-10">
-              <AccentBar className="w-20" />
-              <p className="mt-3 text-xs text-slate-500">Prepare for the Future of Work.</p>
+            <div className="flex items-center justify-center px-5 py-9 sm:px-10 sm:py-12 lg:min-h-[44rem] lg:py-14">
+              <div className="w-full max-w-md">{panel}</div>
             </div>
           </div>
-        </aside>
 
-        {/* Form panel */}
-        <div className="flex items-center justify-center px-5 py-10 sm:px-10 sm:py-14">
-          <div className="w-full max-w-md">{panel}</div>
+          {/* Visual panel */}
+          <aside className="relative hidden min-h-[44rem] overflow-hidden rounded-4xl bg-brand-900 text-canvas lg:flex lg:flex-col">
+            <img key={deco.photo} src={img(deco.photo)} alt={deco.alt} className="absolute inset-0 h-full w-full animate-ghost-in object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-b from-ink-950/80 via-brand-950/55 to-ink-950/90" aria-hidden />
+            <div className="bg-paper-noise pointer-events-none absolute inset-0 opacity-30 mix-blend-overlay" aria-hidden />
+
+            <div className="relative flex flex-1 flex-col p-10 xl:p-12">
+              <div className="flex items-center justify-between">
+                <Logo light />
+                <Sparkle className="h-8 w-8" color="#ffa946" animated />
+              </div>
+
+              <div key={role} className="mt-16 animate-ghost-in">
+                <h2 className="max-w-lg text-balance text-5xl leading-[0.95] xl:text-6xl">{copy.heading}</h2>
+                <Squiggle className="mt-4 h-4 w-36" color="#ff6c4c" animated />
+              </div>
+
+              {/* Drifting chat + mascot */}
+              <div className="relative my-8 min-h-[12rem] flex-1">
+                <GhostBubbles key={`b-${role}`} bubbles={deco.bubbles} mobile />
+                <div className="absolute bottom-0 right-0">
+                  <GhostMascot mood="wave" className="h-24 w-24 animate-ghost-float xl:h-28 xl:w-28" animated />
+                </div>
+              </div>
+
+              {/* Rotating benefit line */}
+              <div className="flex items-end justify-between gap-6">
+                <p key={`${role}-${lineIndex}`} className="animate-ghost-in font-display text-3xl italic leading-tight text-canvas xl:text-4xl">
+                  {line.quote}
+                </p>
+                <span className="mb-2 flex shrink-0 gap-1" aria-hidden>
+                  {deco.lines.map((_, i) => (
+                    <span key={i} className={cn('h-1.5 rounded-full transition-all duration-500', i === lineIndex ? 'w-5 bg-canvas' : 'w-1.5 bg-canvas/30')} />
+                  ))}
+                </span>
+              </div>
+            </div>
+          </aside>
         </div>
       </div>
     </div>
@@ -335,19 +421,19 @@ export default function LoginPage() {
 
 function inputCls(invalid: boolean) {
   return cn(
-    'h-12 w-full rounded-xl border bg-white px-3.5 text-[15px] text-ink-950 placeholder:text-slate-400 transition focus:outline-none focus:ring-4',
-    invalid ? 'border-clay-400 focus:border-clay-500 focus:ring-clay-100' : 'border-slate-200 focus:border-brand-500 focus:ring-brand-100',
+    'h-12 w-full rounded-xl border bg-canvas/60 px-3.5 text-[15px] text-ink-950 placeholder:text-ink-400 transition-colors focus:bg-paper focus:outline-none focus:ring-4',
+    invalid ? 'border-clay-400 focus:border-clay-500 focus:ring-clay-100' : 'border-ink-950/15 hover:border-ink-950/30 focus:border-ink-950 focus:ring-lilac-200',
   );
 }
 
 function Field({ id, label, error, icon, children }: { id: string; label: string; error?: string; icon?: ReactNode; children: ReactNode }) {
   return (
     <div>
-      <label htmlFor={id} className="mb-1.5 block text-sm font-semibold text-slate-700">
+      <label htmlFor={id} className="mb-1.5 block text-sm font-semibold text-ink-800">
         {label}
       </label>
       <div className="relative">
-        {icon && <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">{icon}</span>}
+        {icon && <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400">{icon}</span>}
         {children}
       </div>
       {error && (

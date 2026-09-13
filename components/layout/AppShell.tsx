@@ -87,13 +87,13 @@ export function AIStatusPill({ className }: { className?: string }) {
     ready: { dot: 'bg-brand-500', label: 'Gemini ready' },
     connected: { dot: 'bg-brand-500', label: 'Gemini connected' },
     degraded: { dot: 'bg-gold-500', label: 'Gemini limited' },
-    offline: { dot: 'bg-slate-400', label: 'Offline AI engine' },
+    offline: { dot: 'bg-ink-400', label: 'Offline AI engine' },
   }[status];
   return (
     <Link
       to={settingsPath}
       title="AI engine status — open settings"
-      className={cn('inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-600 hover:border-slate-300', className)}
+      className={cn('inline-flex items-center gap-2 rounded-full border border-ink-950/10 bg-paper px-3 py-1.5 text-xs font-semibold text-ink-700 transition hover:border-ink-950/30 hover:bg-lilac-50', className)}
     >
       <span className="relative flex h-2 w-2">
         {status === 'connected' && <span className={cn('absolute inline-flex h-full w-full animate-ping rounded-full opacity-60', meta.dot)} />}
@@ -109,7 +109,7 @@ function SideNav({ groups, onNavigate }: { groups: { group: string; items: NavIt
     <nav className="space-y-6">
       {groups.map((g) => (
         <div key={g.group}>
-          <p className="mb-2 px-3 text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">{g.group}</p>
+          <p className="mb-2 px-3 font-display text-[15px] italic text-ink-400">{g.group}</p>
           <div className="space-y-0.5">
             {g.items.map((it) => (
               <NavLink
@@ -119,8 +119,8 @@ function SideNav({ groups, onNavigate }: { groups: { group: string; items: NavIt
                 onClick={onNavigate}
                 className={({ isActive }) =>
                   cn(
-                    'group flex items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-semibold transition-all',
-                    isActive ? 'bg-brand-600 text-white shadow-sm shadow-brand-900/20' : 'text-slate-600 hover:bg-slate-100 hover:text-ink-950',
+                    'group flex items-center gap-3 rounded-xl border px-3 py-2.5 text-[14px] font-semibold transition-all duration-300',
+                    isActive ? 'border-ink-950 bg-lilac-200 text-ink-950 shadow-ink-sm' : 'border-transparent text-ink-600 hover:translate-x-0.5 hover:bg-sand-200/60 hover:text-ink-950',
                   )
                 }
               >
@@ -149,20 +149,20 @@ function UserMenu({ compact }: { compact?: boolean }) {
   if (!user) return null;
   return (
     <div className="relative" ref={ref}>
-      <button onClick={() => setOpen((o) => !o)} className={cn('flex w-full items-center gap-3 rounded-xl p-2 text-left transition hover:bg-slate-100', compact && 'p-1')} aria-haspopup="menu" aria-expanded={open}>
+      <button onClick={() => setOpen((o) => !o)} className={cn('flex w-full items-center gap-3 rounded-xl p-2 text-left transition hover:bg-sand-200/60', compact && 'p-1')} aria-haspopup="menu" aria-expanded={open}>
         <Avatar name={user.name} photoURL={user.photoURL} size={compact ? 32 : 36} />
         {!compact && (
           <>
             <span className="min-w-0 flex-1">
               <span className="block truncate text-sm font-bold text-ink-950">{user.name}</span>
-              <span className="block truncate text-xs text-slate-500">{user.role === 'employer' ? organisation?.name ?? 'Employer' : user.email}</span>
+              <span className="block truncate text-xs text-ink-500">{user.role === 'employer' ? organisation?.name ?? 'Employer' : user.email}</span>
             </span>
             <ChevronDown className="h-4 w-4 text-slate-400" />
           </>
         )}
       </button>
       {open && (
-        <div role="menu" className={cn('absolute z-50 w-56 animate-scale-in rounded-2xl border border-slate-200 bg-white p-1.5 shadow-lift', compact ? 'right-0 top-12' : 'bottom-14 left-0')}>
+        <div role="menu" className={cn('absolute z-50 w-56 animate-ghost-in rounded-2xl border border-ink-950 bg-paper p-1.5 shadow-ink', compact ? 'right-0 top-12' : 'bottom-14 left-0')}>
           <button role="menuitem" onClick={() => { setOpen(false); navigate(`${base}/settings`); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100">
             <Settings className="h-4 w-4" /> Settings
           </button>
@@ -204,31 +204,31 @@ export default function AppShell({ role }: { role: 'employee' | 'employer' }) {
   return (
     <div className="min-h-screen bg-canvas">
       {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-slate-200/80 bg-white lg:flex">
+      <aside className="fixed inset-y-3 left-3 z-40 hidden w-64 flex-col overflow-hidden rounded-3xl border border-ink-950/10 bg-paper shadow-card lg:flex">
         <div className="flex h-16 items-center px-5">
           <Logo to={home} />
         </div>
         {user?.isDemo && (
           <div className="mx-4 mb-2">
-            <Link to="/demo" className="flex items-center justify-between rounded-xl bg-gold-50 px-3 py-2 text-xs font-semibold text-gold-800 ring-1 ring-gold-200 hover:bg-gold-100">
+            <Link to="/demo" className="flex items-center justify-between rounded-xl border border-ink-950/10 bg-gold-100 px-3 py-2 text-xs font-semibold text-ink-900 hover:bg-gold-200">
               <span className="inline-flex items-center gap-1.5">
                 <FlaskConical className="h-3.5 w-3.5" /> Demo mode
               </span>
-              <span className="text-gold-700">Switch</span>
+              <span className="underline decoration-dotted underline-offset-2">Switch</span>
             </Link>
           </div>
         )}
         <div className="flex-1 overflow-y-auto px-3 py-4">
           <SideNav groups={groups} />
         </div>
-        <div className="border-t border-slate-100 p-3">
+        <div className="border-t border-ink-950/5 p-3">
           <AIStatusPill className="mb-2 w-full justify-center" />
           <UserMenu />
         </div>
       </aside>
 
       {/* Mobile top bar */}
-      <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-slate-200/80 bg-white/90 px-4 backdrop-blur-xl lg:hidden">
+      <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-ink-950/10 bg-canvas/90 px-4 backdrop-blur-xl lg:hidden">
         <button onClick={() => setDrawer(true)} className="-ml-1 rounded-lg p-2 text-slate-700 hover:bg-slate-100" aria-label="Open menu">
           <Menu className="h-5 w-5" />
         </button>
@@ -240,7 +240,7 @@ export default function AppShell({ role }: { role: 'employee' | 'employer' }) {
       {drawer && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 animate-fade-in bg-ink-950/40 backdrop-blur-sm" onClick={() => setDrawer(false)} />
-          <div className="absolute inset-y-0 left-0 flex w-[84%] max-w-xs animate-slide-right flex-col bg-white shadow-2xl">
+          <div className="absolute inset-y-0 left-0 flex w-[84%] max-w-xs animate-slide-right flex-col rounded-r-3xl bg-paper shadow-2xl">
             <div className="flex h-14 items-center justify-between px-4">
               <Logo to={home} />
               <button onClick={() => setDrawer(false)} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100" aria-label="Close menu">
@@ -257,14 +257,14 @@ export default function AppShell({ role }: { role: 'employee' | 'employer' }) {
             <div className="flex-1 overflow-y-auto px-3 py-4">
               <SideNav groups={groups} onNavigate={() => setDrawer(false)} />
             </div>
-            <div className="border-t border-slate-100 p-3">
+            <div className="border-t border-ink-950/5 p-3">
               <AIStatusPill className="w-full justify-center" />
             </div>
           </div>
         </div>
       )}
 
-      <div className="lg:pl-64">
+      <div className="lg:pl-[17rem]">
         <div className="hidden h-14 items-center justify-end gap-3 px-8 lg:flex">
           <AIStatusPill />
         </div>
@@ -274,14 +274,14 @@ export default function AppShell({ role }: { role: 'employee' | 'employer' }) {
       </div>
 
       {/* Mobile bottom tabs */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-slate-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden">
+      <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-2xl border border-ink-950/15 bg-canvas/95 pb-[env(safe-area-inset-bottom)] shadow-lift backdrop-blur-xl lg:hidden">
         {tabs.map((t) => (
-          <NavLink key={t.to} to={t.to} end={t.end} className={({ isActive }) => cn('flex flex-col items-center gap-0.5 py-2 text-[11px] font-semibold', isActive ? 'text-brand-700' : 'text-slate-500')}>
+          <NavLink key={t.to} to={t.to} end={t.end} className={({ isActive }) => cn('flex flex-col items-center gap-0.5 py-2 text-[11px] font-semibold transition', isActive ? 'text-ink-950 [&>svg]:rounded-lg [&>svg]:bg-lilac-200 [&>svg]:p-0.5' : 'text-ink-500')}>
             {t.icon}
             {t.label}
           </NavLink>
         ))}
-        <button onClick={() => setDrawer(true)} className="flex flex-col items-center gap-0.5 py-2 text-[11px] font-semibold text-slate-500">
+        <button onClick={() => setDrawer(true)} className="flex flex-col items-center gap-0.5 py-2 text-[11px] font-semibold text-ink-500">
           <MoreHorizontal className="h-5 w-5" />
           More
         </button>

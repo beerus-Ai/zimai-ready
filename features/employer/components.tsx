@@ -47,7 +47,7 @@ export function CertBadge({ certification, compact }: { certification: Workforce
 export function ReadinessCell({ value, className }: { value: number; className?: string }) {
   return (
     <div className={cn('flex min-w-[96px] items-center gap-2', className)}>
-      <div className="h-1.5 w-14 overflow-hidden rounded-full bg-slate-100">
+      <div className="h-1.5 w-14 overflow-hidden rounded-full bg-sand-200">
         <div className="h-full rounded-full" style={{ width: `${value}%`, background: readinessHex(value) }} />
       </div>
       <span className="text-sm font-bold tabular-nums text-ink-950">{value}%</span>
@@ -55,17 +55,34 @@ export function ReadinessCell({ value, className }: { value: number; className?:
   );
 }
 
-/** Executive KPI tile. */
-export function KpiTile({ label, value, sub, accent, icon, className, children }: { label: ReactNode; value: ReactNode; sub?: ReactNode; accent?: string; icon?: ReactNode; className?: string; children?: ReactNode }) {
+const KPI_VARIANTS = {
+  paper: 'bg-paper ring-1 ring-inset ring-ink-950/[0.06]',
+  lilac: 'bg-lilac-100/70',
+  blush: 'bg-blush-100/70',
+  gold: 'bg-gold-50',
+  sand: 'bg-sand-100',
+} as const;
+export type KpiVariant = keyof typeof KPI_VARIANTS;
+
+/** Executive KPI tile: soft tint, short label, one big number. (`accent` is accepted for compatibility but no longer drawn.) */
+export function KpiTile({ label, value, sub, icon, className, children, variant = 'paper' }: { label: ReactNode; value: ReactNode; sub?: ReactNode; accent?: string; icon?: ReactNode; className?: string; children?: ReactNode; variant?: KpiVariant }) {
   return (
-    <div className={cn('relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-4 shadow-card sm:p-5', className)}>
-      {accent && <span className="absolute inset-x-0 top-0 h-1" style={{ background: accent }} aria-hidden />}
-      <div className="flex items-start justify-between gap-2">
-        <p className="text-[12px] font-semibold uppercase tracking-wide text-slate-500">{label}</p>
-        {icon && <span className="text-slate-400">{icon}</span>}
-      </div>
-      <p className="mt-1.5 text-[28px] font-extrabold leading-none tracking-tight text-ink-950 tabular-nums sm:text-[32px]">{value}</p>
-      {sub && <p className="mt-1.5 text-xs text-slate-500">{sub}</p>}
+    <div className={cn('relative h-full rounded-3xl p-5 transition duration-300 sm:p-6', KPI_VARIANTS[variant], className)}>
+      <p className="flex items-center gap-1.5 text-[13px] font-medium text-ink-600">
+        {icon && <span className="shrink-0 text-ink-500">{icon}</span>}
+        <span className="min-w-0 truncate">{label}</span>
+      </p>
+      <p className="mt-4 font-display text-[44px] font-medium leading-none tracking-tight text-ink-950 tabular-nums sm:text-6xl">{value}</p>
+      {sub && <p className="mt-2 text-xs leading-snug text-ink-500">{sub}</p>}
+      {children}
+    </div>
+  );
+}
+
+/** Illustration slot for page headers (hidden below md so headers stay compact on phones). */
+export function HeroArt({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <div className={cn('pointer-events-none hidden shrink-0 animate-ghost-in md:block', className)} style={{ animationDelay: '180ms' }} aria-hidden>
       {children}
     </div>
   );
@@ -73,7 +90,7 @@ export function KpiTile({ label, value, sub, accent, icon, className, children }
 
 export function PrivacyNote({ className }: { className?: string }) {
   return (
-    <p className={cn('flex items-start gap-2 rounded-xl bg-slate-50 px-3.5 py-2.5 text-xs leading-relaxed text-slate-500', className)}>
+    <p className={cn('flex items-start gap-2 rounded-xl bg-sand-100 px-3.5 py-2.5 text-xs leading-relaxed text-slate-500', className)}>
       <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
       <span>
         Employers see only name, department, role and AI readiness indicators. Assessment answers, tutor conversations and other personal details stay private to each employee.
@@ -117,7 +134,7 @@ export function SampleDataBanner({ organisation, className }: { organisation: Or
   const toast = useToast();
   if (!organisation.isSampleWorkforce) return null;
   return (
-    <div className={cn('mb-5 flex flex-col gap-3 rounded-2xl border border-gold-200 bg-gold-50/70 px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between', className)}>
+    <div className={cn('mb-5 flex flex-col gap-3 rounded-2xl border border-ink-950/10 bg-gold-100/70 px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between', className)}>
       <p className="flex items-start gap-2 text-gold-900">
         <Info className="mt-0.5 h-4 w-4 shrink-0 text-gold-600" aria-hidden />
         <span>
@@ -136,7 +153,7 @@ export function SampleDataBanner({ organisation, className }: { organisation: Or
 const INSIGHT_META = {
   risk: { icon: <AlertTriangle className="h-4 w-4" />, cls: 'bg-clay-50 text-clay-600', label: 'Risk' },
   opportunity: { icon: <Lightbulb className="h-4 w-4" />, cls: 'bg-brand-50 text-brand-700', label: 'Opportunity' },
-  action: { icon: <ArrowRight className="h-4 w-4" />, cls: 'bg-sky-50 text-sky-700', label: 'Action' },
+  action: { icon: <ArrowRight className="h-4 w-4" />, cls: 'bg-lilac-50 text-lilac-700', label: 'Action' },
 } as const;
 
 export function InsightsCard({ org, members, focus = 'overview', title = 'AI management insights', className }: { org: Organisation; members: WorkforceMember[]; focus?: InsightFocus; title?: string; className?: string }) {
@@ -168,11 +185,10 @@ export function InsightsCard({ org, members, focus = 'overview', title = 'AI man
   }, [key]);
 
   return (
-    <Card className={className}>
+    <Card className={cn('sm:p-8', className)}>
       <CardTitle
         icon={<Sparkles className="h-5 w-5" />}
         title={title}
-        subtitle="Generated from your live workforce data"
         action={
           <div className="flex items-center gap-2">
             <AISourceBadge source={result?.source} />
@@ -185,13 +201,13 @@ export function InsightsCard({ org, members, focus = 'overview', title = 'AI man
       {loading && !result ? (
         <LoadingState variant="ai" title="Analysing your workforce…" messages={['Comparing departments…', 'Checking competency coverage…', 'Prioritising reskilling investment…']} className="py-8" />
       ) : result ? (
-        <div className={cn('space-y-4 transition-opacity', loading && 'opacity-60')}>
-          <p className="rounded-xl bg-ink-950 px-4 py-3 text-[15px] font-semibold leading-snug text-white">{result.data.headline}</p>
-          <ul className="space-y-3">
+        <div className={cn('space-y-6 transition-opacity', loading && 'opacity-60')}>
+          <p className="animate-ghost-in font-display text-2xl leading-snug text-ink-950 sm:text-[28px]">{result.data.headline}</p>
+          <ul className="grid gap-5 md:grid-cols-2">
             {result.data.insights.map((i, idx) => {
               const meta = INSIGHT_META[i.type];
               return (
-                <li key={idx} className="flex gap-3 animate-fade-up" style={{ animationDelay: `${idx * 60}ms` }}>
+                <li key={idx} className="flex gap-3 animate-ghost-in" style={{ animationDelay: `${idx * 80}ms` }}>
                   <span className={cn('mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg', meta.cls)} aria-label={meta.label}>
                     {meta.icon}
                   </span>
@@ -215,7 +231,7 @@ export function InsightsCard({ org, members, focus = 'overview', title = 'AI man
 
 export function MemberRow({ member, onClick, right }: { member: WorkforceMember; onClick?: () => void; right?: ReactNode }) {
   return (
-    <button type="button" onClick={onClick} className="flex w-full items-center gap-3 rounded-xl px-2 py-2.5 text-left transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">
+    <button type="button" onClick={onClick} className="flex w-full items-center gap-3 rounded-xl px-2 py-2.5 text-left transition hover:bg-sand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">
       <Avatar name={member.name} size={34} />
       <span className="min-w-0 flex-1">
         <span className="block truncate text-sm font-semibold text-ink-950">{member.name}</span>
@@ -296,21 +312,21 @@ Focus on practical next steps and coaching. Use responsible language about AI an
         </div>
 
         <div className="grid grid-cols-3 gap-2 sm:gap-3">
-          <div className="rounded-xl bg-slate-50 p-3">
+          <div className="rounded-xl bg-sand-100 p-3">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Readiness</p>
-            <p className="mt-1 text-2xl font-extrabold tabular-nums" style={{ color: readinessHex(member.readiness) }}>
+            <p className="mt-1 font-display text-3xl font-medium leading-none tabular-nums" style={{ color: readinessHex(member.readiness) }}>
               {member.readiness}%
             </p>
             <p className="text-[11px] text-slate-500">{level}</p>
           </div>
-          <div className="rounded-xl bg-slate-50 p-3">
+          <div className="rounded-xl bg-sand-100 p-3">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">AI exposure</p>
-            <p className="mt-1 text-2xl font-extrabold tabular-nums text-ink-950">{member.exposure}%</p>
+            <p className="mt-1 font-display text-3xl font-medium leading-none tabular-nums text-ink-950">{member.exposure}%</p>
             <p className="text-[11px] text-slate-500">{exposureLabel(member.exposure)}</p>
           </div>
-          <div className={cn('rounded-xl p-3', gap > 15 ? 'bg-clay-50' : 'bg-slate-50')}>
+          <div className={cn('rounded-xl p-3', gap > 15 ? 'bg-clay-50' : 'bg-sand-100')}>
             <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Gap</p>
-            <p className={cn('mt-1 text-2xl font-extrabold tabular-nums', gap > 15 ? 'text-clay-700' : 'text-ink-950')}>
+            <p className={cn('mt-1 font-display text-3xl font-medium leading-none tabular-nums', gap > 15 ? 'text-clay-700' : 'text-ink-950')}>
               {gap > 0 ? '+' : ''}
               {gap}
             </p>
@@ -318,7 +334,7 @@ Focus on practical next steps and coaching. Use responsible language about AI an
           </div>
         </div>
 
-        <ProgressBar value={member.learningProgress} label="Learning progress" showValue tone="sky" size="sm" />
+        <ProgressBar value={member.learningProgress} label="Learning progress" showValue tone="violet" size="sm" />
 
         <section>
           <h3 className="mb-2 text-sm font-bold text-ink-950">Skill levels</h3>
@@ -330,7 +346,7 @@ Focus on practical next steps and coaching. Use responsible language about AI an
                   <span className="min-w-0 truncate text-[13px] text-slate-700">{skillName(s.id)}</span>
                   <span className="flex shrink-0 items-center gap-1" aria-label={`${SKILL_LEVEL_LABELS[s.lvl]}`}>
                     {[1, 2, 3].map((n) => (
-                      <span key={n} className={cn('h-2 w-5 rounded-sm', n <= s.lvl ? '' : 'bg-slate-200', n === s.req && 'ring-1 ring-ink-900/40 ring-offset-1')} style={n <= s.lvl ? { background: c.hex } : undefined} />
+                      <span key={n} className={cn('h-2 w-5 rounded-sm', n <= s.lvl ? '' : 'bg-sand-300', n === s.req && 'ring-1 ring-ink-900/40 ring-offset-1')} style={n <= s.lvl ? { background: c.hex } : undefined} />
                     ))}
                   </span>
                 </li>
@@ -343,7 +359,7 @@ Focus on practical next steps and coaching. Use responsible language about AI an
         {checks.length > 0 && (
           <section>
             <h3 className="mb-2 text-sm font-bold text-ink-950">Employer competencies</h3>
-            <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200">
+            <ul className="divide-y divide-ink-950/5 rounded-2xl border border-ink-950/10 bg-paper">
               {checks.map((c) => (
                 <li key={c.competency.id} className="flex items-center gap-3 px-3 py-2.5">
                   {c.met ? <CheckCircle2 className="h-4 w-4 shrink-0 text-brand-600" aria-label="Met" /> : <XCircle className="h-4 w-4 shrink-0 text-clay-500" aria-label="Not met" />}
@@ -377,7 +393,7 @@ Focus on practical next steps and coaching. Use responsible language about AI an
           </ul>
           <div className="mt-3">
             {note ? (
-              <div className="rounded-xl border border-brand-100 bg-brand-50/40 p-3.5">
+              <div className="rounded-2xl border border-ink-950/10 bg-lilac-50 p-3.5">
                 <div className="mb-2 flex items-center justify-between gap-2">
                   <p className="text-xs font-bold uppercase tracking-wide text-brand-700">AI development note</p>
                   <AISourceBadge source={note.source} />

@@ -5,6 +5,8 @@ import { AIDisclaimer, Avatar, Badge, Button, Card, CardTitle, Modal, PageHeader
 import { useApp } from '../../services/store';
 import { getActiveModel, hasEnvApiKey, isGeminiAvailable, setUserApiKey, useAIStatus } from '../../services/gemini';
 import { formatDate } from '../../lib/utils';
+import { Reveal } from '../../components/motion';
+import { ShieldHands } from '../../components/illustrations';
 
 export default function SettingsPage() {
   const { user, backendKind, signOut, resetDemo, organisation } = useApp();
@@ -24,15 +26,19 @@ export default function SettingsPage() {
   }[status];
 
   return (
-    <div className="animate-fade-up">
-      <PageHeader eyebrow="Settings" title="Account & platform" description="Manage your account, AI engine and data." />
-      <div className="grid gap-5 lg:grid-cols-2">
-        <Card>
+    <div>
+      <div className="relative flex items-end gap-4">
+        <PageHeader className="min-w-0 flex-1" eyebrow="Settings" title={<>Account &amp; <em>platform</em></>} description="Account, AI engine and data." />
+        <ShieldHands className="mb-6 hidden h-24 w-24 shrink-0 animate-ghost-in md:block md:h-28 md:w-28" animated />
+      </div>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Reveal className="h-full">
+        <Card className="h-full">
           <CardTitle icon={<UserIcon className="h-5 w-5" />} title="Account" />
           <div className="flex items-center gap-4">
             <Avatar name={user.name} photoURL={user.photoURL} size={52} />
             <div className="min-w-0">
-              <p className="truncate font-bold text-ink-950">{user.name}</p>
+              <p className="truncate font-display text-2xl leading-tight text-ink-950">{user.name}</p>
               <p className="truncate text-sm text-slate-500">{user.email}</p>
               <div className="mt-1.5 flex flex-wrap gap-1.5">
                 <Badge tone="brand">{user.role === 'employer' ? 'Employer' : 'Employee'}</Badge>
@@ -54,10 +60,15 @@ export default function SettingsPage() {
             Sign out
           </Button>
         </Card>
+        </Reveal>
 
-        <Card>
-          <CardTitle icon={status === 'offline' ? <Cpu className="h-5 w-5" /> : <Sparkles className="h-5 w-5" />} title="AI engine" subtitle="Google Gemini powers analysis, tutoring, feedback and advice." />
-          <div className="rounded-xl bg-slate-50 p-4 text-sm text-slate-600">{statusText}</div>
+        <Reveal className="h-full" delay={80}>
+        <Card className="h-full">
+          <CardTitle icon={status === 'offline' ? <Cpu className="h-5 w-5" /> : <Sparkles className="h-5 w-5" />} title="AI engine" subtitle="Google Gemini" />
+          <div className="flex items-start gap-2.5 rounded-xl bg-sand-200/60 p-4 text-sm text-slate-600">
+            <span className={status === 'offline' ? 'mt-1.5 h-2 w-2 shrink-0 rounded-full bg-ink-400' : status === 'degraded' ? 'mt-1.5 h-2 w-2 shrink-0 rounded-full bg-gold-500' : 'mt-1.5 h-2 w-2 shrink-0 animate-ghost-pulse rounded-full bg-brand-500'} aria-hidden />
+            <span>{statusText}</span>
+          </div>
           {!hasEnvApiKey() && (
             <div className="mt-4">
               <label className="text-sm font-semibold text-slate-700" htmlFor="gk">
@@ -70,7 +81,7 @@ export default function SettingsPage() {
                   value={key}
                   onChange={(e) => setKey(e.target.value)}
                   placeholder={isGeminiAvailable() ? '•••••••• saved' : 'Paste key from aistudio.google.com'}
-                  className="h-11 min-w-0 flex-1 rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                  className="h-11 min-w-0 flex-1 rounded-xl border border-ink-950/20 bg-paper px-3 text-sm outline-none focus:border-ink-950 focus:ring-2 focus:ring-lilac-200"
                 />
                 <Button
                   icon={<KeyRound className="h-4 w-4" />}
@@ -87,8 +98,10 @@ export default function SettingsPage() {
           )}
           <AIDisclaimer className="mt-4" />
         </Card>
+        </Reveal>
 
-        <Card>
+        <Reveal className="h-full" delay={160}>
+        <Card className="h-full">
           <CardTitle icon={backendKind === 'firebase' && !user.isDemo ? <Cloud className="h-5 w-5" /> : <Database className="h-5 w-5" />} title="Data storage" />
           <p className="text-sm text-slate-600">
             {user.isDemo
@@ -99,14 +112,17 @@ export default function SettingsPage() {
           </p>
           <p className="mt-3 text-xs text-slate-500">ZimAI Ready stores only what is needed to personalise your learning. Employers see readiness and skills — never your answers to individual questions.</p>
         </Card>
+        </Reveal>
 
         {user.isDemo && (
-          <Card>
+          <Reveal className="h-full" delay={240}>
+          <Card className="h-full">
             <CardTitle icon={<RotateCcw className="h-5 w-5" />} title="Demo data" subtitle="Restore this demo profile to its original state." />
             <Button variant="outline" icon={<RotateCcw className="h-4 w-4" />} onClick={() => setConfirmReset(true)}>
               Reset demo data
             </Button>
           </Card>
+          </Reveal>
         )}
       </div>
 

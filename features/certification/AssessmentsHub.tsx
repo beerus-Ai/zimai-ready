@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowRight, Award, BadgeCheck, Building2, CircleCheck, Circle, ClipboardCheck, FastForward, FlaskConical, Lock, Route,
-  ShieldCheck, Sparkles, Trophy, Wrench, CircleX,
+  ShieldCheck, Trophy, Wrench, CircleX,
 } from 'lucide-react';
 import { Badge, Button, Card, CardTitle, EmptyState, Modal, PageHeader, ProgressBar, useToast } from '../../components/ui';
 import { useApp } from '../../services/store';
@@ -18,6 +18,8 @@ import { getDomain, getModule, moduleTitle } from '../../data/catalog';
 import { cn, formatDate, nowISO, seededRandom, uid } from '../../lib/utils';
 import type { ActivitySubmission, Certificate, CertificationLevel, DomainId, EmployeeProgress } from '../../types';
 import { Fact, LevelLadder, PrincipleBanner } from './assessment-components';
+import { Reveal } from '../../components/motion';
+import { CertificateRibbon } from '../../components/illustrations';
 
 const rank = (l: CertificationLevel | null | undefined) => (l ? LEVEL_META[l].rank : 0);
 const highest = (cs: Certificate[]) => cs.reduce<Certificate | null>((best, c) => (!best || rank(c.level) > rank(best.level) ? c : best), null);
@@ -113,11 +115,15 @@ export default function AssessmentsHub() {
   if (!user) return null;
 
   const header = (
-    <PageHeader
-      eyebrow="Stage 3 · Certify"
-      title="Competency Assessment & Certification"
-      description="Prove what you can do. Certificates are earned through a knowledge assessment, practical workplace activities and a profession-specific capstone."
-    />
+    <div className="relative">
+      <PageHeader
+        className="sm:pr-36 lg:pr-48"
+        eyebrow="Stage 3 · Certify"
+        title={<>Competency assessment &amp; <em>certification</em></>}
+        description="Earn certificates by proving what you can do."
+      />
+      <CertificateRibbon animated className="pointer-events-none absolute right-0 top-0 hidden h-28 w-28 animate-ghost-in sm:block lg:h-40 lg:w-40" />
+    </div>
   );
 
   if (!progress) {
@@ -128,7 +134,7 @@ export default function AssessmentsHub() {
         <EmptyState
           icon={<Route className="h-6 w-6" />}
           title="Start your learning path first"
-          description="Complete your AI readiness assessment and begin your personalised learning path. Assessments unlock as you build and practise your skills."
+          description="Assessments unlock as you learn and practise."
           action={
             <Button to="/app/learning" iconRight={<ArrowRight className="h-4 w-4" />}>
               Go to my learning path
@@ -229,35 +235,32 @@ export default function AssessmentsHub() {
   }
 
   return (
-    <div className="animate-fade-up space-y-6">
+    <div className="space-y-8 sm:space-y-10">
       {header}
-      <PrincipleBanner />
+      <Reveal>
+        <PrincipleBanner />
+      </Reveal>
 
       {/* Claim banner */}
       {canClaim && achievable && (
-        <div className="relative overflow-hidden rounded-3xl bg-ink-950 p-6 text-white shadow-lift sm:p-8">
-          <div className="bg-grid-dark absolute inset-0 opacity-60" />
-          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full opacity-40 blur-3xl" style={{ background: LEVEL_META[achievable].color }} />
+        <Reveal className="relative overflow-hidden rounded-4xl bg-brand-800 p-7 text-canvas sm:p-10">
           <div className="relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div className="min-w-0">
-              <Badge tone="white" icon={<Sparkles className="h-3 w-3" />}>
-                Competency demonstrated
-              </Badge>
-              <h2 className="mt-3 text-2xl font-extrabold tracking-tight sm:text-3xl">You have earned {LEVEL_META[achievable].label}</h2>
-              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-300">
-                {LEVEL_META[achievable].description} Your certificate will record the evidence — knowledge {k ?? 0}%, capstone {c ?? 0}%, responsible AI {status.responsibleAIScore}% and {status.practicalsCompleted} practical
-                {status.practicalsCompleted === 1 ? '' : 's'} — and is valid for 12 months.
+              <h2 className="text-3xl leading-[1.05] sm:text-5xl">You have earned <em>{LEVEL_META[achievable].label}</em></h2>
+              <p className="mt-3 text-sm tabular-nums text-canvas/75">
+                Knowledge {k ?? 0}% · Capstone {c ?? 0}% · Responsible AI {status.responsibleAIScore}% · {status.practicalsCompleted} practical{status.practicalsCompleted === 1 ? '' : 's'} · Valid 12 months
               </p>
             </div>
             <Button variant="gold" size="lg" className="shrink-0" loading={claiming === 'domain'} icon={<Award className="h-5 w-5" />} onClick={() => claimDomain(achievable)}>
               Claim your {LEVEL_META[achievable].label} certificate
             </Button>
           </div>
-        </div>
+        </Reveal>
       )}
 
       {/* Level ladder */}
-      <Card>
+      <Reveal delay={60}>
+      <Card className="rounded-4xl">
         <CardTitle
           icon={<Trophy className="h-5 w-5" />}
           title="Your certification journey"
@@ -283,9 +286,10 @@ export default function AssessmentsHub() {
           </p>
         )}
       </Card>
+      </Reveal>
 
       {/* Assessment stages */}
-      <div className="grid gap-5 md:grid-cols-2">
+      <Reveal delay={120} className="grid gap-6 md:grid-cols-2">
         <StageCard
           icon={<ClipboardCheck className="h-5 w-5" />}
           title="Final Knowledge Assessment"
@@ -311,7 +315,7 @@ export default function AssessmentsHub() {
             </dl>
           ) : (
             <div>
-              <p className="text-slate-600">Unlocks when you complete at least half of your required modules (or three of them). Tests knowledge, tool use, domain application, critical thinking, responsible AI and verification.</p>
+              <p className="text-slate-600">Unlocks after half of your required modules (or three).</p>
               <ProgressBar className="mt-3" value={(status.requiredCompleted / unlockTarget) * 100} label="Progress to unlock" showValue tone="gold" />
               <p className="mt-1.5 text-xs text-slate-500">
                 {status.requiredCompleted}/{status.requiredTotal} required modules completed
@@ -345,9 +349,7 @@ export default function AssessmentsHub() {
             </dl>
           ) : (
             <div>
-              <p className="text-slate-600">
-                Unlocks when you score at least {CERT_RULES.awareKnowledgeMark}% in the final knowledge assessment. You will solve a realistic {domain?.shortName ?? ''} scenario with AI — and show how you verified it.
-              </p>
+              <p className="text-slate-600">Unlocks at {CERT_RULES.awareKnowledgeMark}% in the final knowledge assessment.</p>
               <ProgressBar className="mt-3" value={((k ?? 0) / CERT_RULES.awareKnowledgeMark) * 100} label="Progress to unlock" showValue tone="gold" />
             </div>
           )}
@@ -370,7 +372,7 @@ export default function AssessmentsHub() {
             showValue
           />
           <p className="mt-3 text-slate-600">
-            {status.practicalsCompleted ? `Average practical score: ${status.practicalAverage}%. ` : ''}AI Ready requires at least {CERT_RULES.minPracticalActivities} passed practical activities — real workplace tasks assessed against a rubric.
+            {status.practicalsCompleted ? `Average ${status.practicalAverage}% · ` : ''}AI Ready needs {CERT_RULES.minPracticalActivities} passed.
           </p>
         </StageCard>
 
@@ -385,23 +387,22 @@ export default function AssessmentsHub() {
             <Fact label="Knowledge assessment" value={status.bestKnowledge?.responsibleAIScore != null ? `${status.bestKnowledge.responsibleAIScore}%` : '—'} />
             <Fact label="Capstone" value={status.bestCapstone?.responsibleAIScore != null ? `${status.bestCapstone.responsibleAIScore}%` : '—'} />
           </dl>
-          <p className="mt-3 text-xs leading-relaxed text-slate-500">
-            Averaged across your best final assessment (responsible AI and verification questions) and your capstone safeguards. Until both are complete, only half counts.
-          </p>
+          <p className="mt-3 text-xs text-slate-500">Average of both — only half counts until both are complete.</p>
         </StageCard>
-      </div>
+      </Reveal>
 
       {/* Requirements checklist */}
-      <Card>
-        <CardTitle icon={<CircleCheck className="h-5 w-5" />} title="Requirements checklist" subtitle="Each level requires all of its own requirements and those of the levels below." />
-        <div className="grid gap-6 lg:grid-cols-3">
+      <Reveal delay={60}>
+      <Card className="rounded-4xl">
+        <CardTitle icon={<CircleCheck className="h-5 w-5" />} title="Requirements checklist" subtitle="Each level includes the ones below it." />
+        <div className="grid gap-8 lg:grid-cols-3">
           {LEVEL_ORDER.map((lvl) => {
             const reqs = status.requirements.filter((r) => r.level === lvl);
             const met = reqs.filter((r) => r.met).length;
             return (
               <section key={lvl}>
                 <div className="mb-3 flex items-center justify-between border-b border-slate-100 pb-2">
-                  <h4 className="text-sm font-extrabold tracking-wide" style={{ color: LEVEL_META[lvl].color }}>
+                  <h4 className="font-condensed text-lg tracking-wide" style={{ color: LEVEL_META[lvl].color }}>
                     {LEVEL_META[lvl].label.toUpperCase()}
                   </h4>
                   <span className="text-xs font-semibold tabular-nums text-slate-500">
@@ -425,14 +426,15 @@ export default function AssessmentsHub() {
           })}
         </div>
       </Card>
+      </Reveal>
 
       {/* Employer AI Ready */}
       {organisation && competencies.length > 0 && (
-        <Card>
+        <Reveal>
+        <Card className="rounded-4xl">
           <CardTitle
             icon={<Building2 className="h-5 w-5" />}
             title={`Employer AI Ready — ${organisation.name}`}
-            subtitle="Measured against the AI competencies your employer requires."
             action={
               heldEmployer ? (
                 <Button variant="outline" size="sm" to={`/app/certificates/${heldEmployer.id}`} icon={<BadgeCheck className="h-4 w-4" />}>
@@ -443,7 +445,7 @@ export default function AssessmentsHub() {
           />
           <div className="mb-5 grid gap-3 sm:grid-cols-2">
             {(['domain', 'employer'] as const).map((t) => (
-              <div key={t} className={cn('rounded-xl border p-4', t === 'employer' ? 'border-violet-200 bg-violet-50/50' : 'border-brand-200 bg-brand-50/50')}>
+              <div key={t} className={cn('rounded-xl border p-4', t === 'employer' ? 'border-lilac-200 bg-lilac-50/50' : 'border-brand-800/15 bg-brand-50/60')}>
                 <p className="text-sm font-bold text-ink-950">{CERT_TYPE_META[t].label}</p>
                 <p className="mt-1 text-[13px] leading-snug text-slate-600">{CERT_TYPE_META[t].description}</p>
               </div>
@@ -453,7 +455,7 @@ export default function AssessmentsHub() {
           <div className="-mx-5 overflow-x-auto px-5 sm:mx-0 sm:px-0">
             <table className="w-full min-w-[560px] text-left text-sm">
               <thead>
-                <tr className="border-b border-slate-200 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <tr className="border-b border-ink-950/10 text-xs font-semibold uppercase tracking-wide text-slate-500">
                   <th className="py-2.5 pr-3">Competency</th>
                   <th className="py-2.5 pr-3">Priority</th>
                   <th className="py-2.5 pr-3">Required</th>
@@ -482,7 +484,7 @@ export default function AssessmentsHub() {
             </table>
           </div>
 
-          <div className="mt-5 flex flex-col gap-3 rounded-xl bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-5 flex flex-col gap-3 rounded-xl bg-sand-100 p-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-slate-600">
               {heldEmployer
                 ? `You hold the Employer AI Ready certificate for ${organisation.name}, valid until ${formatDate(heldEmployer.expiryDate)}.`
@@ -497,6 +499,7 @@ export default function AssessmentsHub() {
             )}
           </div>
         </Card>
+        </Reveal>
       )}
 
       {/* Demo accelerator */}
@@ -566,14 +569,14 @@ function StageCard({ icon, title, subtitle, state, children, footer }: {
 }) {
   const badge = state === 'locked' ? { tone: 'neutral' as const, label: 'Locked' } : state === 'done' ? { tone: 'brand' as const, label: 'Passed' } : { tone: 'gold' as const, label: 'Available' };
   return (
-    <Card className={cn('flex flex-col', state === 'locked' && 'bg-slate-50/70')}>
+    <Card className={cn('flex flex-col rounded-3xl p-6 transition duration-300 sm:p-7', state === 'locked' ? 'border-dashed bg-sand-100/70' : 'hover:border-ink-950/30 hover:shadow-ink-sm')}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
-          <div className={cn('flex h-11 w-11 shrink-0 items-center justify-center rounded-xl', state === 'done' ? 'bg-brand-600 text-white' : state === 'locked' ? 'bg-slate-200/70 text-slate-500' : 'bg-brand-50 text-brand-700')}>
+          <div className={cn('flex h-11 w-11 shrink-0 items-center justify-center rounded-xl', state === 'done' ? 'bg-brand-800 text-canvas' : state === 'locked' ? 'bg-sand-200 text-ink-500' : 'border border-ink-950 bg-lilac-200 text-ink-950')}>
             {state === 'locked' ? <Lock className="h-5 w-5" /> : icon}
           </div>
           <div className="min-w-0">
-            <h3 className="font-bold leading-tight text-ink-950">{title}</h3>
+            <h3 className="font-display text-xl font-medium leading-tight text-ink-950">{title}</h3>
             <p className="mt-0.5 text-[13px] text-slate-500">{subtitle}</p>
           </div>
         </div>

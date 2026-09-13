@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { ArrowRight, CircleCheck, ClipboardCheck, Copy, ExternalLink, EyeOff, Globe, Lock, Sparkles, UploadCloud, UserRound } from 'lucide-react';
+import { ArrowRight, CircleCheck, ClipboardCheck, Copy, ExternalLink, EyeOff, Globe, Lock, UploadCloud, UserRound } from 'lucide-react';
 import type { PublicSkillsProfile } from '../../types';
 import { useApp } from '../../services/store';
 import { Badge, Button, Card, CardTitle, EmptyState, PageHeader, Skeleton, useToast } from '../../components/ui';
@@ -8,6 +8,8 @@ import { nowISO, timeAgo } from '../../lib/utils';
 import { ProfileView } from './ProfileView';
 import { buildPublicProfile, sameSnapshot } from './profileSnapshot';
 import { copyText, publicProfileUrl } from './cert-utils';
+import { Reveal } from '../../components/motion';
+import { MapPins } from '../../components/illustrations';
 
 const INCLUDED = ['Name and professional headline', 'AI readiness level and score', 'Competency status with its evidence source', 'Demonstrated skill levels', 'Certificate summary and verification link'];
 const NEVER = ['Assessment answers and question-level scores', 'Practical activity submissions', 'Email address and contact details', 'AI Tutor conversations'];
@@ -73,11 +75,11 @@ export default function SkillsProfilePage() {
   if (!hasFoundation) {
     return (
       <div>
-        <PageHeader eyebrow="Share your skills" title="My AI Skills Profile" />
+        <PageHeader eyebrow="Share your skills" title={<>My AI skills <em>profile</em></>} />
         <EmptyState
           icon={<UserRound className="h-6 w-6" />}
           title="Your profile starts with your readiness assessment"
-          description="Complete the AI readiness assessment to create your learning path. Your profile then fills with verified competencies as you learn, practise and pass assessments."
+          description="Take the readiness assessment to start your verified profile."
           action={<Button to="/onboarding">Start my readiness assessment</Button>}
         />
       </div>
@@ -88,23 +90,25 @@ export default function SkillsProfilePage() {
     <div>
       <PageHeader
         eyebrow="Share your skills"
-        title="My AI Skills Profile"
-        description="A verified, shareable snapshot of your AI competencies — built from evidence, not self-assessment."
+        title={<>My AI skills <em>profile</em></>}
+        description="A verified, shareable snapshot of your AI competencies."
         actions={
+          <>
+          <MapPins animated className="pointer-events-none -my-6 mr-2 hidden h-28 w-28 animate-ghost-in lg:block" />
           <Button onClick={publish} loading={publishing} disabled={checking || upToDate} icon={upToDate ? <CircleCheck className="h-4 w-4" /> : <UploadCloud className="h-4 w-4" />}>
             {publishLabel}
           </Button>
+          </>
         }
       />
 
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
-        <div className="min-w-0">
+      <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-10">
+        <Reveal className="min-w-0">
           {verified === 0 && (
-            <div className="mb-4 flex flex-col gap-3 rounded-2xl border border-gold-200 bg-gold-50 p-4 sm:flex-row sm:items-center sm:justify-between">
-              <p className="flex items-start gap-2.5 text-sm text-gold-900">
-                <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-gold-600" />
+            <div className="mb-6 flex flex-col gap-3 rounded-3xl border border-ink-950/10 bg-sand-100 p-5 sm:flex-row sm:items-center sm:justify-between">
+              <p className="flex items-start gap-2.5 text-sm text-ink-800">
                 <span>
-                  <strong>Your profile is just getting started.</strong> Complete modules, practical activities and assessments to turn competencies from "in progress" into "verified".
+                  <strong>Just getting started.</strong> Pass modules, practicals and assessments to verify competencies.
                 </span>
               </p>
               <Button to="/app/learning" size="sm" variant="dark" iconRight={<ArrowRight className="h-4 w-4" />}>
@@ -113,14 +117,15 @@ export default function SkillsProfilePage() {
             </div>
           )}
           <div className="mb-2 flex items-center justify-between">
-            <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-400">Live preview</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-500">Live preview</p>
             {published && !upToDate && <Badge tone="gold">Unpublished changes</Badge>}
           </div>
           <ProfileView profile={snapshot} preview />
-        </div>
+        </Reveal>
 
-        <aside className="space-y-4 lg:sticky lg:top-6">
-          <Card>
+        <aside className="space-y-6 lg:sticky lg:top-6">
+          <Reveal delay={80}>
+          <Card className="rounded-3xl">
             <CardTitle icon={<Globe className="h-5 w-5" />} title="Public link" subtitle={published ? `Published ${timeAgo(published.updatedAt)}` : 'Private until you publish'} />
             {checking ? (
               <div className="space-y-2">
@@ -129,7 +134,7 @@ export default function SkillsProfilePage() {
               </div>
             ) : published ? (
               <>
-                <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
+                <div className="flex items-center gap-2 rounded-xl border border-ink-950/10 bg-sand-100 px-3 py-2.5">
                   <span className="min-w-0 flex-1 truncate font-mono text-xs text-slate-700" title={link}>
                     {link}
                   </span>
@@ -142,9 +147,9 @@ export default function SkillsProfilePage() {
                     Open
                   </Button>
                 </div>
-                <div className="mt-4 flex items-center gap-3 rounded-xl bg-slate-50 p-3">
-                  <div className="shrink-0 rounded-lg bg-white p-1.5 ring-1 ring-slate-200">
-                    <QRCodeSVG value={link} size={72} marginSize={0} level="M" fgColor="#0b1220" />
+                <div className="mt-4 flex items-center gap-3 rounded-xl bg-sand-100 p-3">
+                  <div className="shrink-0 rounded-lg bg-white p-1.5 ring-1 ring-ink-950/10">
+                    <QRCodeSVG value={link} size={72} marginSize={0} level="M" fgColor="#1a1a1a" />
                   </div>
                   <p className="text-xs text-slate-500">Employers can scan this code to open your profile. {upToDate ? 'Your public snapshot is up to date.' : 'You have changes that are not yet published.'}</p>
                 </div>
@@ -163,9 +168,11 @@ export default function SkillsProfilePage() {
               </>
             )}
           </Card>
+          </Reveal>
 
-          <Card>
-            <CardTitle icon={<Lock className="h-5 w-5" />} title="What employers see" subtitle="Only this snapshot — nothing else." />
+          <Reveal delay={140}>
+          <Card className="rounded-3xl">
+            <CardTitle icon={<Lock className="h-5 w-5" />} title="What employers see" />
             <ul className="space-y-2">
               {INCLUDED.map((t) => (
                 <li key={t} className="flex items-start gap-2 text-sm text-slate-700">
@@ -184,17 +191,19 @@ export default function SkillsProfilePage() {
               ))}
             </ul>
           </Card>
+          </Reveal>
 
-          <Card>
+          <Reveal delay={200}>
+          <Card className="rounded-3xl bg-lilac-50">
             <CardTitle icon={<ClipboardCheck className="h-5 w-5" />} title="Strengthen your profile" />
             <div className="grid grid-cols-3 gap-2 text-center">
               {[
-                { label: 'Verified', value: verified, cls: 'text-brand-700' },
+                { label: 'Verified', value: verified, cls: 'text-brand-800' },
                 { label: 'In progress', value: inProgress, cls: 'text-gold-700' },
                 { label: 'Not started', value: snapshot.competencies.length - verified - inProgress, cls: 'text-slate-500' },
               ].map((s) => (
-                <div key={s.label} className="rounded-xl bg-slate-50 px-2 py-3">
-                  <p className={`text-xl font-extrabold tabular-nums ${s.cls}`}>{s.value}</p>
+                <div key={s.label} className="rounded-2xl border border-ink-950/5 bg-paper px-2 py-3">
+                  <p className={`font-display text-4xl font-medium leading-none tabular-nums ${s.cls}`}>{s.value}</p>
                   <p className="text-[11px] font-semibold text-slate-500">{s.label}</p>
                 </div>
               ))}
@@ -208,6 +217,7 @@ export default function SkillsProfilePage() {
               </Button>
             </div>
           </Card>
+          </Reveal>
         </aside>
       </div>
     </div>

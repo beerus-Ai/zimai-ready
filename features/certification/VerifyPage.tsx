@@ -25,8 +25,10 @@ import type { Certificate } from '../../types';
 import { useApp } from '../../services/store';
 import { localDb } from '../../services/backend';
 import { seedPublicDemoData, DEMO_CERTIFICATE_ID } from '../../data/demo/seed';
-import { Badge, Button, Card, ErrorState, Skeleton, Spinner, useToast } from '../../components/ui';
-import { ChevronPattern, LogoMark } from '../../components/brand';
+import { Badge, Button, ErrorState, Skeleton, useToast } from '../../components/ui';
+import { LogoMark } from '../../components/brand';
+import { DeckSection, GhostText, Reveal } from '../../components/motion';
+import { CertificateRibbon, GhostMascot, ShieldHands, Sparkle, Squiggle } from '../../components/illustrations';
 import { CERT_TYPE_META, certificateState, LEVEL_META } from '../../lib/certification';
 import { CERT_RULES } from '../../config';
 import { cn, formatDate, nowISO, sleep } from '../../lib/utils';
@@ -141,26 +143,50 @@ export default function VerifyPage() {
   const loading = phase.kind === 'loading' || ((!seeded || !ready) && Boolean(certId));
 
   return (
-    <div className="relative">
+    <div className="relative overflow-x-clip">
       {/* Hero & search */}
-      <section className="relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 bg-grid [mask-image:radial-gradient(ellipse_at_top,black,transparent_70%)]" />
-        <div className="pointer-events-none absolute left-1/2 top-[-12rem] h-[28rem] w-[46rem] -translate-x-1/2 rounded-full bg-brand-300/25 blur-3xl" />
-        <div className="relative mx-auto max-w-3xl px-4 pb-8 pt-10 text-center sm:px-6 sm:pb-10 sm:pt-16">
-          <Badge tone="brand" icon={<ShieldCheck className="h-3.5 w-3.5" />}>
+      <section className="relative">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[34rem] bg-grid [mask-image:radial-gradient(ellipse_at_top,black_20%,transparent_70%)]" aria-hidden />
+        <div className="pointer-events-none absolute left-[4%] top-40 hidden -rotate-6 xl:block" aria-hidden>
+          <div className="animate-ghost-in" style={{ animationDelay: '300ms' }}>
+            <CertificateRibbon className="h-44 w-44 animate-float" animated />
+          </div>
+        </div>
+        <div className="pointer-events-none absolute right-[4%] top-48 hidden rotate-3 xl:block" aria-hidden>
+          <div className="animate-ghost-in" style={{ animationDelay: '450ms' }}>
+            <ShieldHands className="h-40 w-40" animated />
+          </div>
+        </div>
+        <div className="relative mx-auto max-w-3xl px-4 pb-10 pt-28 text-center sm:px-6 sm:pb-14 sm:pt-36">
+          <span className="inline-flex animate-ghost-in items-center gap-2 rounded-full border border-ink-950/15 bg-paper px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-ink-700 shadow-card">
+            <ShieldCheck className="h-3.5 w-3.5 text-brand-800" />
             Certificate verification
-          </Badge>
-          <h1 className="mt-4 text-balance text-3xl font-extrabold tracking-tight text-ink-950 sm:text-5xl">Verify a ZimAI Ready certificate</h1>
-          <p className="mx-auto mt-4 max-w-xl text-[15px] text-slate-600 sm:text-base">
-            Confirm that a professional's AI readiness certificate is authentic, current and backed by demonstrated competency.
+          </span>
+          <h1 className="mt-6 text-balance text-[2.6rem] leading-[0.95] text-ink-950 sm:text-7xl">
+            <span className="sr-only">Verify a ZimAI Ready certificate</span>
+            <span aria-hidden>
+              <GhostText text="Verify a ZimAI Ready" startOnView={false} stagger={70} />{' '}
+              <span className="relative inline-block">
+                <GhostText text="*certificate*" accentClassName="italic text-brand-800" startOnView={false} delay={320} stagger={100} />
+                <Squiggle className="absolute -bottom-2 left-0 h-4 w-full sm:-bottom-3 sm:h-5" color="#ffa946" animated />
+              </span>
+            </span>
+          </h1>
+          <p className="mx-auto mt-6 max-w-xl animate-ghost-in text-[15px] leading-relaxed text-ink-600 sm:text-lg" style={{ animationDelay: '380ms' }}>
+            Authentic. Current. Proven.
           </p>
 
-          <form onSubmit={onSubmit} noValidate className="mx-auto mt-8 flex max-w-xl flex-col gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-lift sm:flex-row">
+          <form
+            onSubmit={onSubmit}
+            noValidate
+            className="mx-auto mt-9 flex max-w-xl animate-ghost-in flex-col gap-2 rounded-3xl border border-ink-950 bg-paper p-2 shadow-ink sm:flex-row"
+            style={{ animationDelay: '460ms' }}
+          >
             <label htmlFor="cert-id" className="sr-only">
               Certificate ID
             </label>
             <div className="relative flex-1">
-              <KeyRound className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+              <KeyRound className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-ink-400" />
               <input
                 id="cert-id"
                 value={input}
@@ -177,8 +203,8 @@ export default function VerifyPage() {
                 aria-invalid={Boolean(inputError)}
                 aria-describedby="cert-id-hint"
                 className={cn(
-                  'h-12 w-full rounded-xl bg-slate-50 pl-12 pr-3 font-mono text-base uppercase tracking-wider text-ink-950 outline-none transition placeholder:text-slate-400 focus:bg-white focus:ring-2 sm:h-14 sm:text-lg',
-                  inputError ? 'ring-2 ring-clay-400 focus:ring-clay-500' : 'focus:ring-brand-500',
+                  'h-12 w-full rounded-2xl bg-sand-200/60 pl-12 pr-3 font-mono text-base uppercase tracking-wider text-ink-950 outline-none transition-colors placeholder:text-ink-400 focus:bg-canvas focus:ring-2 sm:h-14 sm:text-lg',
+                  inputError ? 'ring-2 ring-clay-400 focus:ring-clay-500' : 'focus:ring-lilac-300',
                 )}
               />
             </div>
@@ -186,15 +212,15 @@ export default function VerifyPage() {
               Verify
             </Button>
           </form>
-          <p id="cert-id-hint" className={cn('mt-3 text-sm', inputError ? 'font-medium text-clay-700' : 'text-slate-500')} role={inputError ? 'alert' : undefined}>
+          <p id="cert-id-hint" className={cn('mt-4 text-sm', inputError ? 'font-medium text-clay-700' : 'text-ink-500')} role={inputError ? 'alert' : undefined}>
             {inputError ?? `Format: ${CERT_ID_HINT} — printed on the certificate next to the QR code.`}
           </p>
           <button
             type="button"
             onClick={() => go(DEMO_CERTIFICATE_ID)}
-            className="mt-4 inline-flex max-w-full items-center gap-2 rounded-full border border-gold-200 bg-gold-50 px-3.5 py-1.5 text-sm font-semibold text-gold-800 transition hover:bg-gold-100"
+            className="mt-4 inline-flex max-w-full items-center gap-2 rounded-full border border-ink-950 bg-gold-400 px-3.5 py-1.5 text-sm font-semibold text-ink-950 transition hover:-translate-y-px hover:shadow-ink-sm"
           >
-            <Sparkles className="h-4 w-4 shrink-0 text-gold-600" />
+            <Sparkles className="h-4 w-4 shrink-0" />
             <span className="truncate">
               Try the demo certificate: <span className="font-mono">{DEMO_CERTIFICATE_ID}</span>
             </span>
@@ -203,7 +229,7 @@ export default function VerifyPage() {
       </section>
 
       {/* Result */}
-      <section ref={resultRef} className="mx-auto max-w-3xl scroll-mt-20 px-4 pb-12 sm:px-6" aria-live="polite">
+      <section ref={resultRef} className="mx-auto max-w-3xl scroll-mt-24 px-4 pb-28 sm:px-6 sm:pb-36" aria-live="polite">
         {loading ? (
           <LoadingCard id={phase.kind === 'loading' ? phase.id : normaliseCertId(certId ?? '')} />
         ) : phase.kind === 'found' ? (
@@ -230,12 +256,15 @@ export default function VerifyPage() {
 
 function LoadingCard({ id }: { id: string }) {
   return (
-    <Card className="animate-fade-in">
-      <div className="flex items-center gap-3">
-        <Spinner className="h-6 w-6" />
-        <div>
-          <p className="font-bold text-ink-950">Checking the certificate register…</p>
-          <p className="font-mono text-sm text-slate-500">{id}</p>
+    <div className="animate-ghost-in rounded-4xl border border-ink-950/10 bg-paper p-5 shadow-card sm:p-7">
+      <div className="flex items-center gap-4">
+        <div className="relative h-14 w-14 shrink-0">
+          <span className="absolute inset-1 animate-ghost-pulse rounded-full bg-lilac-300/60 blur-lg" aria-hidden />
+          <GhostMascot mood="thinking" className="relative h-14 w-14" animated />
+        </div>
+        <div className="min-w-0">
+          <p className="font-display text-2xl leading-tight text-ink-950">Checking the certificate register…</p>
+          <p className="truncate font-mono text-sm text-ink-500">{id}</p>
         </div>
       </div>
       <div className="mt-6 space-y-3">
@@ -247,7 +276,7 @@ function LoadingCard({ id }: { id: string }) {
           ))}
         </div>
       </div>
-    </Card>
+    </div>
   );
 }
 
@@ -255,10 +284,10 @@ const RESULT_META = {
   valid: {
     label: 'VERIFIED',
     title: 'This certificate is authentic and valid',
-    bar: 'bg-brand-600 text-white',
+    bar: 'bg-brand-800 text-canvas',
     icon: <ShieldCheck className="h-7 w-7" />,
     statusText: 'Valid',
-    statusCls: 'text-brand-700',
+    statusCls: 'text-brand-800',
   },
   expired: {
     label: 'EXPIRED',
@@ -271,12 +300,21 @@ const RESULT_META = {
   revoked: {
     label: 'REVOKED',
     title: 'This certificate has been revoked',
-    bar: 'bg-clay-600 text-white',
+    bar: 'bg-clay-800 text-canvas',
     icon: <ShieldX className="h-7 w-7" />,
     statusText: 'Revoked',
     statusCls: 'text-clay-700',
   },
 } as const;
+
+/** Sparkles that burst around the verified stamp. */
+const SPARKS = [
+  { cls: 'left-[6%] top-3 h-6 w-6', color: '#ffa946', d: 0 },
+  { cls: 'right-[10%] top-2 h-8 w-8', color: '#c8f0dc', d: 180 },
+  { cls: 'right-[34%] -top-2 h-5 w-5', color: '#ffbcf2', d: 320 },
+  { cls: 'left-[40%] bottom-2 h-5 w-5', color: '#fffeeb', d: 460 },
+  { cls: 'right-[4%] bottom-3 h-6 w-6', color: '#ffa946', d: 600 },
+];
 
 function ResultCard({ cert, hasProfile, checkedAt }: { cert: Certificate; hasProfile: boolean; checkedAt: string }) {
   const toast = useToast();
@@ -320,116 +358,140 @@ function ResultCard({ cert, hasProfile, checkedAt }: { cert: Certificate; hasPro
   ];
 
   return (
-    <Card padded={false} className="animate-fade-up overflow-hidden">
-      <div className={cn('relative flex items-center gap-4 overflow-hidden px-5 py-5 sm:px-7', meta.bar)}>
-        <ChevronPattern color="currentColor" opacity={0.1} />
-        <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/20 ring-1 ring-white/30">{meta.icon}</span>
-        <div className="relative min-w-0">
-          <p className="text-xs font-extrabold tracking-[0.22em]">{meta.label}</p>
-          <h2 className="text-lg font-bold leading-snug sm:text-xl">{meta.title}</h2>
-        </div>
-      </div>
-
-      <div className="p-5 sm:p-7">
-        <p className="text-sm text-slate-600">{subtitle}</p>
-
-        <div className="mt-5 flex flex-col-reverse gap-5 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0">
-            <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-400">Certificate holder</p>
-            <p className="mt-1 text-2xl font-extrabold tracking-tight text-ink-950 sm:text-3xl">{cert.holderName}</p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold" style={{ background: tint(level.color, 0.1), color: level.color }}>
-                <BadgeCheck className="h-3.5 w-3.5" /> {level.label}
-              </span>
-              <Badge tone="neutral">{CERT_TYPE_META[cert.type].label}</Badge>
+    <div className="animate-ghost-in">
+      <div className="overflow-hidden rounded-4xl border border-ink-950 bg-paper shadow-ink">
+        {/* Status band */}
+        <div className={cn('relative flex items-center gap-4 overflow-hidden px-5 py-6 sm:px-8 sm:py-7', meta.bar)}>
+          {state === 'valid' && (
+            <div className="pointer-events-none absolute inset-0" aria-hidden>
+              {SPARKS.map((s, i) => (
+                <span key={i} className={cn('absolute animate-ghost-in', s.cls)} style={{ animationDelay: `${s.d}ms` }}>
+                  <Sparkle className="h-full w-full" color={s.color} animated />
+                </span>
+              ))}
             </div>
-          </div>
-          <div className="flex items-center gap-3 sm:flex-col sm:items-end">
-            <div className="rounded-xl bg-white p-2 ring-1 ring-slate-200">
-              <QRCodeSVG value={url} size={88} marginSize={0} level="M" fgColor="#0b1220" />
-            </div>
-            <p className="flex items-center gap-1 text-[11px] font-medium text-slate-500">
-              <ScanLine className="h-3.5 w-3.5" /> Scan to re-open this check
-            </p>
+          )}
+          <span className="relative flex h-14 w-14 shrink-0 animate-scale-in items-center justify-center rounded-full border-2 border-current">
+            {state === 'valid' && <span className="absolute inset-0 animate-ping-slow rounded-full border-2 border-current opacity-40" aria-hidden />}
+            {meta.icon}
+          </span>
+          <div className="relative min-w-0">
+            <p className="font-condensed text-2xl uppercase leading-none tracking-wide sm:text-3xl">{meta.label}</p>
+            <h2 className="mt-1 text-xl leading-snug sm:text-2xl">{meta.title}</h2>
           </div>
         </div>
 
-        <dl className="mt-6 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 sm:grid-cols-2">
-          {rows.map((r) => (
-            <div key={r.label} className="bg-white px-4 py-3">
-              <dt className="text-xs font-semibold text-slate-400">{r.label}</dt>
-              <dd className="mt-0.5 text-sm font-semibold text-ink-950">{r.value}</dd>
+        {/* Certificate body with an inset frame */}
+        <div className="p-3 sm:p-4">
+          <div className="relative rounded-3xl border border-dashed border-ink-950/25 p-4 sm:p-6">
+            <div className="pointer-events-none absolute -right-2 -top-3 hidden sm:block" aria-hidden>
+              <CertificateRibbon className="h-24 w-24" animated={state === 'valid'} />
             </div>
-          ))}
-        </dl>
+            <p className="max-w-lg text-sm text-ink-600 sm:pr-20">{subtitle}</p>
 
-        <div className="mt-6">
-          <p className="text-sm font-bold text-ink-950">Verified competencies</p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {cert.competencies.map((c) => (
-              <Badge key={c.name} tone="brand" icon={<CircleCheck className="h-3.5 w-3.5" />} className="px-3 py-1 text-[13px]">
-                {c.name}
-              </Badge>
-            ))}
+            <div className="mt-6 flex flex-col-reverse gap-5 sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-500">Certificate holder</p>
+                <p className="mt-1 break-words font-display text-4xl leading-tight text-ink-950 sm:text-5xl">{cert.holderName}</p>
+                <Squiggle className="mt-1 h-3 w-32" color={level.color} animated={state === 'valid'} />
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold" style={{ background: tint(level.color, 0.12), color: level.color }}>
+                    <BadgeCheck className="h-3.5 w-3.5" /> {level.label}
+                  </span>
+                  <Badge tone="neutral">{CERT_TYPE_META[cert.type].label}</Badge>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 sm:mt-16 sm:flex-col sm:items-end">
+                <div className="rounded-2xl border border-ink-950/15 bg-canvas p-2">
+                  <QRCodeSVG value={url} size={88} marginSize={0} level="M" fgColor="#1a1a1a" bgColor="#fffeeb" />
+                </div>
+                <p className="flex items-center gap-1 text-[11px] font-medium text-ink-500">
+                  <ScanLine className="h-3.5 w-3.5" /> Scan to re-open this check
+                </p>
+              </div>
+            </div>
+
+            <dl className="mt-6 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-ink-950/10 bg-ink-950/10 sm:grid-cols-2">
+              {rows.map((r, i) => (
+                <div key={r.label} className="animate-ghost-in bg-paper px-4 py-3" style={{ animationDelay: `${150 + i * 40}ms` }}>
+                  <dt className="text-xs font-semibold text-ink-400">{r.label}</dt>
+                  <dd className="mt-0.5 break-words text-sm font-semibold text-ink-950">{r.value}</dd>
+                </div>
+              ))}
+            </dl>
+
+            <div className="mt-6">
+              <p className="font-display text-xl text-ink-950">Verified competencies</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {cert.competencies.map((c) => (
+                  <Badge key={c.name} tone="brand" icon={<CircleCheck className="h-3.5 w-3.5" />} className="px-3 py-1 text-[13px]">
+                    {c.name}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              {evidence.map((e) => (
+                <div key={e.label} className="rounded-2xl bg-sand-200/60 px-4 py-3">
+                  <p className="text-xs font-semibold text-ink-500">{e.label}</p>
+                  <p className="mt-1 font-condensed text-3xl leading-none tabular-nums text-ink-950">{e.score ? `${Math.round(e.score)}%` : '—'}</p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div className="mt-6 grid gap-3 sm:grid-cols-3">
-          {evidence.map((e) => (
-            <div key={e.label} className="rounded-xl bg-slate-50 px-4 py-3">
-              <p className="text-xs font-semibold text-slate-500">{e.label}</p>
-              <p className="mt-0.5 text-lg font-extrabold tabular-nums text-ink-950">{e.score ? `${Math.round(e.score)}%` : '—'}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-6 flex flex-col gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap gap-2">
-            {hasProfile && (
-              <Button to={`/p/${cert.userId}`} variant="secondary" size="sm" icon={<UserRound className="h-4 w-4" />}>
-                View AI Skills Profile
+          <div className="mt-4 flex flex-col gap-3 px-2 pb-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap gap-2">
+              {hasProfile && (
+                <Button to={`/p/${cert.userId}`} variant="primary" size="sm" icon={<UserRound className="h-4 w-4" />}>
+                  View AI Skills Profile
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                icon={<Link2 className="h-4 w-4" />}
+                onClick={async () => ((await copyText(url)) ? toast.success('Verification link copied') : toast.error('Could not copy the link', url))}
+              >
+                Copy verification link
               </Button>
-            )}
-            <Button
-              variant="outline"
-              size="sm"
-              icon={<Link2 className="h-4 w-4" />}
-              onClick={async () => ((await copyText(url)) ? toast.success('Verification link copied') : toast.error('Could not copy the link', url))}
-            >
-              Copy verification link
-            </Button>
+            </div>
+            <p className="text-xs text-ink-400">Checked {formatDate(checkedAt, { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
           </div>
-          <p className="text-xs text-slate-400">Checked {formatDate(checkedAt, { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }
 
 function NotFoundCard({ id, reason, onDemo }: { id: string; reason: 'format' | 'missing'; onDemo: () => void }) {
   return (
-    <Card className="animate-fade-up">
-      <div className="flex items-start gap-4">
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-slate-500">
-          <SearchX className="h-6 w-6" />
-        </span>
+    <div className="animate-ghost-in rounded-4xl border border-ink-950/10 bg-paper p-5 shadow-card sm:p-8">
+      <div className="flex flex-col items-start gap-5 sm:flex-row">
+        <div className="relative shrink-0">
+          <GhostMascot mood="thinking" className="h-20 w-20 animate-ghost-float" animated />
+          <span className="absolute -bottom-1 -right-2 flex h-8 w-8 items-center justify-center rounded-xl border border-ink-950 bg-blush-200 text-ink-950 shadow-ink-sm">
+            <SearchX className="h-4 w-4" />
+          </span>
+        </div>
         <div className="min-w-0">
-          <p className="text-xs font-extrabold tracking-[0.22em] text-slate-500">NOT FOUND</p>
-          <h2 className="mt-0.5 text-lg font-bold text-ink-950 sm:text-xl">
+          <p className="font-condensed text-xl uppercase leading-none tracking-wide text-clay-500">Not found</p>
+          <h2 className="mt-2 text-3xl leading-tight text-ink-950">
             {reason === 'format' ? "That isn't a valid certificate ID" : (
               <>
-                No certificate matches <span className="break-all font-mono">{id}</span>
+                No certificate matches <span className="break-all font-mono text-2xl">{id}</span>
               </>
             )}
           </h2>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-2 text-sm leading-relaxed text-ink-600">
             {reason === 'format'
               ? `ZimAI Ready certificate IDs follow the format ${CERT_ID_HINT}.`
               : 'We could not match this ID to a certificate issued on this deployment of ZimAI Ready. This does not necessarily mean the certificate is fake.'}
           </p>
         </div>
       </div>
-      <ul className="mt-5 space-y-2.5 rounded-2xl bg-slate-50 p-4 text-sm text-slate-600">
+      <ul className="mt-6 space-y-2.5 rounded-3xl bg-sand-200/60 p-4 text-sm text-ink-600 sm:p-5">
         {[
           'Check the ID carefully — the six-character code never uses the look-alike characters O, I, 0 or 1.',
           'Scan the QR code on the certificate instead of typing the ID.',
@@ -437,35 +499,38 @@ function NotFoundCard({ id, reason, onDemo }: { id: string; reason: 'format' | '
           'Certificates issued on a different deployment of this prototype cannot be verified here.',
         ].map((t) => (
           <li key={t} className="flex items-start gap-2">
-            <Info className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
+            <Info className="mt-0.5 h-4 w-4 shrink-0 text-ink-400" />
             {t}
           </li>
         ))}
       </ul>
-      <Button variant="outline" size="sm" className="mt-5" icon={<Sparkles className="h-4 w-4 text-gold-500" />} onClick={onDemo}>
+      <Button variant="gold" size="sm" className="mt-5" icon={<Sparkles className="h-4 w-4" />} onClick={onDemo}>
         Try the demo certificate
       </Button>
-    </Card>
+    </div>
   );
 }
 
 function HowToVerify() {
   const steps = [
-    { icon: <ScanLine className="h-5 w-5" />, title: 'Find the ID or QR code', text: 'Printed at the bottom right of every ZimAI Ready certificate.' },
-    { icon: <KeyRound className="h-5 w-5" />, title: 'Enter or scan it', text: 'Scanning the QR code opens this page with the result.' },
-    { icon: <ShieldCheck className="h-5 w-5" />, title: 'Review the result', text: 'Status, level, competencies and validity dates.' },
+    { icon: <ScanLine className="h-5 w-5" />, title: 'Find the ID or QR code', c: 'bg-lilac-200' },
+    { icon: <KeyRound className="h-5 w-5" />, title: 'Enter or scan it', c: 'bg-gold-400' },
+    { icon: <ShieldCheck className="h-5 w-5" />, title: 'Review the result', c: 'bg-blush-200' },
   ];
   return (
-    <div className="grid gap-3 sm:grid-cols-3">
+    <div className="grid gap-4 sm:grid-cols-3">
       {steps.map((s, i) => (
-        <div key={s.title} className="rounded-2xl border border-slate-200/80 bg-white/70 p-4">
-          <div className="flex items-center gap-2 text-brand-700">
-            {s.icon}
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Step {i + 1}</span>
+        <Reveal key={s.title} delay={500 + i * 100}>
+          <div className="h-full rounded-3xl border border-ink-950/10 bg-paper p-5 shadow-card transition duration-300 hover:-translate-y-1 hover:border-ink-950 hover:shadow-ink-sm">
+            <div className="flex items-center justify-between">
+              <span className={cn('flex h-10 w-10 items-center justify-center rounded-xl border border-ink-950 text-ink-950', s.c)}>{s.icon}</span>
+              <span className="font-condensed text-5xl leading-none text-ink-950/10" aria-hidden>
+                0{i + 1}
+              </span>
+            </div>
+            <p className="mt-5 font-display text-2xl leading-tight text-ink-950">{s.title}</p>
           </div>
-          <p className="mt-2 text-sm font-bold text-ink-950">{s.title}</p>
-          <p className="mt-0.5 text-sm text-slate-500">{s.text}</p>
-        </div>
+        </Reveal>
       ))}
     </div>
   );
@@ -473,61 +538,54 @@ function HowToVerify() {
 
 function Guarantees() {
   const items = [
-    {
-      icon: <GraduationCap className="h-5 w-5" />,
-      title: 'Knowledge assessment',
-      text: `Passed a final knowledge assessment (≥ ${CERT_RULES.knowledgePassMark}% for AI Ready) covering AI concepts, tools, domain application and output verification.`,
-    },
-    {
-      icon: <Briefcase className="h-5 w-5" />,
-      title: 'Practical capstone',
-      text: `Completed a realistic workplace task in their profession, evaluated against a published rubric (≥ ${CERT_RULES.capstonePassMark}%).`,
-    },
-    {
-      icon: <ShieldCheck className="h-5 w-5" />,
-      title: 'Responsible AI',
-      text: `Demonstrated privacy, bias awareness, verification and human oversight (≥ ${CERT_RULES.responsibleAIPassMark}% across knowledge and capstone).`,
-    },
+    { icon: <GraduationCap className="h-5 w-5" />, title: 'Knowledge assessment', mark: CERT_RULES.knowledgePassMark },
+    { icon: <Briefcase className="h-5 w-5" />, title: 'Practical capstone', mark: CERT_RULES.capstonePassMark },
+    { icon: <ShieldCheck className="h-5 w-5" />, title: 'Responsible AI', mark: CERT_RULES.responsibleAIPassMark },
   ];
   return (
-    <section className="border-t border-slate-200/70 bg-white">
-      <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16">
-        <div className="text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-600">What verification guarantees</p>
-          <h2 className="mt-2 text-balance text-2xl font-extrabold tracking-tight text-ink-950 sm:text-3xl">Demonstrated competency — not course completion</h2>
-          <p className="mx-auto mt-3 max-w-2xl text-[15px] text-slate-600">
-            A valid ZimAI Ready AI Ready certificate means the holder has proven, not just studied, their ability to use AI responsibly in their profession.
-          </p>
-        </div>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          {items.map((it) => (
-            <Card key={it.title}>
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">{it.icon}</span>
-              <h3 className="mt-3 font-bold text-ink-950">{it.title}</h3>
-              <p className="mt-1 text-sm leading-relaxed text-slate-600">{it.text}</p>
-            </Card>
+    <DeckSection tone="teal" className="-mb-12 overflow-hidden sm:-mb-16">
+      <div className="relative mx-auto max-w-5xl px-4 pb-40 pt-24 sm:px-6 sm:pb-52 sm:pt-36">
+        <Reveal className="text-center">
+          <div className="mb-8 flex justify-center" aria-hidden>
+            <ShieldHands className="h-32 w-32 sm:h-44 sm:w-44" animated />
+          </div>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-canvas/60">What verification guarantees</p>
+          <h2 className="mt-5 text-balance text-5xl leading-[0.95] text-canvas sm:text-7xl">
+            Proven, <em className="text-gold-300">not just studied.</em>
+          </h2>
+        </Reveal>
+        <dl className="mt-16 grid gap-10 text-center sm:mt-24 sm:grid-cols-3">
+          {items.map((it, i) => (
+            <Reveal key={it.title} delay={i * 120}>
+              <dt className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-canvas/60">
+                {it.icon}
+                {it.title}
+              </dt>
+              <dd className="mt-3 font-condensed text-7xl leading-none text-canvas sm:text-8xl">
+                <span className="align-top text-3xl text-gold-300 sm:text-4xl">≥</span>
+                {it.mark}%
+              </dd>
+            </Reveal>
           ))}
-        </div>
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
-            <CalendarClock className="mt-0.5 h-5 w-5 shrink-0 text-gold-600" />
-            <p className="text-sm text-slate-600">
-              <strong className="text-ink-950">Valid for 12 months.</strong> AI tools and risks change quickly, so AI readiness is not permanent — certificates must be renewed annually.
-            </p>
-          </div>
-          <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
-            <Info className="mt-0.5 h-5 w-5 shrink-0 text-sky-600" />
-            <p className="text-sm text-slate-600">
-              <strong className="text-ink-950">Prototype note.</strong> This prototype verifies certificates issued on this deployment of ZimAI Ready and its connected database. All demo holders are fictional.
-            </p>
-          </div>
-        </div>
-        <div className="mt-8 text-center">
-          <Button to="/for-employers" variant="ghost" className="h-auto min-h-11 whitespace-normal py-2 text-center" iconRight={<ArrowRight className="h-4 w-4 shrink-0" />}>
-            Measure your whole workforce's AI readiness
+        </dl>
+        <Reveal delay={200} className="mx-auto mt-16 max-w-2xl space-y-3 text-center text-sm text-canvas/60 sm:mt-24">
+          <p className="flex items-center justify-center gap-2">
+            <CalendarClock className="h-4 w-4 shrink-0 text-gold-300" />
+            <span>
+              <strong className="text-canvas">Valid for 12 months.</strong> Renewed annually.
+            </span>
+          </p>
+          <p className="flex items-start justify-center gap-2">
+            <Info className="mt-0.5 h-4 w-4 shrink-0" />
+            <span>Prototype: verifies certificates issued on this deployment of ZimAI Ready. All demo holders are fictional.</span>
+          </p>
+        </Reveal>
+        <div className="mt-10 text-center">
+          <Button to="/for-employers" variant="white" size="lg" iconRight={<ArrowRight className="h-4 w-4 shrink-0" />}>
+            Measure your workforce
           </Button>
         </div>
       </div>
-    </section>
+    </DeckSection>
   );
 }

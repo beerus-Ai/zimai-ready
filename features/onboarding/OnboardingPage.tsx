@@ -35,6 +35,7 @@ import {
   X,
   Zap,
   CircleDashed,
+  PlayCircle,
   CalendarDays,
   CalendarClock,
   Repeat,
@@ -42,7 +43,10 @@ import {
 import type { CareerObjective, Confidence, DeptUsage, ExperienceBand, OnboardingAnswers, OrgAdoption, PersonalUsage, UseCase } from '../../types';
 import { useApp } from '../../services/store';
 import { isGeminiAvailable } from '../../services/gemini';
-import { Button, Chip, ErrorState, Icon, LoadingState, Modal, OptionCard, ProgressBar } from '../../components/ui';
+import { Button, Chip, ErrorState, Icon, LoadingState, Modal, OptionCard } from '../../components/ui';
+import { GhostText } from '../../components/motion';
+import { BrainSpark, GhostMascot, GrowthPath, LaptopWorker, Sparkle, TeamIdeas } from '../../components/illustrations';
+import { AssessmentTutorial } from '../../components/tutorials';
 import { Logo } from '../../components/brand';
 import { INDUSTRIES, industryName } from '../../data/industries';
 import { getRole, ROLES, roleName } from '../../data/roles';
@@ -151,6 +155,14 @@ const STEP_META: { eyebrow: string; title: string; helper?: string }[] = [
   { eyebrow: 'Your AI use', title: 'How confident are you with AI?', helper: 'Be honest — there are no wrong answers. This only personalises your path.' },
   { eyebrow: 'Your goals', title: 'What is your main career objective?', helper: 'We’ll shape your learning path around it.' },
 ];
+
+/** Floating contextual illustration for each section of the assessment. */
+const SECTION_ART: Record<string, (p: { className?: string }) => ReactNode> = {
+  'About your work': (p) => <LaptopWorker {...p} />,
+  'AI in your workplace': (p) => <TeamIdeas {...p} />,
+  'Your AI use': (p) => <BrainSpark {...p} />,
+  'Your goals': (p) => <GrowthPath {...p} />,
+};
 
 // ───────────────────────────── Helpers ─────────────────────────────
 
@@ -431,22 +443,22 @@ export default function OnboardingPage() {
   return (
     <div className="relative flex min-h-screen flex-col bg-canvas">
       <style>{`
-        @keyframes zo-in-right { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
-        @keyframes zo-in-left { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
+        @keyframes zo-in-right { from { opacity: 0; filter: blur(14px); transform: translateX(28px) scale(.985); } to { opacity: 1; filter: blur(0); transform: none; } }
+        @keyframes zo-in-left { from { opacity: 0; filter: blur(14px); transform: translateX(-28px) scale(.985); } to { opacity: 1; filter: blur(0); transform: none; } }
         @keyframes zo-shake { 0%,100% { transform: none; } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
-        .zo-in-right { animation: zo-in-right .38s cubic-bezier(.2,.8,.2,1) both; }
-        .zo-in-left { animation: zo-in-left .38s cubic-bezier(.2,.8,.2,1) both; }
+        .zo-in-right { animation: zo-in-right .6s cubic-bezier(.2,.8,.2,1) both; }
+        .zo-in-left { animation: zo-in-left .6s cubic-bezier(.2,.8,.2,1) both; }
         .zo-shake { animation: zo-shake .3s ease-in-out; }
       `}</style>
 
       {/* Decorative background */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[420px] overflow-hidden" aria-hidden>
-        <div className="absolute -top-40 left-1/2 h-[520px] w-[820px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(21,174,124,0.16),transparent)]" />
+        <div className="absolute -top-40 left-1/2 h-[520px] w-[820px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(200,240,220,0.7),transparent)]" />
         <div className="absolute inset-0 bg-grid [mask-image:linear-gradient(to_bottom,black,transparent)]" />
       </div>
 
       {/* Top bar */}
-      <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-white/85 backdrop-blur-xl">
+      <header className="sticky top-0 z-30 border-b border-ink-950/10 bg-canvas/85 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-4xl items-center gap-4 px-4 sm:px-6">
           <div
             onClickCapture={(e) => {
@@ -460,17 +472,27 @@ export default function OnboardingPage() {
           <div className="min-w-0 flex-1">
             {phase === 'questions' && (
               <div className="mx-auto max-w-md animate-fade-in">
-                <div className="mb-1.5 flex items-center justify-between text-xs font-semibold">
-                  <span className="text-slate-600">
-                    Question <span className="tabular-nums text-ink-950">{step + 1}</span> of {TOTAL}
+                <div className="mb-1.5 flex items-baseline justify-between gap-2">
+                  <span key={step} className="animate-ghost-in font-display text-[15px] text-ink-700 sm:text-base">
+                    Question <em className="tabular-nums text-ink-950">{step + 1}</em> of {TOTAL}
                   </span>
-                  <span className="hidden text-slate-400 sm:inline">{STEP_META[step].eyebrow}</span>
+                  <span className="hidden text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-400 sm:inline">{STEP_META[step].eyebrow}</span>
                 </div>
-                <ProgressBar value={((step + 1) / TOTAL) * 100} size="xs" />
+                <div
+                  className="relative h-2 w-full rounded-full bg-lilac-100 ring-1 ring-inset ring-ink-950/5"
+                  role="progressbar"
+                  aria-valuemin={0}
+                  aria-valuemax={TOTAL}
+                  aria-valuenow={step + 1}
+                  aria-label={`Question ${step + 1} of ${TOTAL}`}
+                >
+                  <div className="h-full rounded-full bg-ink-950 transition-[width] duration-700 ease-out" style={{ width: `${((step + 1) / TOTAL) * 100}%` }} />
+                  <span className="absolute top-1/2 h-3.5 w-3.5 -translate-y-1/2 rounded-full border-2 border-ink-950 bg-lilac-200 transition-[left] duration-700 ease-out" style={{ left: `calc(${((step + 1) / TOTAL) * 100}% - 14px)` }} />
+                </div>
               </div>
             )}
             {phase === 'intro' && (
-              <p className="hidden text-center text-sm font-semibold text-slate-500 sm:block">{retake ? 'AI readiness reassessment' : 'AI readiness assessment'}</p>
+              <p className="hidden text-center font-display text-lg text-ink-600 sm:block">{retake ? 'AI readiness reassessment' : 'AI readiness assessment'}</p>
             )}
           </div>
           <Button variant="ghost" size="sm" onClick={requestExit} disabled={phase === 'analysing'} icon={<X className="h-4 w-4" />} aria-label="Exit assessment">
@@ -486,9 +508,23 @@ export default function OnboardingPage() {
           <>
             <div className="mx-auto w-full max-w-2xl flex-1 px-4 pb-10 pt-8 sm:px-6 sm:pt-12">
               <div key={step} className={dir > 0 ? 'zo-in-right' : 'zo-in-left'}>
-                <p className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-brand-600">{STEP_META[step].eyebrow}</p>
-                <h1 className="text-balance text-2xl font-extrabold tracking-tight text-ink-950 sm:text-[32px] sm:leading-tight">{STEP_META[step].title}</h1>
-                {STEP_META[step].helper && <p className="mt-2 text-[15px] text-slate-500">{STEP_META[step].helper}</p>}
+                <div className="flex items-start gap-3 sm:gap-6">
+                  <div className="min-w-0 flex-1">
+                    <p className="mb-3 flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-ink-500">
+                      {STEP_META[step].eyebrow}
+                      {step === TOTAL - 1 && (
+                        <span className="inline-flex animate-ghost-in items-center gap-1 rounded-full border border-ink-950 bg-lilac-200 px-2 py-0.5 text-[10px] tracking-[0.12em] text-ink-950">
+                          <Sparkle className="h-3 w-3" color="#1a1a1a" /> Last one
+                        </span>
+                      )}
+                    </p>
+                    <h1 className="text-balance text-3xl leading-[1.05] text-ink-950 sm:text-[44px]">{STEP_META[step].title}</h1>
+                    {STEP_META[step].helper && <p className="mt-3 text-[15px] leading-relaxed text-ink-500">{STEP_META[step].helper}</p>}
+                  </div>
+                  <div className="-mt-1 h-16 w-16 shrink-0 animate-ghost-in sm:h-28 sm:w-28" style={{ animationDelay: '160ms' }} aria-hidden>
+                    <div className="h-full w-full animate-float">{SECTION_ART[STEP_META[step].eyebrow]?.({ className: 'h-full w-full' })}</div>
+                  </div>
+                </div>
                 <div className="mt-7">
                   {step === 0 && (
                     <>
@@ -577,11 +613,11 @@ export default function OnboardingPage() {
                             aria-pressed={draft.experience === x.id}
                             onClick={() => choose({ experience: x.id })}
                             className={cn(
-                              'group flex w-full flex-col items-center justify-center rounded-2xl border-2 bg-white px-3 py-5 transition-all active:scale-[0.98] sm:py-7',
-                              draft.experience === x.id ? 'border-brand-500 bg-brand-50/70 shadow-sm' : 'border-slate-200 hover:border-brand-300 hover:bg-slate-50/60',
+                              'group flex w-full flex-col items-center justify-center rounded-2xl border-2 bg-paper px-3 py-5 transition-all active:scale-[0.98] sm:py-7',
+                              draft.experience === x.id ? 'border-ink-950 bg-lilac-100 shadow-ink-sm' : 'border-ink-950/10 hover:border-ink-950/35 hover:bg-white',
                             )}
                           >
-                            <span className={cn('text-3xl font-extrabold tracking-tight tabular-nums', draft.experience === x.id ? 'text-brand-700' : 'text-ink-950')}>{x.label}</span>
+                            <span className="font-condensed text-4xl tracking-wide text-ink-950 tabular-nums">{x.label}</span>
                             <span className="mt-1 text-xs font-semibold uppercase tracking-wide text-slate-500">years</span>
                             <span className="mt-2 text-[12px] text-slate-400">{x.hint}</span>
                           </button>
@@ -668,9 +704,9 @@ export default function OnboardingPage() {
                         ))}
                       </div>
                       {draft.careerObjective === 'transition' && (
-                        <div className="mt-5 animate-fade-up rounded-2xl border border-brand-200 bg-white p-4 shadow-card sm:p-5">
-                          <p className="flex items-center gap-2 text-[15px] font-bold text-ink-950">
-                            <Target className="h-4 w-4 text-brand-600" /> Which field or role interests you?
+                        <div className="mt-5 animate-ghost-in rounded-3xl border border-ink-950/10 bg-paper p-4 shadow-card sm:p-5">
+                          <p className="flex items-center gap-2 font-display text-xl text-ink-950">
+                            <Target className="h-4 w-4 text-clay-500" /> Which field or role interests you?
                           </p>
                           <div className="mt-3 flex flex-wrap gap-2">
                             {TARGET_CAREERS.map((t) => (
@@ -700,7 +736,7 @@ export default function OnboardingPage() {
                 </div>
 
                 {error && (
-                  <p key={error + step} role="alert" className="zo-shake mt-5 flex items-center gap-2 rounded-xl bg-clay-50 px-3.5 py-2.5 text-sm font-medium text-clay-700 ring-1 ring-inset ring-clay-200">
+                  <p key={error + step} role="alert" className="zo-shake mt-5 flex items-center gap-2 rounded-xl bg-blush-100 px-3.5 py-2.5 text-sm font-medium text-clay-800 ring-1 ring-inset ring-clay-300/60">
                     <AlertCircle className="h-4 w-4 shrink-0" /> {error}
                   </p>
                 )}
@@ -708,7 +744,7 @@ export default function OnboardingPage() {
             </div>
 
             {/* Footer navigation */}
-            <div className="sticky bottom-0 z-20 border-t border-slate-200/70 bg-white/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl">
+            <div className="sticky bottom-0 z-20 border-t border-ink-950/10 bg-canvas/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl">
               <div className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
                 <Button variant="ghost" onClick={goBack} icon={<ArrowLeft className="h-4 w-4" />}>
                   Back
@@ -784,7 +820,7 @@ export default function OnboardingPage() {
 
 function Stagger({ i, children, className }: { i: number; children: ReactNode; className?: string }) {
   return (
-    <div className={cn('animate-fade-up', className)} style={{ animationDelay: `${Math.min(i, 12) * 28}ms` }}>
+    <div className={cn('animate-ghost-in', className)} style={{ animationDelay: `${120 + Math.min(i, 12) * 40}ms` }}>
       {children}
     </div>
   );
@@ -809,14 +845,14 @@ function RoleTile({ selected, icon, label, onClick }: { selected: boolean; icon:
       aria-pressed={selected}
       onClick={onClick}
       className={cn(
-        'group relative flex h-full w-full flex-col items-start gap-2.5 rounded-2xl border-2 bg-white p-3.5 text-left transition-all active:scale-[0.98]',
-        selected ? 'border-brand-500 bg-brand-50/60 shadow-sm' : 'border-slate-200 hover:border-brand-300 hover:bg-slate-50/60',
+        'group relative flex h-full w-full flex-col items-start gap-2.5 rounded-2xl border-2 bg-paper p-3.5 text-left transition-all active:scale-[0.98]',
+        selected ? 'border-ink-950 bg-lilac-100 shadow-ink-sm' : 'border-ink-950/10 hover:border-ink-950/35 hover:bg-white',
       )}
     >
-      <span className={cn('flex h-9 w-9 items-center justify-center rounded-xl transition-colors', selected ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-600 group-hover:bg-brand-100 group-hover:text-brand-700')}>{icon}</span>
+      <span className={cn('flex h-9 w-9 items-center justify-center rounded-xl transition-colors', selected ? 'bg-ink-950 text-canvas' : 'bg-sand-200/80 text-ink-700 group-hover:bg-lilac-200 group-hover:text-ink-950')}>{icon}</span>
       <span className="text-[14px] font-semibold leading-snug text-ink-950">{label}</span>
       {selected && (
-        <span className="absolute right-2.5 top-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-brand-600 text-white">
+        <span className="absolute right-2.5 top-2.5 flex h-5 w-5 animate-scale-in items-center justify-center rounded-full bg-ink-950 text-canvas">
           <Check className="h-3 w-3" strokeWidth={3} />
         </span>
       )}
@@ -835,8 +871,8 @@ function TextField({ label, value, onChange, placeholder, autoFocus, maxLength, 
   compact?: boolean;
 }) {
   return (
-    <label className={cn('block animate-fade-up', compact ? 'mt-4' : 'mt-6')}>
-      <span className="mb-1.5 block text-sm font-semibold text-slate-700">{label}</span>
+    <label className={cn('block animate-ghost-in', compact ? 'mt-4' : 'mt-6')}>
+      <span className="mb-1.5 block text-sm font-semibold text-ink-700">{label}</span>
       <input
         ref={inputRef}
         autoFocus={autoFocus}
@@ -844,7 +880,7 @@ function TextField({ label, value, onChange, placeholder, autoFocus, maxLength, 
         maxLength={maxLength}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-[15px] text-ink-950 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/15"
+        className="h-12 w-full rounded-xl border border-ink-950/20 bg-paper px-4 text-[15px] text-ink-950 shadow-sm outline-none transition placeholder:text-ink-400 focus:border-ink-950 focus:ring-4 focus:ring-lilac-200"
       />
     </label>
   );
@@ -864,7 +900,7 @@ function ConfidenceScale({ value, onChange }: { value?: Confidence; onChange: (v
   return (
     <div>
       <div role="radiogroup" aria-label="AI confidence" onKeyDown={onKey} className="relative">
-        <div className="absolute inset-x-[10%] top-[38px] hidden h-1 rounded-full bg-gradient-to-r from-clay-300 via-gold-300 to-brand-500 opacity-60 sm:block" aria-hidden />
+        <div className="absolute inset-x-[10%] top-[38px] hidden h-1 rounded-full bg-gradient-to-r from-clay-300 via-gold-300 to-brand-700 opacity-60 sm:block" aria-hidden />
         <div className="relative grid grid-cols-5 gap-2 sm:gap-3">
           {CONFIDENCE.map((c, i) => {
             const on = value === c.id;
@@ -879,16 +915,16 @@ function ConfidenceScale({ value, onChange }: { value?: Confidence; onChange: (v
                   tabIndex={on || (!value && c.id === 1) ? 0 : -1}
                   onClick={() => onChange(c.id)}
                   className={cn(
-                    'flex w-full flex-col items-center gap-2 rounded-2xl border-2 bg-white px-1 py-3.5 transition-all active:scale-[0.97] sm:py-4',
-                    on ? 'border-brand-500 bg-brand-50/70 shadow-glow' : 'border-slate-200 hover:border-brand-300',
+                    'flex w-full flex-col items-center gap-2 rounded-2xl border-2 bg-paper px-1 py-3.5 transition-all active:scale-[0.97] sm:py-4',
+                    on ? 'border-ink-950 bg-lilac-100 shadow-ink-sm' : 'border-ink-950/10 hover:border-ink-950/35',
                   )}
                 >
                   <span className="flex h-8 items-end gap-[3px]" aria-hidden>
                     {[1, 2, 3, 4, 5].map((b) => (
-                      <span key={b} className={cn('w-1.5 rounded-full transition-colors duration-300', b <= c.id ? (filled ? 'bg-brand-500' : 'bg-slate-300') : 'bg-slate-100')} style={{ height: 6 + b * 5 }} />
+                      <span key={b} className={cn('w-1.5 rounded-full transition-colors duration-300', b <= c.id ? (filled ? 'bg-brand-800' : 'bg-ink-950/25') : 'bg-ink-950/5')} style={{ height: 6 + b * 5 }} />
                     ))}
                   </span>
-                  <span className={cn('text-lg font-extrabold tabular-nums', on ? 'text-brand-700' : 'text-ink-950')}>{c.id}</span>
+                  <span className="font-condensed text-xl tabular-nums text-ink-950">{c.id}</span>
                   <span className="hidden text-[11px] font-semibold uppercase tracking-wide text-slate-500 sm:block">{c.name}</span>
                 </button>
               </Stagger>
@@ -900,17 +936,17 @@ function ConfidenceScale({ value, onChange }: { value?: Confidence; onChange: (v
         <span>Beginner</span>
         <span>Advanced</span>
       </div>
-      <div className={cn('mt-5 rounded-2xl border p-5 transition-colors', active ? 'border-brand-200 bg-white shadow-card' : 'border-dashed border-slate-300 bg-white/60')}>
+      <div className={cn('mt-5 rounded-3xl border p-5 transition-colors', active ? 'border-ink-950/10 bg-paper shadow-card' : 'border-dashed border-ink-950/20 bg-paper/60')}>
         {active ? (
-          <div key={active.id} className="flex animate-fade-in items-start gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white">
+          <div key={active.id} className="flex animate-ghost-in items-start gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-800 text-canvas">
               <Gauge className="h-5 w-5" />
             </span>
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.12em] text-brand-600">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-800">
                 Level {active.id} · {active.name}
               </p>
-              <p className="mt-0.5 text-lg font-bold text-ink-950">“{active.description}”</p>
+              <p className="mt-0.5 font-display text-2xl leading-tight text-ink-950">“{active.description}”</p>
             </div>
           </div>
         ) : (
@@ -923,60 +959,69 @@ function ConfidenceScale({ value, onChange }: { value?: Confidence; onChange: (v
 
 function Intro({ retake, onStart, name }: { retake: boolean; onStart: () => void; name?: string }) {
   const first = name?.split(' ')[0];
+  const [tour, setTour] = useState(false);
   const items = [
-    { icon: <Gauge className="h-5 w-5" />, title: 'Personal AI Readiness', text: 'How prepared you are to work with AI, scored 0–100.' },
-    { icon: <Radar className="h-5 w-5" />, title: 'Workplace AI Exposure', text: 'How much AI is transforming your role and sector.' },
-    { icon: <Target className="h-5 w-5" />, title: 'Your AI skills gaps', text: 'The specific skills that matter most in your job.' },
-    { icon: <ListChecks className="h-5 w-5" />, title: 'AI Skills Prescription', text: 'A prioritised learning path built around you.' },
+    { icon: <Gauge className="h-4 w-4" />, title: 'Readiness score' },
+    { icon: <Radar className="h-4 w-4" />, title: 'AI exposure' },
+    { icon: <Target className="h-4 w-4" />, title: 'Skills gaps' },
+    { icon: <ListChecks className="h-4 w-4" />, title: 'Learning path' },
   ];
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-4 pb-16 pt-10 text-center sm:px-6 sm:pt-16">
-      <span className="inline-flex animate-fade-up items-center gap-1.5 rounded-full bg-white px-3 py-1 text-xs font-bold text-brand-700 shadow-card ring-1 ring-brand-200/70">
-        <Sparkles className="h-3.5 w-3.5" /> {retake ? 'Reassessment' : 'AI Readiness Assessment'}
-      </span>
-      <h1 className="mt-5 max-w-2xl animate-fade-up text-balance text-3xl font-extrabold tracking-tight text-ink-950 [animation-delay:60ms] sm:text-5xl sm:leading-[1.08]">
-        {retake ? (
-          <>
-            Let’s see how far you’ve come{first ? `, ${first}` : ''}.
-          </>
-        ) : (
-          <>
-            Let’s understand where you are with <span className="shimmer-text">AI</span>.
-          </>
-        )}
-      </h1>
-      <p className="mt-4 max-w-xl animate-fade-up text-[15px] leading-relaxed text-slate-600 [animation-delay:120ms] sm:text-lg">
-        {retake
-          ? 'Your previous answers are pre-filled — update anything that has changed. We’ll compare your new profile with your last one.'
-          : 'Nine quick questions about your work, your workplace and how you use AI today. Your answers become a personal readiness profile and learning plan.'}
-      </p>
-      <p className="mt-4 inline-flex animate-fade-up items-center gap-1.5 text-sm font-semibold text-slate-500 [animation-delay:160ms]">
-        <Clock className="h-4 w-4" /> Takes about 2 minutes
-      </p>
-
-      <div className="mt-9 grid w-full gap-3 text-left sm:grid-cols-2">
-        {items.map((it, i) => (
-          <div key={it.title} className="flex animate-fade-up items-start gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-card" style={{ animationDelay: `${200 + i * 70}ms` }}>
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700">{it.icon}</span>
-            <div>
-              <p className="text-[15px] font-bold text-ink-950">{it.title}</p>
-              <p className="mt-0.5 text-sm text-slate-500">{it.text}</p>
-            </div>
-          </div>
-        ))}
+      <div className="relative h-28 w-28 animate-ghost-in sm:h-36 sm:w-36" aria-hidden>
+        <span className="absolute inset-4 animate-ghost-pulse rounded-full bg-lilac-300/60 blur-2xl" />
+        <div className="relative h-full w-full animate-ghost-float">
+          <GhostMascot mood="wave" className="h-full w-full" />
+        </div>
+        <Sparkle className="absolute -right-3 top-2 h-6 w-6" color="#ffa946" />
+        <Sparkle className="absolute -left-4 bottom-6 h-4 w-4" color="#ff6c4c" />
       </div>
+      <p className="mt-4 inline-flex animate-ghost-in items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-ink-500" style={{ animationDelay: '80ms' }}>
+        <Sparkles className="h-3.5 w-3.5" /> {retake ? 'Reassessment' : 'AI Readiness Assessment'}
+      </p>
+      <GhostText
+        as="h1"
+        startOnView={false}
+        delay={150}
+        className="mt-4 max-w-2xl text-balance text-[44px] leading-[0.98] text-ink-950 sm:text-7xl"
+        text={retake ? `Let’s see how far you’ve *come${first ? `, ${first}` : ''}.*` : 'Let’s find out where you *stand.*'}
+      />
+      <p className="mt-5 max-w-md animate-ghost-in text-[15px] leading-relaxed text-ink-500 sm:text-lg" style={{ animationDelay: '600ms' }}>
+        {retake ? 'Your answers are pre-filled. Update what’s changed.' : 'Nine questions. About two minutes.'}
+      </p>
 
-      <div className="mt-9 flex animate-fade-up flex-col items-center gap-3 [animation-delay:520ms]">
-        <Button size="lg" onClick={onStart} iconRight={<ArrowRight className="h-5 w-5" />} className="min-w-[220px] shadow-glow">
+      <ul className="mt-7 flex flex-wrap justify-center gap-2">
+        {items.map((it, i) => (
+          <li key={it.title} className="inline-flex animate-ghost-in items-center gap-1.5 rounded-full border border-ink-950/10 bg-paper px-3.5 py-2 text-sm font-medium text-ink-700 shadow-card" style={{ animationDelay: `${700 + i * 90}ms` }}>
+            <span className="text-brand-800">{it.icon}</span>
+            {it.title}
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-9 flex animate-ghost-in flex-col items-center gap-3" style={{ animationDelay: '1000ms' }}>
+        <Button size="lg" onClick={onStart} iconRight={<ArrowRight className="h-5 w-5" />} className="min-w-[220px]">
           {retake ? 'Start reassessment' : 'Start assessment'}
         </Button>
-        <p className="hidden items-center gap-1 text-xs text-slate-400 sm:inline-flex">
-          or press <kbd className="rounded-md border border-slate-200 bg-white px-1.5 py-0.5 font-sans font-semibold text-slate-500">Enter</kbd>
-        </p>
+        <button
+          type="button"
+          onClick={() => setTour((t) => !t)}
+          aria-expanded={tour}
+          className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold text-ink-600 transition hover:bg-ink-950/5 hover:text-ink-950"
+        >
+          <PlayCircle className="h-4 w-4" /> {tour ? 'Hide the tour' : 'Watch the 30-second tour'}
+        </button>
       </div>
-      <p className="mt-8 flex max-w-md items-start gap-2 text-left text-xs leading-relaxed text-slate-500">
-        <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
-        Your answers are only used to personalise your analysis and learning. We never ask for sensitive personal data.
+
+      {tour && (
+        <div className="mt-6 w-full max-w-2xl animate-ghost-in text-left">
+          <AssessmentTutorial />
+        </div>
+      )}
+
+      <p className="mt-10 flex max-w-md items-center justify-center gap-2 text-xs leading-relaxed text-ink-400">
+        <ShieldCheck className="h-4 w-4 shrink-0 text-brand-800" />
+        No sensitive personal data. Ever.
       </p>
     </div>
   );
@@ -1017,30 +1062,42 @@ function Analysing({ draft, industryLabel }: { draft: Draft; industryLabel: stri
 
   return (
     <div className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center px-4 pb-16 pt-6 sm:pt-12">
-      <LoadingState variant="ai" title="Analysing your AI readiness" messages={messages} />
-      <div className="w-full animate-fade-up rounded-2xl border border-slate-200/80 bg-white p-4 shadow-card sm:p-5">
+      <div className="relative w-full">
+        {[
+          { c: 'left-[14%] top-10 h-6 w-6', col: '#ffa946', d: '0s' },
+          { c: 'right-[16%] top-6 h-5 w-5', col: '#ff6c4c', d: '.8s' },
+          { c: 'right-[22%] top-32 h-4 w-4', col: '#034f46', d: '1.6s' },
+          { c: 'left-[22%] top-36 h-3 w-3', col: '#ffbcf2', d: '2.2s' },
+        ].map((s, i) => (
+          <span key={i} className={cn('pointer-events-none absolute animate-float', s.c)} style={{ animationDelay: s.d }} aria-hidden>
+            <Sparkle className="h-full w-full" color={s.col} />
+          </span>
+        ))}
+        <LoadingState variant="ai" title="Analysing your AI readiness" messages={messages} />
+      </div>
+      <div className="w-full animate-ghost-in rounded-3xl border border-ink-950/10 bg-paper p-4 shadow-card sm:p-5">
         <ul className="space-y-3">
           {stages.map((s, i) => {
             const complete = i < done;
             const current = i === done;
             return (
-              <li key={s.label} className={cn('flex items-center gap-3 text-sm transition-opacity duration-300', i > done && 'opacity-40')}>
+              <li key={s.label} className={cn('flex items-center gap-3 text-sm transition-all duration-500', i > done && 'opacity-40 blur-[1px]')}>
                 <span
                   className={cn(
                     'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors',
-                    complete ? 'bg-brand-600 text-white' : current ? 'bg-brand-50 text-brand-700 ring-1 ring-brand-200' : 'bg-slate-100 text-slate-400',
+                    complete ? 'bg-brand-800 text-canvas' : current ? 'bg-lilac-200 text-ink-950 ring-1 ring-ink-950' : 'bg-sand-200 text-ink-400',
                   )}
                 >
-                  {complete ? <Check className="h-4 w-4" strokeWidth={3} /> : s.icon}
+                  {complete ? <Check className="h-4 w-4 animate-scale-in" strokeWidth={3} /> : s.icon}
                 </span>
-                <span className={cn('font-medium', complete ? 'text-slate-500' : 'text-ink-950')}>{s.label}</span>
-                {current && <span className="ml-auto h-1.5 w-1.5 animate-pulse rounded-full bg-brand-500" />}
+                <span className={cn('font-medium', complete ? 'text-ink-400' : 'text-ink-950')}>{s.label}</span>
+                {current && <span className="ml-auto h-1.5 w-1.5 animate-pulse rounded-full bg-ink-950" />}
               </li>
             );
           })}
         </ul>
       </div>
-      <p className="mt-5 text-center text-xs text-slate-400">Scores come from a transparent, deterministic model — AI personalises the explanation and plan.</p>
+      <p className="mt-5 text-center text-xs text-ink-400">Scores come from a transparent, deterministic model — AI personalises the explanation and plan.</p>
     </div>
   );
 }

@@ -19,7 +19,6 @@ import {
   Rocket,
   Route,
   ShieldCheck,
-  Sparkles,
   Target,
   TrendingUp,
   TriangleAlert,
@@ -29,7 +28,6 @@ import type { ActivityLogEntry, AISource, CareerObjective, DomainId, EmployeePro
 import { useApp } from '../../services/store';
 import { AIDisclaimer, AISourceBadge, Badge, Button, Card, CardTitle, Chip, EmptyState, Icon, LoadingState, OptionCard, PageHeader, ProgressBar, useToast } from '../../components/ui';
 import type { Tone } from '../../components/ui';
-import { ChevronPattern } from '../../components/brand';
 import { CERT_TYPE_META, checkEmployerCompetencies, LEVEL_META } from '../../lib/certification';
 import type { CompetencyCheck } from '../../lib/certification';
 import { emptyModuleProgress } from '../../lib/progress';
@@ -42,6 +40,8 @@ import { cn, formatDate, nowISO } from '../../lib/utils';
 import { ASSESSMENT_RENEWAL_DAYS, assessFreshness, buildTimeline, recommendMaintenance, REC_KIND_LABEL } from './cert-maintenance';
 import type { Freshness, FreshnessReport, MaintenanceRec, RecKind, TimelineEvent } from './cert-maintenance';
 import { tint } from './cert-utils';
+import { Reveal } from '../../components/motion';
+import { GrowthPath } from '../../components/illustrations';
 
 const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -118,11 +118,11 @@ export default function MaintainPage() {
   if (!profile && !progress) {
     return (
       <div>
-        <PageHeader eyebrow="Continuous readiness" title="Maintain My AI Readiness" />
+        <PageHeader eyebrow="Continuous readiness" title={<>Maintain my AI <em>readiness</em></>} />
         <EmptyState
           icon={<RefreshCw className="h-6 w-6" />}
           title="Start with your AI readiness assessment"
-          description="Maintenance tracks how current your AI readiness is over time. Complete the readiness assessment to begin."
+          description="Take the readiness assessment to begin."
           action={<Button to="/onboarding">Start my readiness assessment</Button>}
         />
       </div>
@@ -143,22 +143,26 @@ export default function MaintainPage() {
     <div>
       <PageHeader
         eyebrow="Continuous readiness"
-        title="Maintain My AI Readiness"
-        description="AI readiness is not permanent. Tools, risks and workplace expectations keep changing — keep your skills, goals and certificates current."
+        title={<>Maintain my AI <em>readiness</em></>}
+        description="AI readiness isn’t permanent — keep it current."
         actions={
-          <Button to="/app/reassess" icon={<RefreshCw className="h-4 w-4" />}>
-            Refresh my readiness
-          </Button>
+          <>
+            <GrowthPath animated className="pointer-events-none -my-6 mr-2 hidden h-28 w-28 animate-ghost-in lg:block" />
+            <Button to="/app/reassess" icon={<RefreshCw className="h-4 w-4" />}>
+              Refresh my readiness
+            </Button>
+          </>
         }
       />
 
-      <FreshnessPanel report={freshness} />
+      <Reveal>
+        <FreshnessPanel report={freshness} />
+      </Reveal>
 
       {/* What's changed? */}
-      <section className="mt-8">
-        <h2 className="text-lg font-bold text-ink-950">What's changed?</h2>
-        <p className="mt-1 text-sm text-slate-500">Tell us what's different and your learning adapts.</p>
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
+      <Reveal as="section" delay={80} className="mt-14 sm:mt-20">
+        <h2 className="text-3xl leading-tight text-ink-950 sm:text-4xl">What's <em>changed?</em></h2>
+        <div className="mt-6 grid gap-6 md:grid-cols-2">
           <TriggerCard
             icon={<Target className="h-5 w-5" />}
             title="My goals have changed"
@@ -236,15 +240,15 @@ export default function MaintainPage() {
             )}
           </TriggerCard>
         </div>
-      </section>
+      </Reveal>
 
-      <div className="mt-8 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="mt-14 grid items-start gap-8 sm:mt-20 lg:grid-cols-[minmax(0,1fr)_360px]">
         {/* Recommended new learning */}
-        <Card>
+        <Reveal>
+        <Card className="rounded-4xl p-6 sm:p-8">
           <CardTitle
-            icon={<Sparkles className="h-5 w-5" />}
+            icon={<GraduationCap className="h-5 w-5" />}
             title="Recommended new learning"
-            subtitle="Grow beyond your current pathway — advanced modules, adjacent domains and responsible-AI refreshers."
             action={
               <div className="flex items-center gap-1.5">
                 {recs && !recLoading && <AISourceBadge source={recs.source} className="hidden sm:inline-flex" />}
@@ -288,19 +292,17 @@ export default function MaintainPage() {
             </>
           )}
         </Card>
+        </Reveal>
 
-        <div className="space-y-4">
-          <div className="relative overflow-hidden rounded-2xl bg-ink-950 p-6 text-white shadow-card">
-            <ChevronPattern color="#ffffff" opacity={0.06} />
-            <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-brand-500/30 blur-3xl" />
+        <Reveal delay={100} className="space-y-6">
+          <div className="relative overflow-hidden rounded-4xl bg-brand-800 p-7 text-canvas sm:p-8">
             <div className="relative">
               <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gold-400 text-ink-950">
                 <RefreshCw className="h-5 w-5" />
               </span>
-              <h3 className="mt-4 text-lg font-extrabold">Refresh my readiness</h3>
-              <p className="mt-1 text-sm leading-relaxed text-slate-300">
-                Retake the readiness assessment to measure your improvement and refresh your recommendations.
-                {latestAssessment ? ` Last taken ${formatDate(latestAssessment.createdAt)}.` : ''}
+              <h3 className="mt-4 font-display text-3xl font-medium leading-tight">Refresh my <em>readiness</em></h3>
+              <p className="mt-1 text-sm leading-relaxed text-canvas/75">
+                {latestAssessment ? `Last taken ${formatDate(latestAssessment.createdAt)}.` : 'Measure your improvement.'}
               </p>
               <Button to="/app/reassess" variant="gold" full className="mt-5" iconRight={<ArrowRight className="h-4 w-4" />}>
                 Refresh my readiness
@@ -308,7 +310,7 @@ export default function MaintainPage() {
             </div>
           </div>
           <TimelineCard events={timeline} />
-        </div>
+        </Reveal>
       </div>
     </div>
   );
@@ -320,7 +322,7 @@ const FRESH_META: Record<Freshness, { label: string; icon: ReactNode; cls: strin
   fresh: {
     label: 'Fresh',
     icon: <ShieldCheck className="h-6 w-6" />,
-    cls: 'bg-brand-600 text-white',
+    cls: 'bg-brand-800 text-canvas',
     text: 'Your readiness evidence is current. Keep practising to stay ahead as AI tools evolve.',
   },
   review: {
@@ -332,7 +334,7 @@ const FRESH_META: Record<Freshness, { label: string; icon: ReactNode; cls: strin
   renewal: {
     label: 'Renewal due',
     icon: <TriangleAlert className="h-6 w-6" />,
-    cls: 'bg-clay-600 text-white',
+    cls: 'bg-clay-400 text-ink-950',
     text: 'Part of your AI readiness needs renewing. Refresh your assessment or certificate to stay verifiably AI ready.',
   },
 };
@@ -368,35 +370,34 @@ function FreshnessPanel({ report }: { report: FreshnessReport }) {
   ];
 
   return (
-    <Card padded={false} className="overflow-hidden">
+    <Card padded={false} className="overflow-hidden rounded-4xl">
       <div className="grid lg:grid-cols-[280px_minmax(0,1fr)]">
-        <div className={cn('relative overflow-hidden p-6', m.cls)}>
-          <ChevronPattern color="currentColor" opacity={0.1} />
+        <div className={cn('relative overflow-hidden p-7 sm:p-8', m.cls)}>
           <div className="relative">
-            <p className="text-xs font-bold uppercase tracking-[0.16em] opacity-80">Readiness freshness</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] opacity-80">Readiness freshness</p>
             <div className="mt-3 flex items-center gap-3">
-              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20 ring-1 ring-white/30">{m.icon}</span>
-              <p className="text-3xl font-extrabold tracking-tight">{m.label}</p>
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-paper/20 ring-1 ring-current/30">{m.icon}</span>
+              <p className="font-condensed text-5xl uppercase leading-none tracking-wide">{m.label}</p>
             </div>
             <p className="mt-3 text-sm leading-relaxed opacity-90">{m.text}</p>
           </div>
         </div>
-        <div className="p-5 sm:p-6">
-          <div className="grid gap-3 sm:grid-cols-3">
+        <div className="p-6 sm:p-8">
+          <div className="grid gap-4 sm:grid-cols-3">
             {tiles.map((t) => (
-              <div key={t.label} className="rounded-2xl bg-slate-50 p-4">
+              <div key={t.label} className="rounded-2xl border border-ink-950/5 bg-sand-100 p-5">
                 <p className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
                   {t.icon}
                   {t.label}
                 </p>
-                <p className="mt-1 text-xl font-extrabold tracking-tight text-ink-950">{t.value}</p>
+                <p className="mt-2 font-display text-3xl font-medium leading-tight text-ink-950">{t.value}</p>
                 <ProgressBar value={Math.max(0, t.fresh)} tone={freshTone(t.fresh)} size="xs" className="mt-2" />
                 <p className="mt-1.5 text-[11px] text-slate-500">{t.hint}</p>
               </div>
             ))}
           </div>
 
-          <ul className="mt-4 space-y-1.5">
+          <ul className="mt-6 space-y-1.5">
             {report.reasons.length ? (
               report.reasons.map((r) => (
                 <li key={r.text} className="flex items-start gap-2 text-sm text-slate-600">
@@ -413,14 +414,14 @@ function FreshnessPanel({ report }: { report: FreshnessReport }) {
           </ul>
 
           {report.countdowns.length > 0 && (
-            <div className="mt-5 border-t border-slate-100 pt-4">
+            <div className="mt-5 border-t border-ink-950/10 pt-4">
               <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Certificate expiry</p>
               <ul className="mt-2 space-y-3">
                 {report.countdowns.map(({ cert, daysLeft, state, percentRemaining }) => (
                   <li key={cert.id}>
                     <Link to={`/app/certificates/${cert.id}`} className="group block">
                       <div className="flex items-baseline justify-between gap-3 text-sm">
-                        <span className="min-w-0 truncate font-semibold text-ink-900 group-hover:text-brand-700">
+                        <span className="min-w-0 truncate font-semibold text-ink-900 group-hover:text-brand-800">
                           <span style={{ color: LEVEL_META[cert.level].color }}>{LEVEL_META[cert.level].label}</span> · {CERT_TYPE_META[cert.type].label} · {cert.domainName}
                         </span>
                         <span className={cn('shrink-0 text-xs font-semibold', state !== 'valid' ? 'text-clay-700' : daysLeft <= 60 ? 'text-gold-700' : 'text-slate-500')}>
@@ -444,11 +445,11 @@ function FreshnessPanel({ report }: { report: FreshnessReport }) {
 
 function TriggerCard({ icon, title, text, action, children, className }: { icon: ReactNode; title: string; text: string; action?: ReactNode; children?: ReactNode; className?: string }) {
   return (
-    <Card className={cn('flex flex-col', className)}>
+    <Card className={cn('flex flex-col rounded-3xl p-6 transition duration-300 hover:border-ink-950/30 hover:shadow-ink-sm sm:p-7', className)}>
       <div className="flex items-start gap-3">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700">{icon}</span>
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-ink-950/10 bg-lilac-100 text-ink-900">{icon}</span>
         <div className="min-w-0 flex-1">
-          <h3 className="font-bold text-ink-950">{title}</h3>
+          <h3 className="font-display text-xl font-medium leading-tight text-ink-950">{title}</h3>
           <p className="mt-1 text-sm leading-relaxed text-slate-600">{text}</p>
         </div>
       </div>
@@ -510,7 +511,7 @@ function GoalsEditor({ profile, onSaved, onCancel }: { profile: EmployeeProfile;
   };
 
   return (
-    <div className="mt-5 animate-fade-in border-t border-slate-100 pt-5">
+    <div className="mt-5 animate-fade-in border-t border-ink-950/10 pt-5">
       <p className="text-sm font-bold text-ink-950">What is your main goal now?</p>
       <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {OBJECTIVES.map((o) => (
@@ -519,7 +520,7 @@ function GoalsEditor({ profile, onSaved, onCancel }: { profile: EmployeeProfile;
       </div>
 
       {objective === 'transition' && (
-        <div className="mt-5 rounded-2xl bg-slate-50 p-4">
+        <div className="mt-5 rounded-2xl bg-sand-100 p-4">
           <p className="text-sm font-bold text-ink-950">Which career are you moving towards?</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {TARGET_CAREERS.map((c) => (
@@ -537,7 +538,7 @@ function GoalsEditor({ profile, onSaved, onCancel }: { profile: EmployeeProfile;
             onChange={(e) => setTarget(e.target.value)}
             placeholder="e.g. Supply Chain Analyst"
             maxLength={60}
-            className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-[15px] text-ink-950 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+            className="mt-1.5 h-11 w-full rounded-xl border border-ink-950/15 bg-paper px-3.5 text-[15px] text-ink-950 outline-none transition focus:border-ink-950 focus:ring-2 focus:ring-lilac-200"
           />
           <p className="mt-2 text-xs text-slate-500">
             {trimmed ? (
@@ -583,20 +584,20 @@ function CompetencyGaps({ orgName, checks, domainId, inPath, adding, canAdd, onA
   const unmet = checks.filter((c) => !c.met).sort((a, b) => PRIORITY_RANK[a.competency.priority] - PRIORITY_RANK[b.competency.priority]);
   if (!unmet.length) {
     return (
-      <div className="mt-5 flex items-center gap-2 rounded-xl bg-brand-50 p-4 text-sm font-medium text-brand-800">
+      <div className="mt-5 flex items-center gap-2 rounded-xl border border-brand-800/15 bg-brand-50 p-4 text-sm font-medium text-brand-800">
         <CircleCheck className="h-5 w-5 shrink-0 text-brand-600" /> You meet every AI competency {orgName} requires.
       </div>
     );
   }
   const rank = (m: ModuleMeta) => (m.domainId === domainId ? 0 : m.kind === 'core' ? 10 : 20) + (m.kind === 'challenge' && m.domainId !== domainId ? 5 : 0) + LEVEL_RANK[m.level];
   return (
-    <div className="mt-5 space-y-3 border-t border-slate-100 pt-5">
+    <div className="mt-5 space-y-3 border-t border-ink-950/10 pt-5">
       {unmet.map(({ competency: c, actual }) => {
         const mods = MODULES.filter((m) => m.skillIds.some((s) => c.skillIds.includes(s)))
           .sort((a, b) => rank(a) - rank(b))
           .slice(0, 3);
         return (
-          <div key={c.id} className="rounded-2xl border border-slate-200 p-4">
+          <div key={c.id} className="rounded-2xl border border-ink-950/10 bg-paper p-4">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div className="min-w-0">
                 <p className="font-bold text-ink-950">{c.name}</p>
@@ -609,7 +610,7 @@ function CompetencyGaps({ orgName, checks, domainId, inPath, adding, canAdd, onA
               {c.skillIds.map(skillName).join(', ')}
             </p>
             {mods.length > 0 && (
-              <ul className="mt-3 divide-y divide-slate-100 rounded-xl bg-slate-50">
+              <ul className="mt-3 divide-y divide-ink-950/5 rounded-xl bg-sand-100">
                 {mods.map((m) => {
                   const added = inPath.has(m.id);
                   return (
@@ -641,22 +642,22 @@ function CompetencyGaps({ orgName, checks, domainId, inPath, adding, canAdd, onA
 
 // ───────────────────────── Recommendations ─────────────────────────
 
-const KIND_TONE: Record<RecKind, Tone> = { advanced: 'violet', domain: 'brand', target: 'sky', responsible: 'gold', adjacent: 'neutral', core: 'brand' };
+const KIND_TONE: Record<RecKind, Tone> = { advanced: 'violet', domain: 'brand', target: 'violet', responsible: 'gold', adjacent: 'neutral', core: 'brand' };
 
 function RecCard({ rec, domainId, added, adding, onAdd }: { rec: MaintenanceRec; domainId: DomainId; added: boolean; adding: boolean; onAdd: () => void }) {
   const m = getModule(rec.moduleId);
   if (!m) return null;
   const d = m.domainId ? getDomain(m.domainId) : undefined;
-  const color = d?.color ?? '#0a8a5f';
+  const color = d?.color ?? '#034f46';
   return (
-    <div className={cn('flex flex-col rounded-2xl border p-4 transition', added ? 'border-brand-200 bg-brand-50/40' : 'border-slate-200 hover:border-slate-300')}>
+    <div className={cn('flex flex-col rounded-2xl border p-5 transition duration-300', added ? 'border-brand-800/15 bg-brand-50/60' : 'border-ink-950/10 bg-paper hover:border-ink-950/40 hover:shadow-ink-sm')}>
       <div className="flex items-start gap-3">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" style={{ background: tint(color, 0.1), color }}>
           <Icon name={m.icon} className="h-5 w-5" />
         </span>
         <div className="min-w-0">
           <Badge tone={KIND_TONE[rec.kind]}>{REC_KIND_LABEL[rec.kind]}</Badge>
-          <p className="mt-1.5 font-bold leading-snug text-ink-950">{moduleTitle(m, domainId)}</p>
+          <p className="mt-1.5 font-display text-lg font-medium leading-snug text-ink-950">{moduleTitle(m, domainId)}</p>
           <p className="mt-0.5 text-xs text-slate-500">
             {d ? d.name : 'Core · all professions'} · {capitalise(m.level)} · {m.estimatedMinutes} min
           </p>
@@ -669,7 +670,7 @@ function RecCard({ rec, domainId, added, adding, onAdd }: { rec: MaintenanceRec;
             <Button size="sm" variant="secondary" disabled icon={<CircleCheck className="h-4 w-4" />}>
               Added to your path
             </Button>
-            <Link to={`/app/learning/${m.id}`} className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:underline">
+            <Link to={`/app/learning/${m.id}`} className="inline-flex items-center gap-1 text-sm font-semibold text-brand-800 hover:underline">
               Open <ArrowRight className="h-4 w-4" />
             </Link>
           </>
@@ -685,24 +686,24 @@ function RecCard({ rec, domainId, added, adding, onAdd }: { rec: MaintenanceRec;
 
 // ───────────────────────── Timeline ─────────────────────────
 
-const TONE_HEX: Record<TimelineEvent['tone'], string> = { brand: '#10a36f', gold: '#f5a800', clay: '#f4511e', sky: '#0ea5e9', ink: '#94a3b8' };
+const TONE_HEX: Record<TimelineEvent['tone'], string> = { brand: '#1b8f78', gold: '#ffa946', clay: '#ff6c4c', sky: '#4fbf8e', ink: '#a3a390' };
 
 function TimelineCard({ events }: { events: TimelineEvent[] }) {
   const [all, setAll] = useState(false);
   const shown = all ? events : events.slice(0, 7);
   return (
-    <Card>
-      <CardTitle icon={<CalendarClock className="h-5 w-5" />} title="Readiness timeline" subtitle="Assessments and certificates over time" />
+    <Card className="rounded-3xl">
+      <CardTitle icon={<CalendarClock className="h-5 w-5" />} title="Readiness timeline" />
       {events.length ? (
         <>
-          <ol className="relative ml-2 space-y-4 border-l-2 border-slate-100 pl-5">
+          <ol className="relative ml-2 space-y-4 border-l-2 border-ink-950/10 pl-5">
             {shown.map((e) => (
               <li key={e.id} className="relative">
-                <span className="absolute -left-[28px] top-1 h-3.5 w-3.5 rounded-full ring-4 ring-white" style={{ background: TONE_HEX[e.tone], opacity: e.future ? 0.55 : 1 }} />
+                <span className="absolute -left-[28px] top-1 h-3.5 w-3.5 rounded-full ring-4 ring-paper" style={{ background: TONE_HEX[e.tone], opacity: e.future ? 0.55 : 1 }} />
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                   <p className="text-sm font-semibold text-ink-950">
                     {e.to ? (
-                      <Link to={e.to} className="hover:text-brand-700">
+                      <Link to={e.to} className="hover:text-brand-800">
                         {e.title}
                       </Link>
                     ) : (
@@ -718,7 +719,7 @@ function TimelineCard({ events }: { events: TimelineEvent[] }) {
             ))}
           </ol>
           {events.length > 7 && (
-            <button onClick={() => setAll((a) => !a)} className="mt-4 text-sm font-semibold text-brand-700 hover:underline">
+            <button onClick={() => setAll((a) => !a)} className="mt-4 text-sm font-semibold text-brand-800 hover:underline">
               {all ? 'Show less' : `Show all ${events.length} events`}
             </button>
           )}
