@@ -1,0 +1,1270 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<title>ZimAI Ready — Prompt Document · Group 4</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..700;1,400..700&family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  @page { size: A4; margin: 16mm 15mm 16mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Figtree, Arial, sans-serif; color: #1a1a1a; font-size: 9.5pt; line-height: 1.45; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  em { font-style: italic; }
+  .cover { background: #fffeeb; border: 0.3mm solid #1a1a1a; border-radius: 5mm; padding: 9mm 10mm; position: relative; overflow: hidden; }
+  .cover .blob { position: absolute; width: 90mm; height: 90mm; border-radius: 50%; top: -40mm; right: -30mm; background: radial-gradient(circle, rgba(200,240,220,.9) 0%, rgba(200,240,220,0) 70%); }
+  .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 6mm; position: relative; }
+  .brand { display: flex; align-items: center; gap: 3mm; }
+  .brand b { font-size: 13pt; font-weight: 800; letter-spacing: -0.02em; }
+  .brand i { font-family: 'EB Garamond', serif; font-size: 15pt; color: #034f46; margin-left: 1mm; }
+  .group { text-align: right; }
+  .tag { display: inline-block; background: #1a1a1a; color: #fffeeb; font-weight: 700; font-size: 8.5pt; letter-spacing: .14em; text-transform: uppercase; padding: 1.2mm 3mm; border-radius: 99px; }
+  .rolls { margin-top: 2mm; display: flex; gap: 1.5mm; justify-content: flex-end; white-space: nowrap; }
+  .rolls span { border: 0.3mm solid #1a1a1a; background: #c8f0dc; border-radius: 2mm; padding: .7mm 1.8mm; font-weight: 700; font-size: 8pt; }
+  .eyebrow { font-size: 7.5pt; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: #78786a; margin-top: 2mm; }
+  h1 { font-family: 'EB Garamond', serif; font-weight: 500; font-size: 28pt; line-height: 1.02; letter-spacing: -0.02em; margin-top: 8mm; position: relative; }
+  h1 em { color: #034f46; }
+  .lede { margin-top: 3mm; font-size: 10.5pt; color: #46463f; position: relative; }
+  .links { margin-top: 3.5mm; font-size: 10pt; position: relative; }
+  .links span { margin-left: 6mm; }
+  .links a { color: #034f46; font-weight: 700; text-decoration: underline; text-underline-offset: .5mm; }
+  .note { margin-top: 3mm; font-size: 8.5pt; color: #78786a; position: relative; }
+  .toc { margin-top: 5mm; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5mm; position: relative; }
+  .toc div { border-radius: 3mm; padding: 2.5mm 3mm; border: 0.3mm solid rgba(26,26,26,.12); font-size: 8.5pt; }
+  .toc b { display: block; font-family: 'EB Garamond', serif; font-size: 13pt; color: rgba(26,26,26,.35); }
+  .t1 { background: #e2f7ec; } .t2 { background: #ffebd1; } .t3 { background: #ffe3f9; }
+  h2 { font-family: 'EB Garamond', serif; font-weight: 500; font-size: 19pt; margin: 9mm 0 1mm; letter-spacing: -0.01em; break-after: avoid; }
+  h2 em { color: #034f46; }
+  h3 { font-size: 10.5pt; font-weight: 800; margin: 5mm 0 1.5mm; break-after: avoid; }
+  .sub { color: #78786a; font-size: 8.5pt; margin-bottom: 2mm; break-after: avoid; }
+  .page-break { break-before: page; }
+  pre { font-family: Figtree, Arial, sans-serif; white-space: pre-wrap; word-wrap: break-word; font-size: 8.4pt; line-height: 1.38; background: #fffdf6; border: 0.3mm solid rgba(26,26,26,.14); border-left: 1.2mm solid #034f46; border-radius: 2.5mm; padding: 3.5mm 4mm; color: #2a2a26; }
+  pre.studio { border-left-color: #ffa946; }
+  .fu { display: grid; grid-template-columns: 8mm 1fr; gap: 0 2mm; padding: 2.4mm 0; border-top: 0.3mm solid rgba(26,26,26,.1); break-inside: avoid; }
+  .fu .n { font-family: 'EB Garamond', serif; font-size: 13pt; color: rgba(26,26,26,.35); line-height: 1.1; }
+  .fu q { display: block; quotes: none; background: #eefaf6; border-radius: 2mm; padding: 1.6mm 2.6mm; font-size: 9pt; }
+  .fu .did { margin-top: 1mm; font-size: 8.4pt; color: #5d5d52; }
+  .fu .did b { color: #034f46; }
+</style></head><body>
+<section class="cover">
+  <div class="blob"></div>
+  <div class="top">
+    <div>
+      <div class="brand">
+        <svg width="34" height="34" viewBox="0 0 40 40" aria-hidden="true"><rect x="1" y="1" width="38" height="38" rx="11" fill="#034f46" stroke="#1a1a1a" stroke-width="2"/><path d="M8 27 L14 21 L20 27 L26 21 L32 27" fill="none" stroke="#fffeeb" stroke-opacity=".35" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 21 L14 15 L20 21 L26 15 L32 21" fill="none" stroke="#fffeeb" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span><b>ZimAI</b><i>Ready</i></span>
+      </div>
+      <p class="eyebrow">Prompt document</p>
+    </div>
+    <div class="group"><span class="tag">Group 4</span><div class="rolls"><span>25DM304</span><span>25DM329</span><span>25DM331</span><span>25SM332</span><span>25DM336</span></div></div>
+  </div>
+  <h1>The prompts that<br /><em>built ZimAI Ready.</em></h1>
+  <p class="lede">ZimAI Ready was built by giving an AI coding agent (Claude Code) a detailed product specification, then steering it with short follow-up prompts. Google AI Studio was used to connect Gemini, Firebase sign-in and the database, and to host the app. This document collects those prompts in the order they were given.</p>
+  <p class="links"><b>Live app:</b> <a href="https://zimai-ready.ai.studio/">https://zimai-ready.ai.studio/</a><span><b>Code:</b> <a href="https://github.com/beerus-Ai/zimai-ready">github.com/beerus-Ai/zimai-ready</a></span></p>
+  <p class="note">Prompts are copied exactly as typed, including spelling. Messages that contained only a greeting, a screenshot, &quot;try again&quot; or an account email address are left out.</p>
+  <div class="toc">
+    <div class="t1"><b>01</b>The master build prompt: Stages 1–4</div>
+    <div class="t2"><b>02</b>29 follow-up prompts: publishing, AI Studio, redesign</div>
+    <div class="t3"><b>03</b>The Google AI Studio hand-off prompt</div>
+  </div>
+</section>
+
+<h2>Part 1 — <em>The master build prompt</em></h2>
+<p class="sub">Sent as one message on 10 September 2026. It describes the whole product in four stages and ends with instructions on how to build it.</p>
+
+<h3>1.1 &nbsp;STAGE 1 OF 4 — Platform Foundation, User Experience &amp; AI Readiness Assessment</h3><pre>STAGE 1 OF 4 — Platform Foundation, User Experience &amp; AI Readiness Assessment
+
+You are building a production-quality prototype called &quot;ZimAI Ready&quot;, an AI Workforce Readiness, Reskilling and Certification Platform initially designed for Zimbabwean employees and employers.
+
+CORE PROBLEM
+
+AI adoption is changing jobs, workflows and required skills. Many employees know that AI may affect their careers but do not know:
+
+- How exposed their current role is to AI-driven change.
+- Whether they are personally prepared to work with AI.
+- Which AI skills are relevant to their specific profession.
+- Which skills they should learn first.
+- Whether they should upskill in their current role or reskill toward another career.
+- How to demonstrate to employers that they are genuinely AI-ready.
+
+ZimAI Ready should solve this through:
+
+ASSESS → ANALYSE → RECOMMEND → LEARN → PRACTISE → ASSESS → CERTIFY → CONTINUOUSLY UPSKILL
+
+IMPORTANT PRODUCT PRINCIPLE
+
+This must NOT feel like a generic online course website with an AI chatbot added to it.
+
+AI personalisation must be fundamental to the entire user journey.
+
+==================================================
+STAGE 1 OBJECTIVE
+==================================================
+
+Build the platform foundation and employee onboarding/readiness assessment.
+
+Do NOT attempt to implement every future feature in this stage.
+
+Create a clean architecture that can be extended in later stages without rebuilding the application.
+
+==================================================
+1. BRAND AND DESIGN
+==================================================
+
+Product name: ZimAI Ready
+
+Tagline:
+&quot;Prepare for the Future of Work.&quot;
+
+Supporting statement:
+&quot;Discover where you stand, learn what matters, and become AI Ready in your profession.&quot;
+
+Create a modern, premium professional interface suitable for employees, employers, universities and corporate training.
+
+The design should feel like a modern AI/SaaS product rather than a traditional school LMS.
+
+Use:
+- Clean typography
+- Cards
+- Progress indicators
+- Subtle animations
+- Professional icons
+- Responsive layouts
+- Excellent mobile experience
+
+Use a modern professional colour system with subtle inspiration from Zimbabwe without making the application look governmental.
+
+==================================================
+2. LANDING PAGE
+==================================================
+
+Create a polished landing page explaining:
+
+- What ZimAI Ready does
+- Why AI readiness matters
+- Personalised AI learning
+- Career transition support
+- Domain-specific training
+- Employer workforce readiness
+- Verifiable AI Ready certification
+
+Primary CTA:
+&quot;Check My AI Readiness&quot;
+
+Secondary CTA:
+&quot;For Employers&quot;
+
+Include a simple process:
+
+1. Assess
+2. Discover your gaps
+3. Follow your pathway
+4. Practise
+5. Get certified
+
+==================================================
+3. AUTHENTICATION / DEMO ACCESS
+==================================================
+
+Create employee and employer user types.
+
+For prototype/demo purposes, provide simple demo access.
+
+Do not make authentication unnecessarily complicated.
+
+==================================================
+4. EMPLOYEE ONBOARDING
+==================================================
+
+After employee signup, do NOT immediately show a generic dashboard.
+
+Display:
+
+&quot;Let&#x27;s understand where you are with AI.&quot;
+
+Explain that the assessment takes approximately 2 minutes.
+
+The assessment must be short, visual and engaging.
+
+Use cards, buttons, sliders and multi-select options rather than long text forms.
+
+Use approximately 7–9 questions.
+
+Collect:
+
+1. Industry
+
+Include Zimbabwe-relevant sectors such as:
+- Banking &amp; Finance
+- Mining
+- Agriculture
+- Healthcare
+- Retail
+- Telecommunications
+- Government/Public Sector
+- Education
+- Manufacturing
+- Tourism &amp; Hospitality
+- ICT/Technology
+- Professional Services
+- Other
+
+2. Current job role / functional area
+
+Examples:
+- Finance &amp; Accounting
+- Human Resources
+- Software/IT
+- Operations
+- Marketing
+- Sales
+- Customer Service
+- Administration
+- Management
+- Engineering
+- Procurement
+- Data/Analytics
+- Other
+
+Allow a specific job title.
+
+3. Years of professional experience.
+
+4. Has your organisation adopted AI?
+
+Options:
+- Yes, extensively
+- Partially
+- Currently experimenting
+- Not yet
+- I don&#x27;t know
+
+5. How much is AI currently used in your department?
+
+- Regularly
+- Occasionally
+- Experimenting
+- Never
+- Unsure
+
+6. How often do YOU currently use AI at work?
+
+- Daily
+- Weekly
+- Occasionally
+- Never
+
+7. What do you currently use AI for?
+
+Multi-select:
+- Writing
+- Research
+- Data analysis
+- Automation
+- Coding
+- Customer support
+- Reporting
+- Brainstorming
+- Decision support
+- I don&#x27;t currently use AI
+
+8. AI confidence level.
+
+Use a simple visual scale from Beginner to Advanced.
+
+9. Career objective.
+
+Options:
+- Become better at my current job
+- Become AI-ready in my current profession
+- Prepare for future changes to my role
+- Transition into another field
+- Move into leadership/management
+- Build advanced AI skills
+
+If &quot;Transition into another field&quot; is selected, ask which field or role they are interested in.
+
+Keep this conditional question short.
+
+==================================================
+5. GEMINI AI READINESS ANALYSIS
+==================================================
+
+Use Gemini to analyse the onboarding profile.
+
+Do NOT generate a random readiness score.
+
+The AI should reason using:
+
+- Current profession
+- Industry
+- AI usage
+- AI confidence
+- Organisation AI adoption
+- Department AI adoption
+- Career objectives
+- Existing skills
+- Target career where applicable
+
+Generate TWO major indicators:
+
+PERSONAL AI READINESS
+0–100%
+
+and
+
+WORKPLACE AI EXPOSURE
+0–100%
+
+Provide labels such as:
+
+0–25: AI Beginner
+26–50: Developing
+51–75: AI Capable
+76–100: AI Ready
+
+Also determine a priority state.
+
+For example:
+
+High Workplace AI Exposure + Low Personal AI Readiness
+= &quot;Priority Upskilling Recommended&quot;
+
+High Personal Readiness + High Exposure
+= &quot;Well Positioned&quot;
+
+High Personal Readiness + Low Exposure
+= &quot;Future Ready&quot;
+
+==================================================
+6. READINESS RESULTS
+==================================================
+
+After assessment, create an impressive personalised results screen.
+
+Show:
+
+&quot;Your AI Readiness Profile&quot;
+
+Display:
+
+- Personal AI Readiness Score
+- Workplace AI Exposure Score
+- Current role
+- Industry
+- AI readiness level
+- Career objective
+
+Gemini should generate a short personalised explanation.
+
+Example:
+
+&quot;You are an HR Officer working in an organisation beginning to adopt AI. Your personal AI usage remains limited while recruitment, reporting and employee analytics are increasingly being augmented by AI.&quot;
+
+Then show:
+
+YOUR STRENGTHS
+
+YOUR AI SKILLS GAPS
+
+HOW AI IS CHANGING YOUR ROLE
+
+WHAT YOU SHOULD LEARN NEXT
+
+CAREER OPPORTUNITIES
+
+Keep explanations concise and actionable.
+
+==================================================
+7. AI SKILLS PRESCRIPTION
+==================================================
+
+Generate a personalised &quot;AI Skills Prescription.&quot;
+
+Do not dump a huge course catalogue onto the user.
+
+Recommend approximately 4–7 skills/modules in priority order.
+
+Example for HR:
+
+1. AI Fundamentals for HR
+2. Prompt Engineering for HR Professionals
+3. AI-Assisted Recruitment
+4. HR Analytics with AI
+5. AI for Employee Experience
+6. Responsible AI &amp; Employee Privacy
+7. HR AI Workplace Challenge
+
+Explain WHY each recommendation matters.
+
+==================================================
+8. CAREER TRANSITION ANALYSIS
+==================================================
+
+If the employee selected a target career, compare:
+
+CURRENT STATE → TARGET STATE
+
+Example:
+
+Accounts Clerk → Data Analyst
+
+Show:
+
+- Transferable existing skills
+- Missing skills
+- AI-related competencies required
+- Career transition readiness percentage
+- Recommended learning pathway
+
+Do not imply that AI will definitely eliminate someone&#x27;s job.
+
+Use responsible wording such as:
+&quot;AI exposure&quot;, &quot;role transformation&quot;, &quot;augmentation&quot;, and &quot;skills transition.&quot;
+
+==================================================
+9. EMPLOYEE DASHBOARD FOUNDATION
+==================================================
+
+Create the employee dashboard shell.
+
+Include:
+
+- AI Readiness
+- My Learning Path
+- Skills
+- Assessments
+- Career Path
+- Certificates
+
+Only fully implement readiness functionality during Stage 1.
+
+Use realistic demo data where necessary.
+
+==================================================
+10. DATA ARCHITECTURE
+==================================================
+
+Create reusable data models for:
+
+- Users
+- Employee profiles
+- Employer profiles
+- AI readiness assessments
+- Industries
+- Roles
+- Skills
+- Learning pathways
+- Modules
+- Assessments
+- Certificates
+- Employee progress
+
+Prepare these structures for future stages.
+
+==================================================
+STAGE 1 COMPLETION RULE
+==================================================
+
+Prioritise:
+
+1. Excellent UX
+2. Working onboarding flow
+3. Gemini-powered readiness analysis
+4. Personalised results
+5. AI Skills Prescription
+6. Responsive design
+
+Do not build fake buttons.
+
+Buttons that represent future stages may show a tasteful:
+&quot;Coming in the next stage&quot;
+state.
+
+At the end, ensure Stage 1 works end-to-end:
+
+Landing Page
+→ Employee Entry
+→ Short Assessment
+→ Gemini Analysis
+→ AI Readiness Results
+→ Skills Prescription
+→ Dashboard
+
+Do not remove or redesign working functionality when future stages are added.</pre>
+<h3>1.2 &nbsp;STAGE 2 OF 4 — Personalised Learning Engine &amp; AI Tutor</h3><pre>STAGE 2 OF 4 — Personalised Learning Engine &amp; AI Tutor
+
+Continue developing the EXISTING ZimAI Ready application.
+
+IMPORTANT:
+Do not recreate the application.
+Do not remove Stage 1 functionality.
+Preserve the current design system, navigation, responsiveness, user profiles, readiness assessment and Gemini integration.
+
+Now implement the learning and upskilling layer.
+
+==================================================
+1. PERSONALISED LEARNING PATH
+==================================================
+
+Take the AI Skills Prescription generated during Stage 1 and transform it into an interactive learning pathway.
+
+Every employee should receive different recommendations based on:
+
+- Profession
+- Industry
+- AI readiness
+- Skills gaps
+- Workplace AI exposure
+- Career objective
+- Target career
+- Previous learning progress
+
+Create:
+
+&quot;My AI Learning Path&quot;
+
+Show:
+- Overall progress
+- Current module
+- Completed modules
+- Recommended next module
+- Estimated learning time
+- Skills being developed
+
+==================================================
+2. DOMAIN-SPECIFIC LEARNING
+==================================================
+
+Courses must NOT be generic.
+
+Create sample learning pathways for:
+
+- Finance &amp; Accounting
+- Human Resources
+- Marketing
+- Software/IT
+- Customer Service
+- Operations
+- Management
+- Agriculture
+- Healthcare
+- Education
+
+Each should combine:
+
+AI fundamentals
++
+profession-specific AI application
++
+responsible AI
++
+practical workplace usage.
+
+==================================================
+3. MICRO-LEARNING
+==================================================
+
+Lessons should be short and engaging.
+
+A lesson can contain:
+
+- Short explanation
+- Workplace example
+- AI-generated example
+- Interactive activity
+- Quick knowledge check
+- Practical task
+
+Avoid pages containing huge amounts of text.
+
+Show progress throughout.
+
+==================================================
+4. AI TUTOR
+==================================================
+
+Create an integrated Gemini-powered AI Tutor.
+
+The tutor must understand:
+
+- Employee&#x27;s profession
+- Current module
+- AI readiness
+- Skills gaps
+- Career objective
+- Learning progress
+
+The tutor should answer questions in context.
+
+Example:
+
+Employee:
+&quot;How can I actually use this in accounting?&quot;
+
+Tutor:
+Give an accounting-specific explanation rather than a generic AI explanation.
+
+Provide suggested questions such as:
+
+&quot;Explain this more simply&quot;
+&quot;Give me an example from my job&quot;
+&quot;Test my understanding&quot;
+&quot;Show me how I would use this at work&quot;
+
+==================================================
+5. ADAPTIVE LEARNING
+==================================================
+
+The platform should adapt based on performance.
+
+If a learner struggles with a concept:
+- Explain it differently.
+- Recommend additional practice.
+- Generate another example.
+- Delay progression where appropriate.
+
+If the learner demonstrates strong competency:
+- Allow faster progression.
+- Recommend advanced material.
+
+==================================================
+6. PRACTICAL WORKPLACE ACTIVITIES
+==================================================
+
+Create profession-specific activities.
+
+Examples:
+
+Finance:
+Analyse financial information using AI and verify the AI&#x27;s conclusions.
+
+HR:
+Use AI to develop a recruitment workflow while identifying bias/privacy risks.
+
+Marketing:
+Use AI to develop a campaign and evaluate the quality of its output.
+
+Software:
+Use AI to assist with debugging while identifying security or correctness problems.
+
+Management:
+Use AI to analyse business information without blindly accepting its recommendation.
+
+The learner should submit an answer.
+
+Gemini should evaluate it and provide constructive feedback.
+
+==================================================
+7. RESPONSIBLE AI
+==================================================
+
+Responsible AI must be included across every pathway.
+
+Teach:
+
+- Privacy
+- Confidential information
+- Hallucinations
+- Verification
+- Bias
+- Human oversight
+- Ethical AI usage
+- Appropriate workplace usage
+
+==================================================
+8. PROGRESS DASHBOARD
+==================================================
+
+Upgrade the employee dashboard.
+
+Show:
+
+AI Readiness
+Learning Progress
+Skills Acquired
+Current Learning Streak
+Practical Challenges
+Assessment Performance
+Next Recommended Action
+
+Create a visual skills map showing:
+
+NEEDS DEVELOPMENT
+DEVELOPING
+COMPETENT
+AI READY
+
+==================================================
+9. REASSESSMENT
+==================================================
+
+Learning should influence readiness.
+
+After meaningful progress, allow:
+&quot;Reassess My AI Readiness&quot;
+
+Gemini should compare the original assessment with demonstrated learning and practical performance.
+
+Show:
+
+Initial AI Readiness: 42%
+Current AI Readiness: 67%
+
+Explain what caused the improvement.
+
+==================================================
+STAGE 2 COMPLETION
+==================================================
+
+The complete employee journey should now be:
+
+Assess
+→ Receive Skills Prescription
+→ Start Personalised Path
+→ Learn
+→ Ask AI Tutor
+→ Complete Practical Activities
+→ Receive AI Feedback
+→ Track Skills
+→ Reassess Readiness
+
+Do NOT implement final certification yet.
+That belongs to Stage 3.</pre>
+<h3>1.3 &nbsp;STAGE 3 OF 4 — Competency Assessment &amp; AI-Ready Certification</h3><pre>STAGE 3 OF 4 — Competency Assessment &amp; AI-Ready Certification
+
+Continue from the existing application.
+
+DO NOT rebuild Stage 1 or Stage 2.
+Preserve all existing functionality and design.
+
+The objective of Stage 3 is to prove whether an employee can APPLY AI effectively in their profession.
+
+IMPORTANT PRINCIPLE:
+
+Watching tutorials must NEVER automatically make someone AI Ready.
+
+Certification requires demonstrated competency.
+
+==================================================
+1. AI READINESS ASSESSMENT
+==================================================
+
+Create a final assessment combining:
+
+Knowledge
++
+AI tool usage
++
+Domain application
++
+Critical thinking
++
+Responsible AI
++
+Verification of AI outputs.
+
+Use Gemini to dynamically create domain-specific questions and workplace scenarios.
+
+==================================================
+2. PRACTICAL CAPSTONE
+==================================================
+
+Every learner must complete a practical workplace challenge.
+
+The challenge should depend on their profession.
+
+Example:
+
+An HR employee receives a fictional recruitment problem and must demonstrate how AI could assist while addressing privacy, fairness, verification and human oversight.
+
+A Finance employee receives fictional financial information and must use AI-assisted reasoning while checking for incorrect conclusions.
+
+Gemini should evaluate:
+
+- Approach
+- AI usage
+- Domain understanding
+- Verification
+- Critical thinking
+- Responsible AI
+- Quality of final result
+
+Provide transparent scoring criteria.
+
+==================================================
+3. CERTIFICATION LEVELS
+==================================================
+
+Implement:
+
+AI AWARE
+Understands AI concepts and risks.
+
+AI CAPABLE
+Can effectively use AI for selected professional activities.
+
+AI READY
+Can responsibly integrate AI into their professional workflows and demonstrate practical competency.
+
+==================================================
+4. CERTIFICATION RULES
+==================================================
+
+AI READY should require:
+
+- Required learning pathway completed
+- Minimum knowledge assessment score
+- Practical assessments completed
+- Responsible AI competency passed
+- Capstone assessment passed
+
+Do not award certification based purely on course completion.
+
+==================================================
+5. CERTIFICATE
+==================================================
+
+Generate a professional certificate.
+
+Example:
+
+ZimAI Ready
+
+AI-READY PROFESSIONAL CERTIFICATION
+
+Employee Name
+
+Domain: Finance &amp; Accounting
+Competency: AI-Augmented Financial Operations
+Readiness Score: 87%
+Level: AI READY
+Issue Date
+Certificate ID
+
+Include a QR code or verification mechanism in the prototype.
+
+Create a public certificate verification page.
+
+Entering the certificate ID should display:
+
+- Certificate holder
+- Domain
+- Competencies
+- AI readiness level
+- Issue date
+- Verification status
+
+==================================================
+6. SKILLS PROFILE
+==================================================
+
+Create a shareable AI Skills Profile.
+
+Show verified competencies such as:
+
+AI Fundamentals — Verified
+Prompt Engineering — Verified
+AI-Assisted Analytics — Verified
+Responsible AI — Verified
+Domain AI Application — Verified
+
+==================================================
+7. CONTINUOUS READINESS
+==================================================
+
+AI readiness should not appear permanent.
+
+Add:
+
+&quot;Maintain My AI Readiness&quot;
+
+The system can recommend new learning when:
+- Employee goals change
+- Their role changes
+- They transition careers
+- New competencies are required
+
+==================================================
+STAGE 3 COMPLETION
+==================================================
+
+The employee experience should now support:
+
+Assessment
+→ Personalised Learning
+→ AI Tutor
+→ Practical Work
+→ Competency Assessment
+→ Capstone
+→ AI Ready Decision
+→ Verifiable Certificate
+→ Continuous Upskilling</pre>
+<h3>1.4 &nbsp;STAGE 4 OF 4 — Employer Workforce Intelligence, Organisational AI Readiness &amp; Final Product Polish</h3><pre>STAGE 4 OF 4 — Employer Workforce Intelligence, Organisational AI Readiness &amp; Final Product Polish
+
+Continue developing the EXISTING application.
+
+Do not rebuild or remove functionality from Stages 1–3.
+
+==================================================
+1. EMPLOYER ONBOARDING
+==================================================
+
+Create a short employer onboarding assessment.
+
+Collect:
+
+- Organisation name
+- Industry
+- Approximate workforce size
+- Departments
+- Current level of AI adoption
+- Departments currently using AI
+- AI tools/technologies being introduced
+- Departments expected to experience significant AI transformation
+- Skills management wants employees to develop
+
+Generate:
+
+ORGANISATION AI MATURITY SCORE
+
+Classify organisations appropriately from early-stage AI adoption through advanced adoption.
+
+==================================================
+2. EMPLOYER DASHBOARD
+==================================================
+
+Create an executive workforce dashboard.
+
+Example:
+
+148 Employees
+
+31% AI Ready
+46% Currently Upskilling
+23% Priority Reskilling
+
+Show readiness by department:
+
+Finance — 72%
+HR — 61%
+Marketing — 84%
+Operations — 39%
+
+Use professional charts and visualisations.
+
+==================================================
+3. WORKFORCE SKILLS GAP
+==================================================
+
+Allow management to identify:
+
+- Most vulnerable skills
+- Emerging skills
+- Departments requiring attention
+- Employees requiring reskilling
+- Employees ready for advanced AI responsibilities
+- Organisation-wide competency gaps
+
+Generate AI-powered management insights.
+
+Example:
+
+&quot;Operations currently has the largest AI readiness gap. 64% of employees demonstrate low AI competency while the department has high expected AI exposure.&quot;
+
+==================================================
+4. EMPLOYER-SPECIFIC AI READINESS
+==================================================
+
+Allow employers to define AI competencies required by their organisation.
+
+For example:
+
+A bank may prioritise:
+- AI governance
+- Financial analysis
+- Fraud detection awareness
+- Data privacy
+- Responsible AI
+
+A mining organisation may prioritise:
+- Predictive analytics
+- Operational optimisation
+- AI-assisted maintenance
+- Safety
+- Data interpretation
+
+Compare employees against these requirements.
+
+==================================================
+5. TWO CERTIFICATION TYPES
+==================================================
+
+Support:
+
+DOMAIN AI READY
+
+Independently demonstrates readiness within a profession.
+
+and
+
+EMPLOYER AI READY
+
+Demonstrates competency against AI requirements defined by a particular employer.
+
+Clearly distinguish between them.
+
+==================================================
+6. EMPLOYEE MANAGEMENT
+==================================================
+
+Employer should be able to view employees by:
+
+- Department
+- Role
+- Readiness
+- Learning progress
+- Skills gaps
+- Certification
+- Priority reskilling status
+
+Use realistic fictional Zimbabwean demo employees.
+
+Do not expose unnecessary personal information.
+
+==================================================
+7. AI WORKFORCE ADVISOR
+==================================================
+
+Create a Gemini-powered Workforce AI Advisor.
+
+Management can ask questions such as:
+
+&quot;Which department should we prioritise?&quot;
+
+&quot;Which skills are we currently missing?&quot;
+
+&quot;Where is our greatest AI readiness risk?&quot;
+
+&quot;What training should Finance receive?&quot;
+
+&quot;How ready are we to introduce AI into customer service?&quot;
+
+The AI must use dashboard/workforce data when responding.
+
+==================================================
+8. ZIMBABWE CONTEXT
+==================================================
+
+Make the prototype relevant to Zimbabwe.
+
+Use fictional organisations and employees.
+
+Represent industries important to Zimbabwe including:
+
+- Financial services
+- Mining
+- Agriculture
+- Telecommunications
+- Retail
+- Tourism
+- Manufacturing
+- Education
+- Healthcare
+- Government/Public Sector
+- Technology
+
+Do not make unsupported claims about specific real Zimbabwean companies.
+
+==================================================
+9. FINAL PRODUCT POLISH
+==================================================
+
+Now review the ENTIRE application.
+
+Ensure:
+
+- All navigation works.
+- No broken buttons.
+- No dead pages.
+- Loading states exist.
+- Empty states exist.
+- Error states are handled.
+- Mobile layout works.
+- Tablet layout works.
+- Desktop layout works.
+- Gemini failures are handled gracefully.
+- AI-generated content has appropriate disclaimers.
+- Forms have validation.
+- Dashboard data looks realistic.
+- Demo data is internally consistent.
+
+Maintain visual consistency across all four stages.
+
+==================================================
+10. DEMONSTRATION MODE
+==================================================
+
+Make the application excellent for a university demonstration.
+
+Provide fictional demo profiles for:
+
+EMPLOYEE DEMO:
+An employee with moderate workplace AI exposure but low personal AI readiness.
+
+CAREER TRANSITION DEMO:
+An Accounts Clerk attempting to transition toward Data Analytics.
+
+EMPLOYER DEMO:
+A fictional Zimbabwean organisation with several departments at different AI readiness levels.
+
+Ensure these scenarios demonstrate the platform&#x27;s major features without requiring extensive setup.
+
+==================================================
+FINAL PRODUCT JOURNEY
+==================================================
+
+The finished ZimAI Ready ecosystem should demonstrate:
+
+EMPLOYEE:
+
+Sign Up
+↓
+2-Minute AI Assessment
+↓
+Personal AI Readiness
++
+Workplace AI Exposure
+↓
+Skills Gap Analysis
+↓
+AI Skills Prescription
+↓
+Personalised Learning
+↓
+AI Tutor
+↓
+Workplace Challenges
+↓
+Readiness Reassessment
+↓
+Final Practical Assessment
+↓
+AI Ready Certification
+↓
+Continuous Upskilling
+
+
+EMPLOYER:
+
+Organisation Assessment
+↓
+AI Maturity Profile
+↓
+Workforce Dashboard
+↓
+Department Readiness
+↓
+Skills Gap Analysis
+↓
+Targeted Reskilling
+↓
+Employee Progress
+↓
+Domain / Employer Certification
+↓
+Workforce AI Intelligence
+
+FINAL PRODUCT PRINCIPLE:
+
+ZimAI Ready should answer three questions exceptionally well:
+
+FOR THE EMPLOYEE:
+&quot;How is AI affecting my career, and what should I learn next?&quot;
+
+FOR THE CAREER TRANSITIONER:
+&quot;What skills do I already have, what am I missing, and how do I become ready for my next role?&quot;
+
+FOR THE EMPLOYER:
+&quot;Is our workforce actually ready for AI transformation, and where should we invest in reskilling?&quot;
+
+The final application should feel like an AI workforce intelligence and transformation platform — NOT simply an online course platform.</pre>
+<h3>1.5 &nbsp;Closing instruction</h3><pre>run multiple agents at the same time to complete it fast After you complete, I&#x27;m going to import this project into Google AI Studio, and it&#x27;s going to connect Google Firebase, the Google login, and all the necessary items in the database. After you have designed everything, that&#x27;s what we are going to be doing. You complete what you think you can, and leave the rest to Google AI Studio. Give me a prompt, and make sure that I don&#x27;t have prompts for Google AI Studio. Make sure that whatever Google AI Studio is going to do is not a lot of work. It&#x27;s very simple.</pre>
+<h2 class="page-break">Part 2 — <em>Follow-up prompts</em></h2>
+<h3>Publishing the code to GitHub</h3><p class="sub">11–12 September 2026</p>
+<div class="fu"><div class="n">01</div><div><q>push it to GitHub so I can import it</q><div class="did"><b>What it did:</b> Pushed the finished four-stage build to GitHub so it could be imported elsewhere.</div></div></div>
+<div class="fu"><div class="n">02</div><div><q>run the projectand let me</q><div class="did"><b>What it did:</b> Started the app locally so the team could test it.</div></div></div>
+<div class="fu"><div class="n">03</div><div><q>create a github repo and upload  at beerus-Ai</q><div class="did"><b>What it did:</b> Created the zimai-ready repository under the beerus-Ai account and uploaded the code.</div></div></div>
+<div class="fu"><div class="n">04</div><div><q>make it public</q><div class="did"><b>What it did:</b> Made the repository public so Google AI Studio could import it.</div></div></div>
+<div class="fu"><div class="n">05</div><div><q>how do i run the app</q><div class="did"><b>What it did:</b> Gave instructions for running the app locally.</div></div></div>
+<h3>Handing over to Google AI Studio</h3><p class="sub">13 September 2026</p>
+<div class="fu"><div class="n">06</div><div><q>are we ready for aistudio</q><div class="did"><b>What it did:</b> Checked the build was ready for Google AI Studio.</div></div></div>
+<div class="fu"><div class="n">07</div><div><q>Okay, did you connect to GitHub? What I want you to do is to give me the GitHub link that you have created, so that I then go to AI Studio and give it the GitHub link to the code that you have done. The prompt should tell it what to do with that code in GitHub to implement it further.</q><div class="did"><b>What it did:</b> Produced the AI Studio hand-off prompt (reproduced in Part 3 below).</div></div></div>
+<div class="fu"><div class="n">08</div><div><q>yes and open browswe to googleai studio and i login then you proceed with the rest</q><div class="did"><b>What it did:</b> Opened Google AI Studio in the browser for the team to sign in.</div></div></div>
+<div class="fu"><div class="n">09</div><div><q>logged in proceed</q><div class="did"><b>What it did:</b> Continued the import in AI Studio.</div></div></div>
+<div class="fu"><div class="n">10</div><div><q>lets upload</q><div class="did"><b>What it did:</b> Switched to uploading the project files.</div></div></div>
+<div class="fu"><div class="n">11</div><div><q>the handshake is failing I IT NOW Wise to updload to google drive and give it access</q><div class="did"><b>What it did:</b> Explored Google Drive as a route because the GitHub connection kept failing.</div></div></div>
+<div class="fu"><div class="n">12</div><div><q>isnt it wwise for google ai studion to first create something very small ,connect to github ,then i pull that repo replace it with my code because the handshake there is an error</q><div class="did"><b>What it did:</b> Considered starting a small AI Studio app first and replacing its code.</div></div></div>
+<div class="fu"><div class="n">13</div><div><q>the reason why inned google ai studio is the free deployement  since i dont have enough prompts to develop using it soo the idea was teh connection and database and histosting is fir google ai studio then the design is for us</q><div class="did"><b>What it did:</b> Set the division of labour: AI Studio handles connections, database and hosting; the team owns the design and features.</div></div></div>
+<div class="fu"><div class="n">14</div><div><q>wait how about you updload the files in google drive then let it aceess the files from there</q><div class="did"><b>What it did:</b> Tried giving AI Studio the files through Google Drive.</div></div></div>
+<div class="fu"><div class="n">15</div><div><q>ipotted the filesin google ai studio</q><div class="did"><b>What it did:</b> The team imported the files into AI Studio.</div></div></div>
+<div class="fu"><div class="n">16</div><div><q>do it for me and make the system work</q><div class="did"><b>What it did:</b> Connected the Firebase project (Google sign-in and Firestore) and added hosting config.</div></div></div>
+<div class="fu"><div class="n">17</div><div><q>yes and run the prompt now that and let me test the app when it working then deploy</q><div class="did"><b>What it did:</b> Ran the hand-off prompt in AI Studio, tested the app, then deployed.</div></div></div>
+<h3>Redesign: look, animation and calmer dashboards</h3><p class="sub">13 September 2026</p>
+<div class="fu"><div class="n">18</div><div><q>working perfectly nicely done now i want use to redsign to a more https://wisprflow.ai/notetaker kind like design very animated tutorials can have animations like  the ghosted animation on claude for ignito mode and some crazy designs and fonts  like https://wisprflow.ai/notetaker and also i need images of illustration  to show work etc  then once done update repo then update the import on aigoogle studio</q><div class="did"><b>What it did:</b> Started the redesign: warm editorial style, ghost mascot animations, new fonts, illustrations and photos.</div></div></div>
+<div class="fu"><div class="n">19</div><div><q>also try to have less text minimalistics like how apple do it</q><div class="did"><b>What it did:</b> Cut copy down to a minimal, Apple-like style.</div></div></div>
+<div class="fu"><div class="n">20</div><div><q>show me when done dont hesitate to use 3d animations like 3js or paralax effects or gifs etc</q><div class="did"><b>What it did:</b> Added parallax, tilt and looping animated demos.</div></div></div>
+<div class="fu"><div class="n">21</div><div><q>the card of ai at work everywhere should should be moveing like a caurasel , remove  teh 3D jelly ghost part and put the part &#x27;Your workforce, at a glance.&#x27; going foward  up to find out where you stand  then after that  you put We needed to know who was ready — and what to teach next. forward</q><div class="did"><b>What it did:</b> Made the &#x27;AI at work&#x27; photos a moving carousel, removed the 3D ghost and reordered the landing page.</div></div></div>
+<div class="fu"><div class="n">22</div><div><q>replace  tendai accountant image and dreplace with how it works part and on how it works on every stage demonstrate by a small git and text should be animated that explain how it works increase the amount of dscription there eg for assess  it will explaining that  how the asessment works</q><div class="did"><b>What it did:</b> Replaced the hero image with an interactive &#x27;How it works&#x27; showcase: a looping demo and animated explanation for each stage.</div></div></div>
+<div class="fu"><div class="n">23</div><div><q>now go to the dashboard dont bombard the user with  everything minimize something and and one is accesssing the dashboard and the user can enlarge if hewants  make it clean and not over welming</q><div class="did"><b>What it did:</b> Reduced the employee dashboard to one next step and four key numbers, with details in collapsible sections.</div></div></div>
+<div class="fu"><div class="n">24</div><div><q>do the same for the employer dashboard</q><div class="did"><b>What it did:</b> Applied the same calmer layout to the employer dashboard.</div></div></div>
+<div class="fu"><div class="n">25</div><div><q>push to github and update ai studio</q><div class="did"><b>What it did:</b> Pushed the redesign to GitHub and updated the AI Studio app.</div></div></div>
+<div class="fu"><div class="n">26</div><div><q>both working now publish it</q><div class="did"><b>What it did:</b> Published the live app.</div></div></div>
+<h3>Project summary and this document</h3><p class="sub">13–15 September 2026</p>
+<div class="fu"><div class="n">27</div><div><q>perfect now create a folder and  1 page pdf with explanation of what the project is all about and it for group 4 with roll number 25DM329,25DM331,25SM332,25DM336</q><div class="did"><b>What it did:</b> Created the one-page project summary PDF for Group 4.</div></div></div>
+<div class="fu"><div class="n">28</div><div><q>in the project summary put 25DM304 AS WELL  AND ALSO CREATE A PROMPT DOCUMENT WITH THE PROMPTS THAT CAME UP WITH THIS SYSTEM</q><div class="did"><b>What it did:</b> Added 25DM304 to the summary and created this prompt document.</div></div></div>
+<div class="fu"><div class="n">29</div><div><q>INCLUDE the clickable link https://zimai-ready.ai.studio/ in the documents</q><div class="did"><b>What it did:</b> Added the clickable live-app link to the project summary and this document.</div></div></div>
+<h2 class="page-break">Part 3 — <em>The Google AI Studio hand-off prompt</em></h2>
+<p class="sub">Pasted once into Google AI Studio (Build mode) so it would connect Gemini, Firebase and hosting without redesigning the app.</p>
+<pre class="studio">Import the code from this public GitHub repository and use it as the complete
+source for this app:
+
+https://github.com/beerus-Ai/zimai-ready   (branch: main)
+
+This is a FINISHED React 19 + TypeScript + Vite app called &quot;ZimAI Ready&quot; — an AI
+workforce readiness, reskilling and certification platform for Zimbabwean
+employees and employers. Every screen and all four stages (Readiness Assessment,
+Learning Path, Certification, Employer Workforce Analytics) are already built and
+the project typechecks and builds cleanly.
+
+DO NOT redesign, restructure, rename, rewrite or remove anything. Do not
+regenerate components or &quot;improve&quot; the UI. Your only job is to connect services,
+in 4 small steps:
+
+1. GEMINI — Gemini is already wired up in services/gemini.ts, which reads the key
+   from process.env.GEMINI_API_KEY / process.env.API_KEY (injected via the
+   `define` block in vite.config.ts). Just ensure the AI Studio Gemini key is
+   injected. The model list is GEMINI_MODELS in config.ts
+   (&#x27;gemini-2.5-flash&#x27; -&gt; &#x27;gemini-flash-latest&#x27; -&gt; &#x27;gemini-2.0-flash&#x27;) and it falls
+   back automatically. If the first model is unavailable, change ONLY that first
+   array entry to the current recommended Gemini Flash model. Change nothing else.
+
+2. FIREBASE — Enable the Firebase integration: create/connect a Firebase project
+   with Cloud Firestore and Firebase Authentication with the Google sign-in
+   provider enabled. Then paste the Firebase web config into
+   services/backend/firebaseConfig.ts (fill the `firebaseConfig` object; set
+   `firestoreDatabaseId` only if you created a named database). Write NO other
+   Firebase code — Google login, Firestore reads/writes and public certificate
+   verification are already implemented in services/backend/firebaseBackend.ts
+   and switch on automatically via isFirebaseConfigured() once the config is
+   filled in.
+
+3. SECURITY RULES — Deploy the Firestore rules exactly as provided in
+   firestore.rules, unmodified. Then add the app&#x27;s preview/deployed domain under
+   Firebase Authentication -&gt; Settings -&gt; Authorised domains.
+
+4. VERIFY — Confirm that:
+   • &quot;Continue with Google&quot; appears on /#/login
+   • a new Google user can complete the employee readiness assessment and see results
+   • an employer can complete organisation onboarding
+   • demo profiles on /#/demo still work (they intentionally use browser storage)
+   • AI responses are labelled &quot;Gemini AI&quot;, not &quot;ZimAI engine&quot;
+
+Keep every offline fallback intact — the app must continue to work end-to-end
+even when Gemini or Firebase is unavailable. Report back what you changed,
+file by file.</pre></body></html>
