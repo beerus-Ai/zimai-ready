@@ -12,7 +12,7 @@ import { cn } from '../../lib/utils';
  * the layout scrolls to the element with that id after navigation.
  */
 const ML_CODE_URL = 'https://github.com/beerus-Ai/ml-practical-code/releases/download/v1.0/cheeseballs.ipynb';
-const EXAM_PREP_URL = 'https://github.com/beerus-Ai/ml-practical-code/releases/download/v1.0/exam-prep.zip';
+const POTATOES_URL = 'https://github.com/beerus-Ai/ml-practical-code/releases/download/v1.0/potatoes.zip';
 
 const NAV = [
   { to: '/?s=how', label: 'How it works' },
@@ -89,12 +89,12 @@ export function PublicHeader() {
             Code
           </a>
           <a
-            href={EXAM_PREP_URL}
+            href={POTATOES_URL}
             target="_blank"
             rel="noreferrer"
             className="whitespace-nowrap rounded-lg px-3 py-2 text-[15px] font-medium text-ink-600 transition hover:text-ink-950"
           >
-            Exam Prep
+            Potatoes
           </a>
         </nav>
 
@@ -139,12 +139,12 @@ export function PublicHeader() {
               <ArrowUpRight className="h-5 w-5 text-ink-400" />
             </a>
             <a
-              href={EXAM_PREP_URL}
+              href={POTATOES_URL}
               target="_blank"
               rel="noreferrer"
               className="flex items-center justify-between rounded-xl px-3 py-3 font-display text-2xl text-ink-900 hover:bg-sand-200/60"
             >
-              Exam Prep
+              Potatoes
               <ArrowUpRight className="h-5 w-5 text-ink-400" />
             </a>
           </nav>
@@ -222,11 +222,11 @@ export function PublicFooter() {
             </a>{' · '}
             <a
               className="transition hover:text-canvas"
-              href={EXAM_PREP_URL}
+              href={POTATOES_URL}
               target="_blank"
               rel="noreferrer"
             >
-              Exam Prep
+              Potatoes
             </a>
           </p>
           <p>All organisations, people and scenarios shown are fictional. AI-generated guidance should be verified.</p>
