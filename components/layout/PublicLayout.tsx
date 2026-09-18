@@ -126,7 +126,7 @@ export function PublicHeader() {
               rel="noreferrer"
               className="flex items-center justify-between rounded-xl px-3 py-3 font-display text-2xl text-ink-900 hover:bg-sand-200/60"
             >
-              Machine Learning Code
+              Code
               <ArrowUpRight className="h-5 w-5 text-ink-400" />
             </a>
           </nav>
@@ -200,7 +200,7 @@ export function PublicFooter() {
               target="_blank"
               rel="noreferrer"
             >
-              Machine Learning Code
+              Code
             </a>
           </p>
           <p>All organisations, people and scenarios shown are fictional. AI-generated guidance should be verified.</p>
