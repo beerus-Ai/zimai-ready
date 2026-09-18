@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#fffeeb" />
+    <meta name="description" content="ZimAI Ready — Prepare for the Future of Work. Discover where you stand, learn what matters, and become AI Ready in your profession." />
+    <title>ZimAI Ready — Prepare for the Future of Work</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='11' fill='%23034f46'/%3E%3Cpath d='M8 21 L14 15 L20 21 L26 15 L32 21' fill='none' stroke='%23fffeeb' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='31' cy='10' r='3.2' fill='%23ffa946'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Figtree:wght@400;500;600;700;800;900&family=Anton&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      // ZimAI Ready design system — "warm editorial": cream paper, deep teal, garamond display type,
+      // lavender calls-to-action and ghost-like blur motion.
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Figtree', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Roboto', 'sans-serif'],
+              display: ['"EB Garamond"', 'Georgia', '"Times New Roman"', 'serif'],
+              serif: ['"EB Garamond"', 'Georgia', '"Times New Roman"', 'serif'],
+              condensed: ['Anton', 'Impact', '"Arial Narrow"', 'sans-serif'],
+              mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+            },
+            colors: {
+              canvas: '#fffeeb',
+              paper: '#fffdf6',
+              sand: { 50: '#fbfbf1', 100: '#f5f5e6', 200: '#ebebd8', 300: '#e4e4d0', 400: '#d2d2b9', 500: '#b8b89c' },
+              // Deep teal (primary brand)
+              brand: { 50: '#eefaf6', 100: '#d4f1e7', 200: '#a9e1cf', 300: '#72c9b0', 400: '#3fac92', 500: '#1b8f78', 600: '#0b7263', 700: '#085c51', 800: '#034f46', 900: '#07352f', 950: '#042420' },
+              // Warm orange (accent)
+              gold: { 50: '#fff7ec', 100: '#ffebd1', 200: '#ffd6a3', 300: '#ffc072', 400: '#ffa946', 500: '#f78f1e', 600: '#dc7110', 700: '#b6560f', 800: '#904412', 900: '#743912', 950: '#3f1b06' },
+              // Coral → wine (alerts, reskilling)
+              clay: { 50: '#fff3ef', 100: '#ffe2d9', 200: '#ffc2b1', 300: '#ff9a80', 400: '#ff6c4c', 500: '#f14e2e', 600: '#d6361c', 700: '#a92a1f', 800: '#7f1c34', 900: '#66172b', 950: '#3a0a17' },
+              // "lilac" token now holds MINT (calls to action) so every screen follows; blush = pink highlights
+              lilac: { 50: '#f1fbf6', 100: '#e2f7ec', 200: '#c8f0dc', 300: '#a6e6c8', 400: '#7dd6ad', 500: '#4fbf8e', 600: '#2f9f72', 700: '#237d5b', 800: '#1e634a', 900: '#1a513e', 950: '#0b2e22' },
+              blush: { 100: '#ffe3f9', 200: '#ffbcf2', 300: '#ff94e8', 400: '#f766d6' },
+              // Legacy tones used across older screens, re-mapped to the warm palette (sky → soft denim, violet → mint)
+              sky: { 50: '#f1f6f8', 100: '#dfeaef', 200: '#c1d6df', 300: '#98bac8', 400: '#6a98ab', 500: '#4a7a8e', 600: '#3a6274', 700: '#2f4f5e', 800: '#27414d', 900: '#223641', 950: '#15222a' },
+              violet: { 50: '#f1fbf6', 100: '#e2f7ec', 200: '#c8f0dc', 300: '#a6e6c8', 400: '#7dd6ad', 500: '#4fbf8e', 600: '#2f9f72', 700: '#237d5b', 800: '#1e634a', 900: '#1a513e', 950: '#0b2e22' },
+              // Warm inks and neutrals (slate is re-mapped so every existing screen warms up)
+              ink: { 50: '#f7f7f1', 100: '#ededE3', 200: '#dcdccd', 300: '#c2c2ae', 400: '#9b9b88', 500: '#78786a', 600: '#5d5d52', 700: '#46463f', 800: '#2f2f2b', 900: '#222220', 950: '#1a1a1a' },
+              slate: { 50: '#fafaf3', 100: '#f1f1e6', 200: '#e3e3d4', 300: '#cfcfbc', 400: '#a3a390', 500: '#7c7c6c', 600: '#5f5f53', 700: '#4a4a41', 800: '#33332e', 900: '#242421', 950: '#1a1a1a' },
+            },
+            borderRadius: { '4xl': '2rem', '5xl': '2.75rem' },
+            boxShadow: {
+              card: '0 1px 0 rgba(26,26,26,0.04), 0 1px 3px rgba(26,26,26,0.05)',
+              lift: '0 18px 40px -18px rgba(26,26,26,0.28), 0 4px 12px -6px rgba(26,26,26,0.10)',
+              glow: '0 0 0 1px rgba(3,79,70,0.12), 0 24px 60px -18px rgba(3,79,70,0.45)',
+              ink: '3px 3px 0 0 #1a1a1a',
+              'ink-sm': '2px 2px 0 0 #1a1a1a',
+            },
+            keyframes: {
+              'fade-in': { from: { opacity: 0 }, to: { opacity: 1 } },
+              'fade-up': { from: { opacity: 0, transform: 'translateY(14px)' }, to: { opacity: 1, transform: 'translateY(0)' } },
+              'slide-up': { from: { opacity: 0, transform: 'translateY(16px)' }, to: { opacity: 1, transform: 'translateY(0)' } },
+              'slide-right': { from: { transform: 'translateX(-100%)' }, to: { transform: 'translateX(0)' } },
+              'scale-in': { from: { opacity: 0, transform: 'scale(0.96)' }, to: { opacity: 1, transform: 'scale(1)' } },
+              float: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-8px)' } },
+              shimmer: { from: { backgroundPosition: '-200% 0' }, to: { backgroundPosition: '200% 0' } },
+              'ping-slow': { '75%,100%': { transform: 'scale(1.5)', opacity: 0 } },
+              // Ghost motion: things materialise out of a soft blur, and dissolve back into it.
+              'ghost-in': { from: { opacity: 0, filter: 'blur(14px)', transform: 'translateY(10px) scale(.98)' }, to: { opacity: 1, filter: 'blur(0)', transform: 'none' } },
+              'ghost-out': { from: { opacity: 1, filter: 'blur(0)' }, to: { opacity: 0, filter: 'blur(14px)', transform: 'translateY(-8px)' } },
+              'ghost-float': { '0%,100%': { transform: 'translateY(0) rotate(-2deg)' }, '50%': { transform: 'translateY(-12px) rotate(2deg)' } },
+              'ghost-pulse': { '0%,100%': { opacity: .35, filter: 'blur(6px)' }, '50%': { opacity: .9, filter: 'blur(0)' } },
+              wiggle: { '0%,100%': { transform: 'rotate(-3deg)' }, '50%': { transform: 'rotate(3deg)' } },
+              draw: { from: { strokeDashoffset: 'var(--len, 400)' }, to: { strokeDashoffset: 0 } },
+              marquee: { from: { transform: 'translateX(0)' }, to: { transform: 'translateX(-50%)' } },
+              blink: { '0%,92%,100%': { transform: 'scaleY(1)' }, '95%': { transform: 'scaleY(.1)' } },
+              'caret': { '0%,100%': { opacity: 1 }, '50%': { opacity: 0 } },
+            },
+            animation: {
+              'fade-in': 'fade-in .35s ease-out both',
+              'fade-up': 'fade-up .6s cubic-bezier(.2,.8,.2,1) both',
+              'slide-up': 'slide-up .35s cubic-bezier(.2,.8,.2,1) both',
+              'slide-right': 'slide-right .28s cubic-bezier(.2,.8,.2,1) both',
+              'scale-in': 'scale-in .22s cubic-bezier(.2,.8,.2,1) both',
+              float: 'float 5s ease-in-out infinite',
+              shimmer: 'shimmer 2.2s linear infinite',
+              'spin-slow': 'spin 3s linear infinite',
+              'ping-slow': 'ping-slow 2s cubic-bezier(0,0,.2,1) infinite',
+              'ghost-in': 'ghost-in .9s cubic-bezier(.2,.8,.2,1) both',
+              'ghost-out': 'ghost-out .7s ease-in both',
+              'ghost-float': 'ghost-float 6s ease-in-out infinite',
+              'ghost-pulse': 'ghost-pulse 2.6s ease-in-out infinite',
+              wiggle: 'wiggle 2.8s ease-in-out infinite',
+              draw: 'draw 1.6s cubic-bezier(.6,.1,.2,1) both',
+              marquee: 'marquee 38s linear infinite',
+              blink: 'blink 4.5s ease-in-out infinite',
+              caret: 'caret 1s steps(1) infinite',
+            },
+          },
+        },
+      };
+    </script>
+    <style>html{-webkit-tap-highlight-color:transparent;scroll-behavior:smooth}body{color:#1a1a1a;-webkit-font-smoothing:antialiased;text-rendering:optimizelegibility;background:#fffeeb;font-family:Figtree,ui-sans-serif,system-ui,sans-serif}::selection{color:#1a1a1a;background:#c8f0dc}h1,h2{letter-spacing:-.025em;font-family:EB Garamond,Georgia,Times New Roman,serif;font-weight:500!important}h1 em,h2 em,.font-display em,.italic-accent{font-style:italic;font-weight:400}.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{scrollbar-width:none}.text-balance{text-wrap:balance}.bg-grid{background-image:linear-gradient(#1a1a1a0b 1px,#0000 1px),linear-gradient(90deg,#1a1a1a0b 1px,#0000 1px);background-size:32px 32px}.bg-grid-dark{background-image:linear-gradient(#fffeeb0d 1px,#0000 1px),linear-gradient(90deg,#fffeeb0d 1px,#0000 1px);background-size:32px 32px}.bg-paper-noise{background-image:radial-gradient(#1a1a1a0d 1px,#0000 1px);background-size:4px 4px}.shimmer-text{background:linear-gradient(90deg,#034f46,#ff6c4c,#ffa946,#034f46) 0 0/200%;color:#0000;-webkit-background-clip:text;background-clip:text;animation:5s linear infinite shimmer}.ghost-mask{-webkit-mask-image:linear-gradient(#0000,#000 18% 82%,#0000);mask-image:linear-gradient(#0000,#000 18% 82%,#0000)}input[type=range]{accent-color:#034f46}:where(main) :where(.grid)>*,:where(main) :where(.flex)>:where(.flex-1){min-width:0}:where(main){overflow-x:clip}@media (prefers-reduced-motion:reduce){*,:before,:after{transition-duration:.001ms!important;animation-duration:.001ms!important;animation-iteration-count:1!important}}@media print{@page{size:A4 landscape;margin:0}html,body{background:#fff!important;height:100%!important;overflow:hidden!important}body *{visibility:hidden!important}body :has(.print-area){filter:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;animation:none!important;transform:none!important}.print-area,.print-area *{visibility:visible!important}.print-area{width:100%!important;max-width:none!important;box-shadow:none!important;margin:0!important;position:fixed!important;inset:0!important;transform:none!important}.no-print{display:none!important}}</style>
+    <!-- Import map lets Google AI Studio run the app without a bundler. Vite ignores it locally. -->
+
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@19.3.0",
+          "react/": "https://esm.sh/react@19.3.0/",
+          "react-dom": "https://esm.sh/react-dom@19.3.0?external=react",
+          "react-dom/": "https://esm.sh/react-dom@19.3.0&external=react/",
+          "react-router-dom": "https://esm.sh/react-router-dom@7.18.3?external=react,react-dom",
+          "@google/genai": "https://esm.sh/@google/genai@2.21.0",
+          "lucide-react": "https://esm.sh/lucide-react@1.44.0?external=react",
+          "qrcode.react": "https://esm.sh/qrcode.react@4.2.0?external=react",
+          "firebase/app": "https://esm.sh/firebase@12.19.0/app",
+          "firebase/auth": "https://esm.sh/firebase@12.19.0/auth",
+          "firebase/firestore": "https://esm.sh/firebase@12.19.0/firestore"
+        }
+      }
+    </script>
+    <script type="module" crossorigin src="./assets/index-oT9tZidu.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/preload-helper-uBIymjUX.js">
+    <link rel="modulepreload" crossorigin href="./assets/ui-CpkHa9fQ.js">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

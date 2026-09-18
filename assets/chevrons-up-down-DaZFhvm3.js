@@ -1,0 +1,1 @@
+import{Ut as e}from"./ui-CpkHa9fQ.js";var t={name:`chevrons-down-up`,size:24,node:[[`path`,{d:`m7 20 5-5 5 5`,key:`13a0gw`}],[`path`,{d:`m7 4 5 5 5-5`,key:`1kwcof`}]]};t.node;var n=e(t),r={name:`chevrons-up-down`,size:24,node:[[`path`,{d:`m7 15 5 5 5-5`,key:`1hf1tw`}],[`path`,{d:`m7 9 5-5 5 5`,key:`sgt6xg`}]]};r.node;var i=e(r);export{n,i as t};
