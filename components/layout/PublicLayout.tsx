@@ -11,6 +11,8 @@ import { cn } from '../../lib/utils';
  * Layout for public pages. Section links use `/?s=<id>` (HashRouter-safe);
  * the layout scrolls to the element with that id after navigation.
  */
+const ML_CODE_URL = 'https://github.com/beerus-Ai/ml-practical-code/raw/main/ML_Practical_Code.ipynb';
+
 const NAV = [
   { to: '/?s=how', label: 'How it works' },
   { to: '/?s=features', label: 'Platform' },
@@ -77,6 +79,14 @@ export function PublicHeader() {
           <NavLink to="/demo" className="rounded-lg px-3 py-2 text-[15px] font-medium text-ink-600 transition hover:text-ink-950">
             Demo
           </NavLink>
+          <a
+            href={ML_CODE_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-lg px-3 py-2 text-[15px] font-medium text-ink-600 transition hover:text-ink-950"
+          >
+            Machine Learning Code
+          </a>
         </nav>
 
         <div className="hidden items-center gap-2 lg:flex">
@@ -110,6 +120,15 @@ export function PublicHeader() {
                 <ArrowUpRight className="h-5 w-5 text-ink-400" />
               </Link>
             ))}
+            <a
+              href={ML_CODE_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center justify-between rounded-xl px-3 py-3 font-display text-2xl text-ink-900 hover:bg-sand-200/60"
+            >
+              Machine Learning Code
+              <ArrowUpRight className="h-5 w-5 text-ink-400" />
+            </a>
           </nav>
           <div className="mt-3 grid gap-2">
             {home ? (
@@ -177,7 +196,7 @@ export function PublicFooter() {
             © {new Date().getFullYear()} ZimAI Ready · Prototype for demonstration purposes. ·{' '}
             <a
               className="transition hover:text-canvas"
-              href="https://github.com/beerus-Ai/ml-practical-code/raw/main/ML_Practical_Code.ipynb"
+              href={ML_CODE_URL}
               target="_blank"
               rel="noreferrer"
             >
