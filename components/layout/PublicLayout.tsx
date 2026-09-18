@@ -72,11 +72,11 @@ export function PublicHeader() {
 
         <nav className="hidden items-center gap-0.5 lg:flex">
           {NAV.filter((n) => n.to !== '/for-employers').map((n) => (
-            <NavLink key={n.label} to={n.to} className="rounded-lg px-3 py-2 text-[15px] font-medium text-ink-600 transition hover:text-ink-950">
+            <NavLink key={n.label} to={n.to} className="whitespace-nowrap rounded-lg px-3 py-2 text-[15px] font-medium text-ink-600 transition hover:text-ink-950">
               {n.label}
             </NavLink>
           ))}
-          <NavLink to="/demo" className="rounded-lg px-3 py-2 text-[15px] font-medium text-ink-600 transition hover:text-ink-950">
+          <NavLink to="/demo" className="whitespace-nowrap rounded-lg px-3 py-2 text-[15px] font-medium text-ink-600 transition hover:text-ink-950">
             Demo
           </NavLink>
           <a
