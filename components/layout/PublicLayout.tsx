@@ -83,7 +83,7 @@ export function PublicHeader() {
             href={ML_CODE_URL}
             target="_blank"
             rel="noreferrer"
-            className="rounded-lg px-3 py-2 text-[15px] font-medium text-ink-600 transition hover:text-ink-950"
+            className="whitespace-nowrap rounded-lg px-3 py-2 text-[15px] font-medium text-ink-600 transition hover:text-ink-950"
           >
             Machine Learning Code
           </a>
