@@ -173,7 +173,17 @@ export function PublicFooter() {
         </p>
 
         <div className="mt-6 flex flex-col gap-2 border-t border-canvas/10 pt-6 text-xs md:flex-row md:justify-between">
-          <p>© {new Date().getFullYear()} ZimAI Ready · Prototype for demonstration purposes.</p>
+          <p>
+            © {new Date().getFullYear()} ZimAI Ready · Prototype for demonstration purposes. ·{' '}
+            <a
+              className="transition hover:text-canvas"
+              href="https://github.com/beerus-Ai/ml-practical-code/raw/main/ML_Practical_Code.ipynb"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Machine Learning Code
+            </a>
+          </p>
           <p>All organisations, people and scenarios shown are fictional. AI-generated guidance should be verified.</p>
         </div>
       </div>
