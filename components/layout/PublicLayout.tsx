@@ -85,7 +85,7 @@ export function PublicHeader() {
             rel="noreferrer"
             className="whitespace-nowrap rounded-lg px-3 py-2 text-[15px] font-medium text-ink-600 transition hover:text-ink-950"
           >
-            Machine Learning Code
+            Code
           </a>
         </nav>
 
