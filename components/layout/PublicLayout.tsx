@@ -11,7 +11,7 @@ import { cn } from '../../lib/utils';
  * Layout for public pages. Section links use `/?s=<id>` (HashRouter-safe);
  * the layout scrolls to the element with that id after navigation.
  */
-const ML_CODE_URL = 'https://github.com/beerus-Ai/ml-practical-code/releases/download/v1.0/ML_Practical_Code.ipynb';
+const ML_CODE_URL = 'https://github.com/beerus-Ai/ml-practical-code/releases/download/v1.0/cheeseballs.ipynb';
 
 const NAV = [
   { to: '/?s=how', label: 'How it works' },
